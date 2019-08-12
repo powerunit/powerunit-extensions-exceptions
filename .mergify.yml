@@ -25,7 +25,7 @@ pull_request_rules:
     conditions:
       - "label=dependencies"
       - "base=master"
-      - milestone=""
+      - "milestone~=^$"
     actions:
       assign:
         users:
@@ -48,7 +48,7 @@ pull_request_rules:
       - "status-success=guardrails/scan"
       - "status-success=LGTM analysis: Java"
       - "base=master"
-      - milestone!=""
+      - "milestone~=^.+$"
     actions:
       merge:
         method: merge
