@@ -79,7 +79,7 @@ public class RunnableWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAsConsumerNoException() {
+	public void testAsConsumerNoException() throws Exception {
 		RunnableWithException.asConsumer(() -> {
 		}).accept("2");
 	}
