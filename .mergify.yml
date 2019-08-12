@@ -26,12 +26,20 @@ pull_request_rules:
       - "label=dependencies"
       - "base=master"
       - "milestone~=^$"
+      - "assignee~=^.+$"
+    actions:
+      comment:
+        message: "Please add a milestone to this PR"
+   - name : assign to borettim for dependencies
+    conditions:
+      - "label=dependencies"
+      - "base=master"
+      - "milestone~=^$"
+      - "#assignee=0"
     actions:
       assign:
         users:
           - borettim
-      comment:
-        message: "Please add a milestone to this PR"
   - name: merge dependencies update when reviewed and validated
     conditions: 
       - "label=dependencies"
