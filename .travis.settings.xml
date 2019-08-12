@@ -1,0 +1,21 @@
+<settings>
+ <servers>
+    <server>
+      <id>github</id>
+      <password>${env.GITHUB_API_TOKEN}</password>
+    </server>
+    <server>
+        <id>oss-snapshots</id>
+        <username>${env.SONATYPE_USERNAME}</username>
+        <password>${env.SONATYPE_PASSWORD}</password>
+    </server>
+  </servers>
+ <profiles>
+		<profile>
+			<id>sign</id>
+			<properties>
+				<powerunit.passphrase>${env.GPG_PASSPHRASE}</powerunit.passphrase>
+			</properties>
+		</profile>
+	</profiles>
+</settings>
