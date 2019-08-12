@@ -30,7 +30,7 @@ pull_request_rules:
     actions:
       comment:
         message: "Please add a milestone to this PR"
-   - name : assign to borettim for dependencies
+  - name : assign to borettim for dependencies
     conditions:
       - "label=dependencies"
       - "base=master"
