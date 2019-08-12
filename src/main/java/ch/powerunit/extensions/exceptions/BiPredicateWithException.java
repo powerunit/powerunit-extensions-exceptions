@@ -98,7 +98,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * {@code BiConsumerWithException}.
 	 * 
 	 * @return the operation
-	 * @see #asBiConsumer(BiPredicateWithException)
+	 * @see #biConsumer(BiPredicateWithException)
 	 */
 	default BiConsumerWithException<T, U, E> asBiConsumer() {
 		return (t, u) -> test(t, u);
@@ -109,7 +109,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * {@code BiFunctionWithException}.
 	 * 
 	 * @return the function
-	 * @see #asBiFunction(BiPredicateWithException)
+	 * @see #biFunction(BiPredicateWithException)
 	 */
 	default BiFunctionWithException<T, U, Boolean, E> asBiFunction() {
 		return (t, u) -> test(t, u);
@@ -288,7 +288,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @return the operation function
 	 * @see #asBiConsumer()
 	 */
-	static <T, U, E extends Exception> BiConsumerWithException<T, U, E> asBiConsumer(
+	static <T, U, E extends Exception> BiConsumerWithException<T, U, E> biConsumer(
 			BiPredicateWithException<T, U, E> predicate) {
 		requireNonNull(predicate, "predicate can't be null");
 		return predicate.asBiConsumer();
@@ -309,7 +309,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @return the operation function
 	 * @see #asBiFunction()
 	 */
-	static <T, U, E extends Exception> BiFunctionWithException<T, U, Boolean, E> asBiFunction(
+	static <T, U, E extends Exception> BiFunctionWithException<T, U, Boolean, E> biFunction(
 			BiPredicateWithException<T, U, E> predicate) {
 		requireNonNull(predicate, "predicate can't be null");
 		return predicate.asBiFunction();

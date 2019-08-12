@@ -93,7 +93,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * {@code ConsumerWithException}.
 	 * 
 	 * @return the operation
-	 * @see #asConsumer(PredicateWithException)
+	 * @see #consumer(PredicateWithException)
 	 */
 	default ConsumerWithException<T, E> asConsumer() {
 		return t -> test(t);
@@ -104,7 +104,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * {@code FunctionWithException}.
 	 * 
 	 * @return the function
-	 * @see #asFunction(PredicateWithException)
+	 * @see #function(PredicateWithException)
 	 */
 	default FunctionWithException<T, Boolean, Exception> asFunction() {
 		return t -> test(t);
@@ -272,7 +272,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @return the operation function
 	 * @see #asConsumer()
 	 */
-	static <T, E extends Exception> ConsumerWithException<T, E> asConsumer(PredicateWithException<T, E> predicate) {
+	static <T, E extends Exception> ConsumerWithException<T, E> consumer(PredicateWithException<T, E> predicate) {
 		requireNonNull(predicate, "predicate can't be null");
 		return predicate.asConsumer();
 	}
@@ -290,7 +290,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @return the operation function
 	 * @see #asFunction()
 	 */
-	static <T, E extends Exception> FunctionWithException<T, Boolean, Exception> asFunction(
+	static <T, E extends Exception> FunctionWithException<T, Boolean, Exception> function(
 			PredicateWithException<T, E> predicate) {
 		requireNonNull(predicate, "predicate can't be null");
 		return predicate.asFunction();

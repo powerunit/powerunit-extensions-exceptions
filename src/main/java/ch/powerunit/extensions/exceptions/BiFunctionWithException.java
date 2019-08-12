@@ -139,7 +139,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * {@code BiConsumerWithException}.
 	 * 
 	 * @return the operation
-	 * @see #asBiConsumer(BiFunctionWithException)
+	 * @see #biConsumer(BiFunctionWithException)
 	 */
 	default BiConsumerWithException<T, U, Exception> asBiConsumer() {
 		return (t, u) -> apply(t, u);
@@ -363,7 +363,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @return the operation function
 	 * @see #asBiConsumer()
 	 */
-	static <T, U, R, E extends Exception> BiConsumerWithException<T, U, Exception> asBiConsumer(
+	static <T, U, R, E extends Exception> BiConsumerWithException<T, U, Exception> biConsumer(
 			BiFunctionWithException<T, U, R, E> function) {
 		requireNonNull(function, "function can't be null");
 		return function.asBiConsumer();

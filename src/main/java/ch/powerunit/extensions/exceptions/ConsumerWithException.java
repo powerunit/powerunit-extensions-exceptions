@@ -92,7 +92,7 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 	 * {@code FunctionWithException} that returns nothing.
 	 * 
 	 * @return the function
-	 * @see #asFunction(ConsumerWithException)
+	 * @see #function(ConsumerWithException)
 	 */
 	default FunctionWithException<T, Void, E> asFunction() {
 		return t -> {
@@ -228,7 +228,7 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 	 * @return the function
 	 * @see #asFunction()
 	 */
-	static <T, E extends Exception> FunctionWithException<T, Void, E> asFunction(
+	static <T, E extends Exception> FunctionWithException<T, Void, E> function(
 			ConsumerWithException<T, E> operation) {
 		requireNonNull(operation, "operation can't be null");
 		return operation.asFunction();

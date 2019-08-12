@@ -83,12 +83,12 @@ public class PredicateWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testAsConsumerNoException() throws Exception {
-		PredicateWithException.asConsumer(x -> true).accept("2");
+		PredicateWithException.consumer(x -> true).accept("2");
 	}
 
 	@Test
 	public void testAsConsumerException() {
-		assertWhen((x) -> PredicateWithException.asConsumer(y -> {
+		assertWhen((x) -> PredicateWithException.consumer(y -> {
 			throw new Exception();
 		}).accept("2")).throwException(instanceOf(Exception.class));
 	}

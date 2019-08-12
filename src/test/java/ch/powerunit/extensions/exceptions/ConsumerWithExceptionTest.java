@@ -77,13 +77,13 @@ public class ConsumerWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testAsFunctionNoException() {
-		assertThat(ConsumerWithException.asFunction(x -> {
+		assertThat(ConsumerWithException.function(x -> {
 		}).stage().apply("2").toCompletableFuture().join()).isNull();
 	}
 
 	@Test
 	public void testAsFunctionException() {
-		assertWhen((x) -> ConsumerWithException.asFunction(y -> {
+		assertWhen((x) -> ConsumerWithException.function(y -> {
 			throw new Exception();
 		}).stage().apply("x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
