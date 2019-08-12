@@ -21,6 +21,17 @@ pull_request_rules:
       request_reviews:
         users: 
           - borettim
+  - name : request milestone for dependencies
+    conditions:
+      - "label=dependencies"
+      - "base=master"
+      - milestone=""
+    actions:
+      assign:
+        users:
+          - borettim
+      comment:
+        message: "Please add a milestone to this PR"
   - name: merge dependencies update when reviewed and validated
     conditions: 
       - "label=dependencies"
@@ -37,6 +48,7 @@ pull_request_rules:
       - "status-success=guardrails/scan"
       - "status-success=LGTM analysis: Java"
       - "base=master"
+      - milestone!=""
     actions:
       merge:
         method: merge
