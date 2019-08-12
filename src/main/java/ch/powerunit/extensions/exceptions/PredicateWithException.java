@@ -21,7 +21,6 @@ package ch.powerunit.extensions.exceptions;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -132,7 +131,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #negate()
 	 */
 	default PredicateWithException<T, E> and(PredicateWithException<? super T, ? extends E> other) {
-		Objects.requireNonNull(other);
+		requireNonNull(other);
 		return (t) -> test(t) && other.test(t);
 	}
 
@@ -167,7 +166,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #negate()
 	 */
 	default PredicateWithException<T, E> or(PredicateWithException<? super T, ? extends E> other) {
-		Objects.requireNonNull(other);
+		requireNonNull(other);
 		return (t) -> test(t) || other.test(t);
 	}
 

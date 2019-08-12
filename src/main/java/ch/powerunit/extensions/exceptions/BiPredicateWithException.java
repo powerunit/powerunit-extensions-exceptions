@@ -21,7 +21,6 @@ package ch.powerunit.extensions.exceptions;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Objects;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -137,7 +136,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @see #negate()
 	 */
 	default BiPredicateWithException<T, U, E> and(BiPredicateWithException<? super T, ? super U, ? extends E> other) {
-		Objects.requireNonNull(other);
+		requireNonNull(other);
 		return (t, u) -> test(t, u) && other.test(t, u);
 	}
 
@@ -172,7 +171,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @see #negate()
 	 */
 	default BiPredicateWithException<T, U, E> or(BiPredicateWithException<? super T, ? super U, ? extends E> other) {
-		Objects.requireNonNull(other);
+		requireNonNull(other);
 		return (t, u) -> test(t, u) || other.test(t, u);
 	}
 

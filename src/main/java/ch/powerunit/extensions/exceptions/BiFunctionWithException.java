@@ -22,7 +22,6 @@ package ch.powerunit.extensions.exceptions;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -191,7 +190,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 */
 	default <V> BiFunctionWithException<T, U, V, E> andThen(
 			FunctionWithException<? super R, ? extends V, ? extends E> after) {
-		Objects.requireNonNull(after);
+		requireNonNull(after);
 		return (T t, U u) -> after.apply(apply(t, u));
 	}
 
