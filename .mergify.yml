@@ -20,7 +20,7 @@ pull_request_rules:
     actions:
       request_reviews:
         users: 
-          - borettim
+          - boretti
   - name : request milestone for dependencies
     conditions:
       - "label=dependencies"
@@ -30,7 +30,7 @@ pull_request_rules:
     actions:
       comment:
         message: "Please add a milestone to this PR"
-  - name : assign to borettim for dependencies
+  - name : assign to boretti for dependencies
     conditions:
       - "label=dependencies"
       - "base=master"
@@ -39,7 +39,7 @@ pull_request_rules:
     actions:
       assign:
         users:
-          - borettim
+          - boretti
   - name: merge dependencies update when reviewed and validated
     conditions: 
       - "label=dependencies"
