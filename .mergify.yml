@@ -19,7 +19,8 @@ pull_request_rules:
       - "base=master"
     actions:
       request_reviews:
-        users: borettim
+        users: 
+          - borettim
   - name: merge dependencies update when reviewed and validated
     conditions: 
       - "label=dependencies"
