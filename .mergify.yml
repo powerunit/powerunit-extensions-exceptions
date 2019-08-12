@@ -5,6 +5,7 @@ pull_request_rules:
       delete_head_branch: {}
   - name: request review for dependencies
     conditions: 
+      - "#approved-reviews-by=0"
       - "label=dependencies"
       - "status-success=Codacy/PR Quality Review"
       - "status-success=CodeFactor"
