@@ -97,7 +97,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * {@code BiFunctionWithException} that returns nothing.
 	 * 
 	 * @return the function
-	 * @see #asBiFunction(BiConsumerWithException)
+	 * @see #biFunction(BiConsumerWithException)
 	 */
 	default BiFunctionWithException<T, U, Void, E> asBiFunction() {
 		return (t, u) -> {
@@ -244,7 +244,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @return the function
 	 * @see #asBiFunction()
 	 */
-	static <T, U, E extends Exception> BiFunctionWithException<T, U, Void, E> asBiFunction(
+	static <T, U, E extends Exception> BiFunctionWithException<T, U, Void, E> biFunction(
 			BiConsumerWithException<T, U, E> operation) {
 		requireNonNull(operation, "operation can't be null");
 		return operation.asBiFunction();

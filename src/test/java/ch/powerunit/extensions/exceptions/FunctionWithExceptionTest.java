@@ -108,12 +108,12 @@ public class FunctionWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testAsConsumerNoException() throws Exception {
-		FunctionWithException.asConsumer(x -> x).accept("2");
+		FunctionWithException.consumer(x -> x).accept("2");
 	}
 
 	@Test
 	public void testAsConsumerException() {
-		assertWhen((x) -> FunctionWithException.asConsumer(y -> {
+		assertWhen((x) -> FunctionWithException.consumer(y -> {
 			throw new Exception();
 		}).accept("2")).throwException(instanceOf(Exception.class));
 	}

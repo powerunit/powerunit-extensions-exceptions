@@ -91,7 +91,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 *            The type for the input parameter of the function
 	 * 
 	 * @return the function
-	 * @see #asFunction(BooleanSupplierWithException)
+	 * @see #function(BooleanSupplierWithException)
 	 */
 	default <T> FunctionWithException<T, Boolean, E> asFunction() {
 		return t -> {
@@ -104,7 +104,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * {@code SupplierWithException}.
 	 * 
 	 * @return the function
-	 * @see #asSupplier(BooleanSupplierWithException)
+	 * @see #supplier(BooleanSupplierWithException)
 	 */
 	default SupplierWithException<Boolean, E> asSupplier() {
 		return () -> {
@@ -207,7 +207,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @return the function
 	 * @see #asFunction()
 	 */
-	static <T, E extends Exception> FunctionWithException<T, Boolean, E> asFunction(
+	static <T, E extends Exception> FunctionWithException<T, Boolean, E> function(
 			BooleanSupplierWithException<E> supplier) {
 		requireNonNull(supplier, "supplier can't be null");
 		return supplier.asFunction();
@@ -224,7 +224,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @return the function
 	 * @see #asSupplier()
 	 */
-	static <E extends Exception> SupplierWithException<Boolean, E> asSupplier(
+	static <E extends Exception> SupplierWithException<Boolean, E> supplier(
 			BooleanSupplierWithException<E> supplier) {
 		requireNonNull(supplier, "supplier can't be null");
 		return supplier.asSupplier();

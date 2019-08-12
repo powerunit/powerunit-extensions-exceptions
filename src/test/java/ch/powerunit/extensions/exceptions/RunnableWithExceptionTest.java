@@ -67,26 +67,26 @@ public class RunnableWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testAsFunctionNoException() {
-		assertThat(RunnableWithException.asFunction(() -> {
+		assertThat(RunnableWithException.function(() -> {
 		}).stage().apply("2").toCompletableFuture().join()).isNull();
 	}
 
 	@Test
 	public void testAsFunctionException() {
-		assertWhen((x) -> RunnableWithException.asFunction(() -> {
+		assertWhen((x) -> RunnableWithException.function(() -> {
 			throw new Exception();
 		}).stage().apply("x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
 	@Test
 	public void testAsConsumerNoException() throws Exception {
-		RunnableWithException.asConsumer(() -> {
+		RunnableWithException.consumer(() -> {
 		}).accept("2");
 	}
 
 	@Test
 	public void testAsConsumerException() {
-		assertWhen((x) -> RunnableWithException.asConsumer(() -> {
+		assertWhen((x) -> RunnableWithException.consumer(() -> {
 			throw new Exception();
 		}).accept("x")).throwException(instanceOf(Exception.class));
 	}

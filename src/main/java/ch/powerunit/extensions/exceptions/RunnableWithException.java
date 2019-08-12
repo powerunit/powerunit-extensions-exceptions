@@ -89,7 +89,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @return the function
 	 * @param <T>
 	 *            The type for the ignored input parameter
-	 * @see #asFunction(RunnableWithException)
+	 * @see #function(RunnableWithException)
 	 */
 	default <T> FunctionWithException<T, Void, E> asFunction() {
 		return t -> {
@@ -105,7 +105,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @return the function
 	 * @param <T>
 	 *            The type for the ignored input parameter
-	 * @see #asFunction(RunnableWithException)
+	 * @see #function(RunnableWithException)
 	 */
 	default <T> ConsumerWithException<T, E> asConsumer() {
 		return t -> {
@@ -207,7 +207,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @return the function
 	 * @see #asFunction()
 	 */
-	static <T, E extends Exception> FunctionWithException<T, Void, E> asFunction(RunnableWithException<E> operation) {
+	static <T, E extends Exception> FunctionWithException<T, Void, E> function(RunnableWithException<E> operation) {
 		requireNonNull(operation, "operation can't be null");
 		return operation.asFunction();
 	}
@@ -225,7 +225,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @return the function
 	 * @see #asFunction()
 	 */
-	static <T, E extends Exception> ConsumerWithException<T, E> asConsumer(RunnableWithException<E> operation) {
+	static <T, E extends Exception> ConsumerWithException<T, E> consumer(RunnableWithException<E> operation) {
 		requireNonNull(operation, "operation can't be null");
 		return operation.asConsumer();
 	}

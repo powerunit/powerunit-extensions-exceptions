@@ -123,7 +123,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @param <T1> The type of the input for the produced function
 	 * 
 	 * @return the function
-	 * @see #asFunction(SupplierWithException)
+	 * @see #function(SupplierWithException)
 	 */
 	default <T1> FunctionWithException<T1, T, E> asFunction() {
 		return t -> {
@@ -271,7 +271,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @return the function
 	 * @see #asFunction()
 	 */
-	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(SupplierWithException<R, E> supplier) {
+	static <T, R, E extends Exception> FunctionWithException<T, R, E> function(SupplierWithException<R, E> supplier) {
 		requireNonNull(supplier, "supplier can't be null");
 		return supplier.asFunction();
 	}

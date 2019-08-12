@@ -77,13 +77,13 @@ public class BiConsumerWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testAsFunctionNoException() {
-		assertThat(BiConsumerWithException.asBiFunction((x, y) -> {
+		assertThat(BiConsumerWithException.biFunction((x, y) -> {
 		}).stage().apply("2", "3").toCompletableFuture().join()).isNull();
 	}
 
 	@Test
 	public void testAsFunctionException() {
-		assertWhen((x) -> BiConsumerWithException.asBiFunction((y, z) -> {
+		assertWhen((x) -> BiConsumerWithException.biFunction((y, z) -> {
 			throw new Exception();
 		}).stage().apply("x", "x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
