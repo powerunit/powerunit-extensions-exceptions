@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface RunnableWithException<E extends Exception> extends ExceptionHandlerSupport<Runnable, Runnable, E> {
+public interface RunnableWithException<E extends Exception> extends ExceptionHandlerSupport<Runnable, Runnable> {
 
 	/**
 	 * Performs this operation.

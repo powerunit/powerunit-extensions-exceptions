@@ -63,6 +63,19 @@ public class ConsumerWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testLiftedNoException() {
+		ConsumerWithException.lifted(x -> {
+		}).accept("2");
+	}
+
+	@Test
+	public void testLiftedException() {
+		ConsumerWithException.lifted(y -> {
+			throw new Exception();
+		}).accept("2");
+	}
+
+	@Test
 	public void testIgnoredNoException() {
 		ConsumerWithException.ignored(x -> {
 		}).accept("2");

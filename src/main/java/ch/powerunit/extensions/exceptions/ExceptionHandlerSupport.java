@@ -29,10 +29,8 @@ import java.util.function.Function;
  *            the type of the java standard function interface
  * @param <L>
  *            the type of the lifted function interface
- * @param <E>
- *            the type of the potential exception of the operation
  */
-public interface ExceptionHandlerSupport<F, L, E extends Exception> {
+public interface ExceptionHandlerSupport<F, L> {
 
 	/**
 	 * Mapping operation to convert the exception to {@code RuntimeException}.

@@ -63,6 +63,19 @@ public class BiConsumerWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testLiftedNoException() {
+		BiConsumerWithException.lifted((x, y) -> {
+		}).accept("2", "3");
+	}
+
+	@Test
+	public void testLiftedException() {
+		BiConsumerWithException.lifted((x, y) -> {
+			throw new Exception();
+		}).accept("2", "3");
+	}
+
+	@Test
 	public void testIgnoredNoException() {
 		BiConsumerWithException.ignored((x, y) -> {
 		}).accept("2", "3");
