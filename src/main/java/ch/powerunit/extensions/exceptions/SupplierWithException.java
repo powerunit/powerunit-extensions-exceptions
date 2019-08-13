@@ -118,17 +118,17 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	}
 
 	/**
-	 * Transforms this {@code SupplierWithException} to a {@code FunctionWithException}.
+	 * Transforms this {@code SupplierWithException} to a
+	 * {@code FunctionWithException}.
 	 * 
-	 * @param <T1> The type of the input for the produced function
+	 * @param <T1>
+	 *            The type of the input for the produced function
 	 * 
 	 * @return the function
 	 * @see #function(SupplierWithException)
 	 */
 	default <T1> FunctionWithException<T1, T, E> asFunction() {
-		return t -> {
-			return get();
-		};
+		return t -> get();
 	}
 
 	/**
@@ -184,7 +184,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #unchecked(SupplierWithException)
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, "supplier can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new SupplierWithException<T, E>() {
@@ -195,7 +195,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

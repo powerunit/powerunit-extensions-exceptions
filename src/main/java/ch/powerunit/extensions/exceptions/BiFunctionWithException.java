@@ -142,7 +142,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @see #biConsumer(BiFunctionWithException)
 	 */
 	default BiConsumerWithException<T, U, Exception> asBiConsumer() {
-		return (t, u) -> apply(t, u);
+		return this::apply;
 	}
 
 	/**
@@ -260,7 +260,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @see #unchecked(BiFunctionWithException)
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiFunctionWithException<T, U, R, E>() {
@@ -271,7 +271,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

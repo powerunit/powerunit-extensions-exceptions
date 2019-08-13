@@ -136,7 +136,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #consumer(FunctionWithException)
 	 */
 	default ConsumerWithException<T, Exception> asConsumer() {
-		return t -> apply(t);
+		return this::apply;
 	}
 
 	/**
@@ -286,7 +286,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #unchecked(FunctionWithException)
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new FunctionWithException<T, R, E>() {
@@ -297,7 +297,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

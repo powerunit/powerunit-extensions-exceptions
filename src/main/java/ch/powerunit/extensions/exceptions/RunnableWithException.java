@@ -108,9 +108,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #function(RunnableWithException)
 	 */
 	default <T> ConsumerWithException<T, E> asConsumer() {
-		return t -> {
-			run();
-		};
+		return t -> run();
 	}
 
 	/**
@@ -160,7 +158,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #unchecked(RunnableWithException)
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new RunnableWithException<E>() {
@@ -171,7 +169,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 
@@ -195,8 +193,8 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	}
 
 	/**
-	 * Transforms a {@code RunnableWithException} to a {@code FunctionWithException} that
-	 * returns nothing.
+	 * Transforms a {@code RunnableWithException} to a {@code FunctionWithException}
+	 * that returns nothing.
 	 * 
 	 * @param operation
 	 *            to be lifted
@@ -213,8 +211,8 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	}
 
 	/**
-	 * Transforms a {@code RunnableWithException} to a {@code ConsumerWithException} that
-	 * returns nothing.
+	 * Transforms a {@code RunnableWithException} to a {@code ConsumerWithException}
+	 * that returns nothing.
 	 * 
 	 * @param operation
 	 *            to be lifted

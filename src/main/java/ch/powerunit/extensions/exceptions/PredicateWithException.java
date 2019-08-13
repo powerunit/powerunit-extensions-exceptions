@@ -96,7 +96,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #consumer(PredicateWithException)
 	 */
 	default ConsumerWithException<T, E> asConsumer() {
-		return t -> test(t);
+		return this::test;
 	}
 
 	/**
@@ -107,7 +107,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #function(PredicateWithException)
 	 */
 	default FunctionWithException<T, Boolean, Exception> asFunction() {
-		return t -> test(t);
+		return this::test;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 */
 	default PredicateWithException<T, E> and(PredicateWithException<? super T, ? extends E> other) {
 		requireNonNull(other);
-		return (t) -> test(t) && other.test(t);
+		return t -> test(t) && other.test(t);
 	}
 
 	/**
@@ -143,7 +143,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #or(PredicateWithException)
 	 */
 	default PredicateWithException<T, E> negate() {
-		return (t) -> !test(t);
+		return t -> !test(t);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 */
 	default PredicateWithException<T, E> or(PredicateWithException<? super T, ? extends E> other) {
 		requireNonNull(other);
-		return (t) -> test(t) || other.test(t);
+		return t -> test(t) || other.test(t);
 	}
 
 	/**
@@ -223,7 +223,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #unchecked(PredicateWithException)
 	 */
 	static <T, E extends Exception> Predicate<T> unchecked(PredicateWithException<T, E> predicate,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, "redicate can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new PredicateWithException<T, E>() {
@@ -234,7 +234,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

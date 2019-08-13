@@ -94,9 +94,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @see #function(BooleanSupplierWithException)
 	 */
 	default <T> FunctionWithException<T, Boolean, E> asFunction() {
-		return t -> {
-			return getAsBoolean();
-		};
+		return t -> getAsBoolean();
 	}
 
 	/**
@@ -107,9 +105,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @see #supplier(BooleanSupplierWithException)
 	 */
 	default SupplierWithException<Boolean, E> asSupplier() {
-		return () -> {
-			return getAsBoolean();
-		};
+		return this::getAsBoolean;
 	}
 
 	/**
@@ -160,7 +156,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @see #unchecked(BooleanSupplierWithException)
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, "supplier can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BooleanSupplierWithException<E>() {
@@ -171,7 +167,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 
@@ -224,8 +220,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @return the function
 	 * @see #asSupplier()
 	 */
-	static <E extends Exception> SupplierWithException<Boolean, E> supplier(
-			BooleanSupplierWithException<E> supplier) {
+	static <E extends Exception> SupplierWithException<Boolean, E> supplier(BooleanSupplierWithException<E> supplier) {
 		requireNonNull(supplier, "supplier can't be null");
 		return supplier.asSupplier();
 	}

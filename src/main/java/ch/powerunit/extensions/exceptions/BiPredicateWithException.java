@@ -101,7 +101,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @see #biConsumer(BiPredicateWithException)
 	 */
 	default BiConsumerWithException<T, U, E> asBiConsumer() {
-		return (t, u) -> test(t, u);
+		return this::test;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @see #biFunction(BiPredicateWithException)
 	 */
 	default BiFunctionWithException<T, U, Boolean, E> asBiFunction() {
-		return (t, u) -> test(t, u);
+		return this::test;
 	}
 
 	/**
@@ -235,7 +235,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @see #unchecked(BiPredicateWithException)
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate,
-			Function<Exception,RuntimeException> exceptionMapper) {
+			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, "redicate can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiPredicateWithException<T, U, E>() {
@@ -246,7 +246,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 
