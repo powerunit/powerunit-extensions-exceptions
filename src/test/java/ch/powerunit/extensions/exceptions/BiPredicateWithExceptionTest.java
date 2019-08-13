@@ -31,17 +31,59 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAnd() throws Exception {
+	public void testAnd1() throws Exception {
 		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> true;
 		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> false;
 		assertThat(fct1.and(fct2).test("3", "4")).is(false);
 	}
 
 	@Test
-	public void testOr() throws Exception {
+	public void testAnd2() throws Exception {
+		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> false;
+		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> true;
+		assertThat(fct1.and(fct2).test("3", "4")).is(false);
+	}
+
+	@Test
+	public void testAnd3() throws Exception {
+		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> false;
+		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> false;
+		assertThat(fct1.and(fct2).test("3", "4")).is(false);
+	}
+
+	@Test
+	public void testAnd4() throws Exception {
+		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> true;
+		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> true;
+		assertThat(fct1.and(fct2).test("3", "4")).is(true);
+	}
+
+	@Test
+	public void testOr1() throws Exception {
 		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> true;
 		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> false;
 		assertThat(fct1.or(fct2).test("3", "4")).is(true);
+	}
+
+	@Test
+	public void testOr2() throws Exception {
+		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> false;
+		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> true;
+		assertThat(fct1.or(fct2).test("3", "4")).is(true);
+	}
+
+	@Test
+	public void testOr3() throws Exception {
+		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> true;
+		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> true;
+		assertThat(fct1.or(fct2).test("3", "4")).is(true);
+	}
+
+	@Test
+	public void testOr4() throws Exception {
+		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> false;
+		BiPredicateWithException<String, String, Exception> fct2 = (x, y) -> false;
+		assertThat(fct1.or(fct2).test("3", "4")).is(false);
 	}
 
 	@Test
@@ -67,6 +109,18 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 		assertWhen((x) -> BiPredicateWithException.unchecked((y, z) -> {
 			throw new Exception();
 		}, RuntimeException::new).test(x, x)).throwException(instanceOf(RuntimeException.class));
+	}
+
+	@Test
+	public void testLiftedNoException() {
+		assertThat(BiPredicateWithException.lifted((x, y) -> true).test("2", "3")).is(true);
+	}
+
+	@Test
+	public void testLiftedException() {
+		assertThat(BiPredicateWithException.lifted((x, y) -> {
+			throw new Exception();
+		}).test("x", "x")).is(false);
 	}
 
 	@Test

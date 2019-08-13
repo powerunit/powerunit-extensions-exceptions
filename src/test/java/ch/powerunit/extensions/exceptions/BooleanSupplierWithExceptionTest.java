@@ -48,6 +48,18 @@ public class BooleanSupplierWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}, RuntimeException::new).getAsBoolean()).throwException(instanceOf(RuntimeException.class));
 	}
+	
+	@Test
+	public void testLiftedNoException() {
+		assertThat(BooleanSupplierWithException.lifted(() -> true).getAsBoolean()).is(true);
+	}
+
+	@Test
+	public void testLiftedException() {
+		assertThat(BooleanSupplierWithException.lifted(() -> {
+			throw new Exception();
+		}).getAsBoolean()).is(false);
+	}
 
 	@Test
 	public void testIgnoredNoException() {

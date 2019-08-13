@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiConsumerWithException<T, U, E extends Exception>
-		extends ExceptionHandlerSupport<BiConsumer<T, U>, BiConsumer<T, U>, E> {
+		extends ExceptionHandlerSupport<BiConsumer<T, U>, BiConsumer<T, U>> {
 
 	/**
 	 * Performs this operation on the given arguments.

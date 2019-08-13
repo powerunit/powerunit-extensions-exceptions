@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface ConsumerWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Consumer<T>, Consumer<T>, E> {
+		extends ExceptionHandlerSupport<Consumer<T>, Consumer<T>> {
 
 	/**
 	 * Performs this operation on the given argument.
