@@ -38,7 +38,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface PredicateWithException<T, E extends Exception> extends ExceptionHandlerSupport {
+public interface PredicateWithException<T, E extends Exception>
+		extends ExceptionHandlerSupport<Predicate<T>, Predicate<T>, E> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -61,6 +62,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #unchecked(PredicateWithException)
 	 * @see #unchecked(PredicateWithException, Function)
 	 */
+	@Override
 	default Predicate<T> uncheck() {
 		return t -> {
 			try {
@@ -77,8 +79,27 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * returning {@code null} in case of exception.
 	 *
 	 * @return the predicate that ignore error (return false in this case)
+	 * @see #lifted(PredicateWithException)
+	 */
+	@Override
+	default Predicate<T> lift() {
+		return t -> {
+			try {
+				return test(t);
+			} catch (Exception e) {
+				return false;
+			}
+		};
+	}
+
+	/**
+	 * Converts this {@code PredicateWithException} to a lifted {@code Predicate}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @return the predicate that ignore error (return false in this case)
 	 * @see #ignored(PredicateWithException)
 	 */
+	@Override
 	default Predicate<T> ignore() {
 		return t -> {
 			try {
@@ -240,6 +261,24 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 			}
 
 		}.uncheck();
+	}
+
+	/**
+	 * Converts a {@code PredicateWithException} to a lifted {@code Predicate}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 */
+	static <T, E extends Exception> Predicate<T> lifted(PredicateWithException<T, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.lift();
 	}
 
 	/**

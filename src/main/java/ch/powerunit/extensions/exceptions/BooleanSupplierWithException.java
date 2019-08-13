@@ -37,7 +37,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface BooleanSupplierWithException<E extends Exception> extends ExceptionHandlerSupport {
+public interface BooleanSupplierWithException<E extends Exception>
+		extends ExceptionHandlerSupport<BooleanSupplier, BooleanSupplier, E> {
 
 	/**
 	 * Gets a result.
@@ -57,6 +58,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @see #unchecked(BooleanSupplierWithException)
 	 * @see #unchecked(BooleanSupplierWithException, Function)
 	 */
+	@Override
 	default BooleanSupplier uncheck() {
 		return () -> {
 			try {
@@ -72,8 +74,27 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * {@code BooleanSupplier} returning {@code false} in case of exception.
 	 *
 	 * @return the supplier that ignore error
+	 * @see #lifted(BooleanSupplierWithException)
+	 */
+	@Override
+	default BooleanSupplier lift() {
+		return () -> {
+			try {
+				return getAsBoolean();
+			} catch (Exception e) {
+				return false;
+			}
+		};
+	}
+
+	/**
+	 * Converts this {@code BooleanSupplierWithException} to a lifted
+	 * {@code BooleanSupplier} returning {@code false} in case of exception.
+	 *
+	 * @return the supplier that ignore error
 	 * @see #ignored(BooleanSupplierWithException)
 	 */
+	@Override
 	default BooleanSupplier ignore() {
 		return () -> {
 			try {
@@ -173,6 +194,22 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 			}
 
 		}.uncheck();
+	}
+
+	/**
+	 * Converts a {@code BooleanSupplierWithException} to a lifted
+	 * {@code BooleanSupplier} returning {@code null} in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #lift()
+	 */
+	static <E extends Exception> BooleanSupplier lifted(BooleanSupplierWithException<E> supplier) {
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
+		return supplier.lift();
 	}
 
 	/**

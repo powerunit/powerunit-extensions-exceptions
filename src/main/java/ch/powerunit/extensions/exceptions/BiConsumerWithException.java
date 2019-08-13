@@ -43,7 +43,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface BiConsumerWithException<T, U, E extends Exception> extends ExceptionHandlerSupport {
+public interface BiConsumerWithException<T, U, E extends Exception>
+		extends ExceptionHandlerSupport<BiConsumer<T, U>, BiConsumer<T, U>, E> {
 
 	/**
 	 * Performs this operation on the given arguments.
@@ -66,6 +67,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @see #unchecked(BiConsumerWithException)
 	 * @see #unchecked(BiConsumerWithException, Function)
 	 */
+	@Override
 	default BiConsumer<T, U> uncheck() {
 		return (t, u) -> {
 			try {
@@ -82,8 +84,21 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * {@code BiConsumer} ignoring exception.
 	 *
 	 * @return the operation that ignore error
+	 * @see #lifted(BiConsumerWithException)
+	 */
+	@Override
+	default BiConsumer<T, U> lift() {
+		return ignore();
+	}
+
+	/**
+	 * Converts this {@code BiConsumerWithException} to a <i>lifted</i>
+	 * {@code BiConsumer} ignoring exception.
+	 *
+	 * @return the operation that ignore error
 	 * @see #ignored(BiConsumerWithException)
 	 */
+	@Override
 	default BiConsumer<T, U> ignore() {
 		return (t, u) -> {
 			try {
@@ -209,6 +224,26 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 			}
 
 		}.uncheck();
+	}
+
+	/**
+	 * Converts a {@code BiConsumerWithException} to a lifted {@code BiConsumer}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the first input object to the operation
+	 * @param <U>
+	 *            the type of the second input object to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #lift()
+	 */
+	static <T, U, E extends Exception> BiConsumer<T, U> lifted(BiConsumerWithException<T, U, E> operation) {
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		return operation.lift();
 	}
 
 	/**

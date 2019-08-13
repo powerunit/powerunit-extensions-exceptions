@@ -46,7 +46,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface BiFunctionWithException<T, U, R, E extends Exception> extends ExceptionHandlerSupport {
+public interface BiFunctionWithException<T, U, R, E extends Exception>
+		extends ExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>, E> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -70,6 +71,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @see #unchecked(BiFunctionWithException)
 	 * @see #unchecked(BiFunctionWithException, Function)
 	 */
+	@Override
 	default BiFunction<T, U, R> uncheck() {
 		return (t, u) -> {
 			try {
@@ -88,6 +90,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @return the lifted function
 	 * @see #lifted(BiFunctionWithException)
 	 */
+	@Override
 	default BiFunction<T, U, Optional<R>> lift() {
 		return (t, u) -> {
 			try {
@@ -105,6 +108,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @return the function that ignore error
 	 * @see #ignored(BiFunctionWithException)
 	 */
+	@Override
 	default BiFunction<T, U, R> ignore() {
 		return (t, u) -> {
 			try {

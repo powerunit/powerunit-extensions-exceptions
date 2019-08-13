@@ -22,10 +22,17 @@ package ch.powerunit.extensions.exceptions;
 import java.util.function.Function;
 
 /**
- * @author borettim
+ * Root interface to support global operations related to exception handling.
  *
+ * @author borettim
+ * @param <F>
+ *            the type of the java standard function interface
+ * @param <L>
+ *            the type of the lifted function interface
+ * @param <E>
+ *            the type of the potential exception of the operation
  */
-public interface ExceptionHandlerSupport {
+public interface ExceptionHandlerSupport<F, L, E extends Exception> {
 
 	/**
 	 * Mapping operation to convert the exception to {@code RuntimeException}.
@@ -35,4 +42,27 @@ public interface ExceptionHandlerSupport {
 	default Function<Exception, RuntimeException> exceptionMapper() {
 		return WrappedException::new;
 	}
+
+	/**
+	 * Converts this function interface to the corresponding one in java and wrap
+	 * exception.
+	 *
+	 * @return the unchecked operation
+	 */
+	F uncheck();
+
+	/**
+	 * Converts this function interface to a lifted one.
+	 *
+	 * @return the lifted function
+	 */
+	L lift();
+
+	/**
+	 * Converts this function interface to the corresponding <i>lifted</i> java
+	 * standard interface ignoring exception.
+	 *
+	 * @return the operation that ignore error
+	 */
+	F ignore();
 }

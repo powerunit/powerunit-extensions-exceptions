@@ -41,7 +41,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface BiPredicateWithException<T, U, E extends Exception> extends ExceptionHandlerSupport {
+public interface BiPredicateWithException<T, U, E extends Exception>
+		extends ExceptionHandlerSupport<BiPredicate<T, U>, BiPredicate<T, U>, E> {
 
 	/**
 	 * Evaluates this predicate on the given arguments.
@@ -66,6 +67,7 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * @see #unchecked(BiPredicateWithException)
 	 * @see #unchecked(BiPredicateWithException, Function)
 	 */
+	@Override
 	default BiPredicate<T, U> uncheck() {
 		return (t, u) -> {
 			try {
@@ -82,8 +84,27 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 	 * {@code BiPredicate} returning {@code null} in case of exception.
 	 *
 	 * @return the predicate that ignore error (return false in this case)
+	 * @see #lifted(BiPredicateWithException)
+	 */
+	@Override
+	default BiPredicate<T, U> lift() {
+		return (t, u) -> {
+			try {
+				return test(t, u);
+			} catch (Exception e) {
+				return false;
+			}
+		};
+	}
+
+	/**
+	 * Converts this {@code BiPredicateWithException} to a lifted
+	 * {@code BiPredicate} returning {@code null} in case of exception.
+	 *
+	 * @return the predicate that ignore error (return false in this case)
 	 * @see #ignored(BiPredicateWithException)
 	 */
+	@Override
 	default BiPredicate<T, U> ignore() {
 		return (t, u) -> {
 			try {
@@ -252,6 +273,26 @@ public interface BiPredicateWithException<T, U, E extends Exception> extends Exc
 			}
 
 		}.uncheck();
+	}
+
+	/**
+	 * Converts a {@code BiPredicateWithException} to a lifted {@code BiPredicate}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 */
+	static <T, U, E extends Exception> BiPredicate<T, U> lifted(BiPredicateWithException<T, U, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.lift();
 	}
 
 	/**
