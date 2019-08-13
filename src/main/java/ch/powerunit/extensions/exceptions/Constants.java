@@ -25,9 +25,6 @@ package ch.powerunit.extensions.exceptions;
  */
 final class Constants {
 
-	private Constants() {
-	}
-
 	public static final String OPERATION_CANT_BE_NULL = "operation can't be null";
 
 	public static final String FUNCTION_CANT_BE_NULL = "function can't be null";
@@ -35,5 +32,8 @@ final class Constants {
 	public static final String SUPPLIER_CANT_BE_NULL = "supplier can't be null";
 
 	public static final String PREDICATE_CANT_BE_NULL = "predicate can't be null";
+	
+	private Constants() {
+	}
 
 }
