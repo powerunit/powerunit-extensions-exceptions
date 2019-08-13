@@ -19,6 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.BiConsumer;
@@ -30,7 +32,7 @@ import java.util.function.Supplier;
  * Represents an operation that accepts two input arguments and returns no
  * result and may throw exception. Unlike most other functional interfaces,
  * {@code Consumer} is expected to operate via side-effects.
- * 
+ *
  * @author borettim
  * @see Consumer
  * @param <T>
@@ -59,7 +61,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	/**
 	 * Converts this {@code BiConsumerWithException} to a {@code BiConsumer} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(BiConsumerWithException)
 	 * @see #unchecked(BiConsumerWithException, Function)
@@ -78,7 +80,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	/**
 	 * Converts this {@code BiConsumerWithException} to a <i>lifted</i>
 	 * {@code BiConsumer} ignoring exception.
-	 * 
+	 *
 	 * @return the operation that ignore error
 	 * @see #ignored(BiConsumerWithException)
 	 */
@@ -95,7 +97,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	/**
 	 * Transforms this {@code BiConsumerWithException} to a
 	 * {@code BiFunctionWithException} that returns nothing.
-	 * 
+	 *
 	 * @return the function
 	 * @see #biFunction(BiConsumerWithException)
 	 */
@@ -120,7 +122,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @throws NullPointerException
 	 *             if {@code after} is null
 	 *
-	 * 
+	 *
 	 * @see BiConsumer#andThen(BiConsumer)
 	 */
 	default BiConsumerWithException<T, U, E> andThen(BiConsumerWithException<? super T, ? super U, ? extends E> after) {
@@ -133,7 +135,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 
 	/**
 	 * Returns an operation that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
@@ -153,7 +155,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	/**
 	 * Converts a {@code BiConsumerWithException} to a {@code Consumer} that convert
 	 * exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param operation
 	 *            to be unchecked
 	 * @param <T>
@@ -167,7 +169,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @see #unchecked(BiConsumerWithException, Function)
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.uncheck();
 	}
 
@@ -175,7 +177,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * Converts a {@code BiConsumerWithException} to a {@code BiConsumer} that
 	 * convert exception to {@code RuntimeException} by using the provided mapping
 	 * function.
-	 * 
+	 *
 	 * @param operation
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -191,8 +193,8 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @see #unchecked(BiConsumerWithException)
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> operation,
-			Function<Exception,RuntimeException> exceptionMapper) {
-		requireNonNull(operation, "function can't be null");
+			Function<Exception, RuntimeException> exceptionMapper) {
+		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiConsumerWithException<T, U, E>() {
 
@@ -202,7 +204,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 
@@ -212,7 +214,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	/**
 	 * Converts a {@code BiConsumerWithException} to a lifted {@code BiConsumer}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
@@ -225,14 +227,14 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @see #ignore()
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> ignored(BiConsumerWithException<T, U, E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
 	}
 
 	/**
 	 * Transforms a {@code BiConsumerWithException} to a
 	 * {@code BiFunctionWithException} that returns nothing.
-	 * 
+	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
@@ -246,7 +248,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 */
 	static <T, U, E extends Exception> BiFunctionWithException<T, U, Void, E> biFunction(
 			BiConsumerWithException<T, U, E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.asBiFunction();
 	}
 

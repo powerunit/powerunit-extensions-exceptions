@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
 /**
  * Represents a function that accepts two arguments, may throw exception and
  * produces a result.
- * 
+ *
  * @author borettim
  * @see BiFunction
  * @param <T>
@@ -64,7 +65,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Converts this {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked function
 	 * @see #unchecked(BiFunctionWithException)
 	 * @see #unchecked(BiFunctionWithException, Function)
@@ -83,7 +84,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Converts this {@code BiFunctionWithException} to a lifted {@code BiFunction}
 	 * using {@code Optional} as return value.
-	 * 
+	 *
 	 * @return the lifted function
 	 * @see #lifted(BiFunctionWithException)
 	 */
@@ -100,7 +101,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Converts this {@code BiFunctionWithException} to a lifted {@code BiFunction}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @return the function that ignore error
 	 * @see #ignored(BiFunctionWithException)
 	 */
@@ -117,7 +118,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Convert this {@code BiFunctionWithException} to a lifted {@code BiFunction}
 	 * return {@code CompletionStage} as return value.
-	 * 
+	 *
 	 * @return the lifted function
 	 * @see #staged(BiFunctionWithException)
 	 */
@@ -137,7 +138,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Transforms this {@code BiFunctionWithException} to a
 	 * {@code BiConsumerWithException}.
-	 * 
+	 *
 	 * @return the operation
 	 * @see #biConsumer(BiFunctionWithException)
 	 */
@@ -148,7 +149,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Transforms this {@code BiFunctionWithException} to a
 	 * {@code SupplierWithException}.
-	 * 
+	 *
 	 * @param t
 	 *            the first input for the generated supplier.
 	 * @param u
@@ -163,7 +164,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Transforms this {@code BiFunctionWithException} to a
 	 * {@code BiSupplierWithException}, passing {@code null} as input.
-	 * 
+	 *
 	 * @return the supplier
 	 * @see #asSupplier(Object,Object)
 	 */
@@ -196,7 +197,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 
 	/**
 	 * Returns a function that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
@@ -218,7 +219,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
@@ -234,7 +235,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @see #unchecked(BiFunctionWithException, Function)
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.uncheck();
 	}
 
@@ -242,7 +243,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException} by using the provided mapping
 	 * function.
-	 * 
+	 *
 	 * @param function
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -261,7 +262,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiFunctionWithException<T, U, R, E>() {
 
@@ -281,7 +282,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	/**
 	 * Converts a {@code BiFunctionWithException} to a lifted {@code BiFunction}
 	 * using {@code Optional} as return value.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -297,14 +298,14 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, Optional<R>> lifted(
 			BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.lift();
 	}
 
 	/**
 	 * Converts a {@code BiFunctionWithException} to a lifted {@code BiFunction}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -319,14 +320,14 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 * @see #ignore()
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
 	}
 
 	/**
 	 * Convert this {@code BiFunctionWithException} to a lifted {@code BiFunction}
 	 * return {@code CompletionStage} as return value.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -342,14 +343,14 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, CompletionStage<R>> staged(
 			BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.stage();
 	}
 
 	/**
 	 * Transforms this {@code BiFunctionWithException} to a
 	 * {@code BiConsumerWithException}.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -365,7 +366,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends E
 	 */
 	static <T, U, R, E extends Exception> BiConsumerWithException<T, U, Exception> biConsumer(
 			BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.asBiConsumer();
 	}
 

@@ -19,6 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
@@ -28,7 +30,7 @@ import java.util.function.Supplier;
  * Represents an operation that accepts a no input argument and returns no
  * result and may throw exception. Unlike most other functional interfaces,
  * {@code Consumer} is expected to operate via side-effects.
- * 
+ *
  * @author borettim
  * @see Runnable
  * @param <E>
@@ -49,7 +51,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	/**
 	 * Converts this {@code RunnableWithException} to a {@code Runnable} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(RunnableWithException)
 	 * @see #unchecked(RunnableWithException, Function)
@@ -68,7 +70,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	/**
 	 * Converts this {@code RunnableWithException} to a <i>lifted</i>
 	 * {@code Runnable} ignoring exception.
-	 * 
+	 *
 	 * @return the operation that ignore error
 	 * @see #ignored(RunnableWithException)
 	 */
@@ -85,7 +87,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	/**
 	 * Transforms this {@code RunnableWithException} to a
 	 * {@code FunctionWithException} that returns nothing.
-	 * 
+	 *
 	 * @return the function
 	 * @param <T>
 	 *            The type for the ignored input parameter
@@ -101,7 +103,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	/**
 	 * Transforms this {@code RunnableWithException} to a
 	 * {@code ConsumerWithException} that returns nothing.
-	 * 
+	 *
 	 * @return the function
 	 * @param <T>
 	 *            The type for the ignored input parameter
@@ -113,7 +115,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 
 	/**
 	 * Returns an operation that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <E>
@@ -129,7 +131,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	/**
 	 * Converts a {@code RunnableWithException} to a {@code Runnable} that convert
 	 * exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param operation
 	 *            to be unchecked
 	 * @param <E>
@@ -139,14 +141,14 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #unchecked(RunnableWithException, Function)
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.uncheck();
 	}
 
 	/**
 	 * Converts a {@code RunnableWithException} to a {@code Runnable} that convert
 	 * exception to {@code RuntimeException} by using the provided mapping function.
-	 * 
+	 *
 	 * @param operation
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -159,7 +161,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, "function can't be null");
+		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new RunnableWithException<E>() {
 
@@ -179,7 +181,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	/**
 	 * Converts a {@code RunnableWithException} to a lifted {@code Runnable}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <E>
@@ -188,14 +190,14 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #ignore()
 	 */
 	static <E extends Exception> Runnable ignored(RunnableWithException<E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
 	}
 
 	/**
 	 * Transforms a {@code RunnableWithException} to a {@code FunctionWithException}
 	 * that returns nothing.
-	 * 
+	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
@@ -206,14 +208,14 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #asFunction()
 	 */
 	static <T, E extends Exception> FunctionWithException<T, Void, E> function(RunnableWithException<E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.asFunction();
 	}
 
 	/**
 	 * Transforms a {@code RunnableWithException} to a {@code ConsumerWithException}
 	 * that returns nothing.
-	 * 
+	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
@@ -224,7 +226,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #asFunction()
 	 */
 	static <T, E extends Exception> ConsumerWithException<T, E> consumer(RunnableWithException<E> operation) {
-		requireNonNull(operation, "operation can't be null");
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.asConsumer();
 	}
 

@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
@@ -28,7 +29,7 @@ import java.util.function.Supplier;
 /**
  * Represents a predicate (boolean-valued function) of one argument and may
  * throw an exception.
- * 
+ *
  * @author borettim
  * @see Predicate
  * @param <T>
@@ -55,7 +56,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	/**
 	 * Converts this {@code PredicateWithException} to a {@code Predicate} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked predicate
 	 * @see #unchecked(PredicateWithException)
 	 * @see #unchecked(PredicateWithException, Function)
@@ -74,7 +75,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	/**
 	 * Converts this {@code PredicateWithException} to a lifted {@code Predicate}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @return the predicate that ignore error (return false in this case)
 	 * @see #ignored(PredicateWithException)
 	 */
@@ -91,7 +92,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	/**
 	 * Transforms this {@code PredicateWithException} to a
 	 * {@code ConsumerWithException}.
-	 * 
+	 *
 	 * @return the operation
 	 * @see #consumer(PredicateWithException)
 	 */
@@ -102,7 +103,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	/**
 	 * Transforms this {@code PredicateWithException} to a
 	 * {@code FunctionWithException}.
-	 * 
+	 *
 	 * @return the function
 	 * @see #function(PredicateWithException)
 	 */
@@ -172,7 +173,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 
 	/**
 	 * Returns a predicate that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
@@ -190,7 +191,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	/**
 	 * Converts a {@code PredicateWithException} to a {@code Predicate} that convert
 	 * exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param predicate
 	 *            to be unchecked
 	 * @param <T>
@@ -202,14 +203,14 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #unchecked(PredicateWithException, Function)
 	 */
 	static <T, E extends Exception> Predicate<T> unchecked(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, "predicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.uncheck();
 	}
 
 	/**
 	 * Converts a {@code PredicateWithException} to a {@code Predicate} that convert
 	 * exception to {@code RuntimeException} by using the provided mapping function.
-	 * 
+	 *
 	 * @param predicate
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -224,7 +225,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 */
 	static <T, E extends Exception> Predicate<T> unchecked(PredicateWithException<T, E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(predicate, "redicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new PredicateWithException<T, E>() {
 
@@ -244,7 +245,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	/**
 	 * Converts a {@code PredicateWithException} to a lifted {@code Predicate}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <T>
@@ -255,14 +256,14 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> Predicate<T> ignored(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, "predicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
 	}
 
 	/**
 	 * Transforms this {@code PredicateWithException} to a
 	 * {@code ConsumerWithException}.
-	 * 
+	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <T>
@@ -273,14 +274,14 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #asConsumer()
 	 */
 	static <T, E extends Exception> ConsumerWithException<T, E> consumer(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, "predicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.asConsumer();
 	}
 
 	/**
 	 * Transforms this {@code PredicateWithException} to a
 	 * {@code FunctionWithException}.
-	 * 
+	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <T>
@@ -292,7 +293,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 */
 	static <T, E extends Exception> FunctionWithException<T, Boolean, Exception> function(
 			PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, "predicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.asFunction();
 	}
 
