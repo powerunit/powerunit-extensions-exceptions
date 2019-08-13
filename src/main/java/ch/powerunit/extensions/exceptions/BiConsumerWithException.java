@@ -191,7 +191,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 	 * @see #unchecked(BiConsumerWithException)
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> operation,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(operation, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiConsumerWithException<T, U, E>() {
@@ -202,7 +202,7 @@ public interface BiConsumerWithException<T, U, E extends Exception> extends Exce
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

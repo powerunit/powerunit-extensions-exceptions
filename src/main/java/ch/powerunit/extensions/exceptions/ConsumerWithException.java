@@ -179,7 +179,7 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 	 * @see #unchecked(ConsumerWithException)
 	 */
 	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> operation,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(operation, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new ConsumerWithException<T, E>() {
@@ -190,7 +190,7 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

@@ -184,7 +184,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #unchecked(SupplierWithException)
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, "supplier can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new SupplierWithException<T, E>() {
@@ -195,7 +195,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

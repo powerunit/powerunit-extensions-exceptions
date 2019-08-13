@@ -147,7 +147,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #unchecked(UnaryOperatorWithException)
 	 */
 	static <T, E extends Exception> UnaryOperator<T> unchecked(UnaryOperatorWithException<T, E> function,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(function, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new UnaryOperatorWithException<T, E>() {
@@ -158,7 +158,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

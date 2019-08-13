@@ -160,7 +160,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #unchecked(RunnableWithException)
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(operation, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new RunnableWithException<E>() {
@@ -171,7 +171,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

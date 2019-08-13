@@ -133,7 +133,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @see #unchecked(BinaryOperatorWithException)
 	 */
 	static <T, E extends Exception> BinaryOperator<T> unchecked(BinaryOperatorWithException<T, E> function,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(function, "function can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BinaryOperatorWithException<T, E>() {
@@ -144,7 +144,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

@@ -223,7 +223,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 	 * @see #unchecked(PredicateWithException)
 	 */
 	static <T, E extends Exception> Predicate<T> unchecked(PredicateWithException<T, E> predicate,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, "redicate can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new PredicateWithException<T, E>() {
@@ -234,7 +234,7 @@ public interface PredicateWithException<T, E extends Exception> extends Exceptio
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 

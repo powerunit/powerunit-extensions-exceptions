@@ -160,7 +160,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 	 * @see #unchecked(BooleanSupplierWithException)
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier,
-			Function<Exception, ? extends RuntimeException> exceptionMapper) {
+			Function<Exception,RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, "supplier can't be null");
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BooleanSupplierWithException<E>() {
@@ -171,7 +171,7 @@ public interface BooleanSupplierWithException<E extends Exception> extends Excep
 			}
 
 			@Override
-			public Function<Exception, ? extends RuntimeException> exceptionMapper() {
+			public Function<Exception,RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 
