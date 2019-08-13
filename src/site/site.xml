@@ -21,30 +21,30 @@
   <poweredBy>
     <logo name="PowerUnit" href="http://www.powerunit.ch/"
           img="http://www.powerunit.ch/powerunit/logo.png"/>
-    <logo name="Travis-ci" href="https://travis-ci.com/powerunit/powerunit-extensions-extensions"
-          img="https://travis-ci.com/powerunit/powerunit-extensions-extensions.svg?branch=master"/>
-    <logo name="Vulnerability" href="https://snyk.io/test/github/powerunit/powerunit-extensions-extensions/badge.svg?targetFile=pom.xml"
-	  img="https://snyk.io/test/github/powerunit/powerunit-extensions-extensions/badge.svg?targetFile=pom.xml"/>     
-    <logo name="LGTM" href="https://lgtm.com/projects/g/powerunit/powerunit-extensions-extensions/alerts/"
-	  img="https://img.shields.io/lgtm/alerts/g/powerunit/powerunit-extensions-extensions.svg?logo=lgtm&amp;logoWidth=18"/>
-    <logo name="Codacy" href="https://www.codacy.com/app/mathieu.boretti/powerunit-extensions-extensions?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=powerunit/powerunit-extensions-extensions&amp;utm_campaign=Badge_Grades"
+    <logo name="Travis-ci" href="https://travis-ci.com/powerunit/powerunit-extensions-exceptions"
+          img="https://travis-ci.com/powerunit/powerunit-extensions-exceptions.svg?branch=master"/>
+    <logo name="Vulnerability" href="https://snyk.io/test/github/powerunit/powerunit-extensions-exceptions/badge.svg?targetFile=pom.xml"
+	  img="https://snyk.io/test/github/powerunit/powerunit-extensions-exceptions/badge.svg?targetFile=pom.xml"/>     
+    <logo name="LGTM" href="https://lgtm.com/projects/g/powerunit/powerunit-extensions-exceptions/alerts/"
+	  img="https://img.shields.io/lgtm/alerts/g/powerunit/powerunit-extensions-exceptions.svg?logo=lgtm&amp;logoWidth=18"/>
+    <logo name="Codacy" href="https://www.codacy.com/app/mathieu.boretti/powerunit-extensions-exceptions?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=powerunit/powerunit-extensions-exceptions&amp;utm_campaign=Badge_Grades"
           img="https://api.codacy.com/project/badge/Grade/54e6f34a650147e48b1864a420695a1c"/>
-    <logo name="Codacy / Coverage" href="https://www.codacy.com/app/mathieu.boretti/powerunit-extensions-extensions?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=powerunit/powerunit-extensions-extensions&amp;utm_campaign=Badge_Coverage"
+    <logo name="Codacy / Coverage" href="https://www.codacy.com/app/mathieu.boretti/powerunit-extensions-exceptions?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=powerunit/powerunit-extensions-exceptions&amp;utm_campaign=Badge_Coverage"
           img="https://api.codacy.com/project/badge/Coverage/54e6f34a650147e48b1864a420695a1c"/>
-    <logo name="Coveralls" href="https://coveralls.io/github/powerunit/powerunit-extensions-extensions?branch=master"
-          img="https://coveralls.io/repos/github/powerunit/powerunit-extensions-extensions/badge.svg?branch=master" />
-    <logo name="Codecov" href="https://codecov.io/gh/powerunit/powerunit-extensions-extensions"
-          img="https://codecov.io/gh/powerunit/powerunit-extensions-extensions/branch/master/graph/badge.svg" />
-    <logo name="Codefactor" href="https://www.codefactor.io/repository/github/powerunit/powerunit-extensions-extensions"
-          img="https://www.codefactor.io/repository/github/powerunit/powerunit-extensions-extensions/badge" />
-    <logo name="Bettercode" href="https://bettercodehub.com/results/powerunit/powerunit-extensions-extensions"
-          img="https://bettercodehub.com/edge/badge/powerunit/powerunit-extensions-extensions?branch=master"/>
-    <logo name="Codebeat" href="https://codebeat.co/projects/github-com-powerunit-powerunit-extensions-extensions-master"
+    <logo name="Coveralls" href="https://coveralls.io/github/powerunit/powerunit-extensions-exceptions?branch=master"
+          img="https://coveralls.io/repos/github/powerunit/powerunit-extensions-exceptions/badge.svg?branch=master" />
+    <logo name="Codecov" href="https://codecov.io/gh/powerunit/powerunit-extensions-exceptions"
+          img="https://codecov.io/gh/powerunit/powerunit-extensions-exceptions/branch/master/graph/badge.svg" />
+    <logo name="Codefactor" href="https://www.codefactor.io/repository/github/powerunit/powerunit-extensions-exceptions"
+          img="https://www.codefactor.io/repository/github/powerunit/powerunit-extensions-exceptions/badge" />
+    <logo name="Bettercode" href="https://bettercodehub.com/results/powerunit/powerunit-extensions-exceptions"
+          img="https://bettercodehub.com/edge/badge/powerunit/powerunit-extensions-exceptions?branch=master"/>
+    <logo name="Codebeat" href="https://codebeat.co/projects/github-com-powerunit-powerunit-extensions-exceptions-master"
           img="https://codebeat.co/badges/cdebf167-fee0-46b4-b33d-c613f1586a9d" />
-    <logo name="Maven" href="https://maven-badges.herokuapp.com/maven-central/ch.powerunit.extensions/powerunit-extensions-extensions"
-          img="https://maven-badges.herokuapp.com/maven-central/ch.powerunit.extensions/powerunit-extensions-extensions/badge.svg" />
-    <logo name="Javadoc" href="http://javadoc.io/doc/ch.powerunit.extensions/powerunit-extensions-extensions" 
-    	  img="http://javadoc.io/badge/ch.powerunit.extensions/powerunit-extensions-extensions.svg?color=yellow"/>
+    <logo name="Maven" href="https://maven-badges.herokuapp.com/maven-central/ch.powerunit.extensions/powerunit-extensions-exceptions"
+          img="https://maven-badges.herokuapp.com/maven-central/ch.powerunit.extensions/powerunit-extensions-exceptions/badge.svg" />
+    <logo name="Javadoc" href="http://javadoc.io/doc/ch.powerunit.extensions/powerunit-extensions-exceptions" 
+    	  img="http://javadoc.io/badge/ch.powerunit.extensions/powerunit-extensions-exceptions.svg?color=yellow"/>
     <logo name="Sonar" href="https://sonarcloud.io/dashboard?id=powerunit_powerunit-extensions-exceptions"
           img="https://sonarcloud.io/api/project_badges/measure?project=powerunit_powerunit-extensions-exceptions&amp;metric=alert_status"/>
     	  
