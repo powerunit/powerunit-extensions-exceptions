@@ -50,6 +50,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #unchecked(FunctionWithException)
 	 * @see #unchecked(FunctionWithException, Function)
 	 */
+	@Override
 	default UnaryOperator<T> uncheck() {
 		return t -> {
 			try {
@@ -67,6 +68,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
 	 */
+	@Override
 	default UnaryOperator<T> ignore() {
 		return t -> {
 			try {

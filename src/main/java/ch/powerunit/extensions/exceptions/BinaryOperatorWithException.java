@@ -50,6 +50,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @see #unchecked(BinaryOperatorWithException)
 	 * @see #unchecked(BinaryOperatorWithException, Function)
 	 */
+	@Override
 	default BinaryOperator<T> uncheck() {
 		return (t, u) -> {
 			try {
@@ -67,6 +68,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @return the function that ignore error
 	 * @see #ignored(BinaryOperatorWithException)
 	 */
+	@Override
 	default BinaryOperator<T> ignore() {
 		return (t, u) -> {
 			try {
