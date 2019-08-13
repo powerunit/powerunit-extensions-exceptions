@@ -1,8 +1,3 @@
-PowerUnit Extension Async
+PowerUnit Extension Extensions
 
- This library provides support for async operation in x-unit test. The idea is
- to do a static import from <<<ch.powerunit.extensions.async.lang.WaitResult>>> and
- then use the various methods to start some asynchronous operations.
- 
- This version is dedicated to Java 9. Multi-version jar (supporting java 8) is available 
- since version 1.1.0
+ This library provides support for unchecked Exception in lambda.

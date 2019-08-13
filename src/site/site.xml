@@ -46,7 +46,7 @@
     <logo name="Javadoc" href="http://javadoc.io/doc/ch.powerunit.extensions/powerunit-extensions-extensions" 
     	  img="http://javadoc.io/badge/ch.powerunit.extensions/powerunit-extensions-extensions.svg?color=yellow"/>
     <logo name="Sonar" href="https://sonarcloud.io/dashboard?id=powerunit_powerunit-extensions-exceptions"
-          img="https://sonarcloud.io/api/project_badges/measure?project=powerunit_powerunit-extensions-exceptions&metric=alert_status"/>
+          img="https://sonarcloud.io/api/project_badges/measure?project=powerunit_powerunit-extensions-exceptions&amp;metric=alert_status"/>
     	  
           
   </poweredBy>
