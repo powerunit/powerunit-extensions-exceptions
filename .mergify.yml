@@ -7,7 +7,6 @@ pull_request_rules:
     conditions:
       - "#approved-reviews-by=0"
       - "label=dependencies"
-      - "status-success=Codacy/PR Quality Review"
       - "status-success=CodeFactor"
       - "status-success=Travis CI - Branch"
       - "status-success=Travis CI - Pull Request"
@@ -47,7 +46,6 @@ pull_request_rules:
       - "label=dependencies"
       - "#approved-reviews-by>=1"
       - "files=pom.xml"
-      - "status-success=Codacy/PR Quality Review"
       - "status-success=CodeFactor"
       - "status-success=Travis CI - Branch"
       - "status-success=Travis CI - Pull Request"
