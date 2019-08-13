@@ -7,16 +7,11 @@ pull_request_rules:
     conditions:
       - "#approved-reviews-by=0"
       - "label=dependencies"
-      - "status-success=CodeFactor"
       - "status-success=Travis CI - Branch"
       - "status-success=Travis CI - Pull Request"
       - "status-success=WIP"
-      - "status-success=codebeat"
-      - "status-success=codecov/patch"
-      - "status-success=codecov/project"
       - "status-success=guardrails/scan"
       - "status-success=LGTM analysis: Java"
-      - "status-success=SonarCloud Code Analysis"
       - "base=master"
     actions:
       request_reviews:
@@ -46,16 +41,11 @@ pull_request_rules:
       - "label=dependencies"
       - "#approved-reviews-by>=1"
       - "files=pom.xml"
-      - "status-success=CodeFactor"
       - "status-success=Travis CI - Branch"
       - "status-success=Travis CI - Pull Request"
       - "status-success=WIP"
-      - "status-success=codebeat"
-      - "status-success=codecov/patch"
-      - "status-success=codecov/project"
       - "status-success=guardrails/scan"
       - "status-success=LGTM analysis: Java"
-      - "status-success=SonarCloud Code Analysis"
       - "base=master"
       - "milestone~=^.+$"
     actions:
