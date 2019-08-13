@@ -29,10 +29,10 @@ public interface ExceptionHandlerSupport {
 
 	/**
 	 * Mapping operation to convert the exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the mapping function
 	 */
-	default Function<Exception,RuntimeException> exceptionMapper() {
+	default Function<Exception, RuntimeException> exceptionMapper() {
 		return WrappedException::new;
 	}
 }

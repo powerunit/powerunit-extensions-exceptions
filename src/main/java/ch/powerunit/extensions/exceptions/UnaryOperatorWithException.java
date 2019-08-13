@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
@@ -30,7 +31,7 @@ import java.util.function.UnaryOperator;
  * produces a result of the same type as its operand. This is a specialization
  * of {@code FunctionWithException} for the case where the operand and result
  * are of the same type.
- * 
+ *
  * @author borettim
  * @see FunctionWithException
  * @see UnaryOperator
@@ -45,7 +46,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	/**
 	 * Converts this {@code UnaryOperatorWithException} to a {@code UnaryOperator}
 	 * that convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked function
 	 * @see #unchecked(FunctionWithException)
 	 * @see #unchecked(FunctionWithException, Function)
@@ -64,7 +65,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	/**
 	 * Converts this {@code UnaryOperatorWithException} to a lifted
 	 * {@code UnaryOperator} returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
 	 */
@@ -95,7 +96,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 
 	/**
 	 * Returns a unary operator that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
@@ -113,7 +114,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	/**
 	 * Converts a {@code UnaryOperatorWithException} to a {@code UnaryOperator} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
@@ -125,7 +126,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #unchecked(UnaryOperatorWithException, Function)
 	 */
 	static <T, E extends Exception> UnaryOperator<T> unchecked(UnaryOperatorWithException<T, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.uncheck();
 	}
 
@@ -133,7 +134,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * Converts a {@code UnaryOperatorWithException} to a {@code UnaryOperator} that
 	 * convert exception to {@code RuntimeException} by using the provided mapping
 	 * function.
-	 * 
+	 *
 	 * @param function
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -147,8 +148,8 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #unchecked(UnaryOperatorWithException)
 	 */
 	static <T, E extends Exception> UnaryOperator<T> unchecked(UnaryOperatorWithException<T, E> function,
-			Function<Exception,RuntimeException> exceptionMapper) {
-		requireNonNull(function, "function can't be null");
+			Function<Exception, RuntimeException> exceptionMapper) {
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new UnaryOperatorWithException<T, E>() {
 
@@ -158,7 +159,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 			}
 
 			@Override
-			public Function<Exception,RuntimeException> exceptionMapper() {
+			public Function<Exception, RuntimeException> exceptionMapper() {
 				return exceptionMapper;
 			}
 
@@ -168,7 +169,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	/**
 	 * Converts a {@code UnaryOperatorWithException} to a lifted
 	 * {@code UnaryOperator} returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -179,14 +180,14 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> UnaryOperator<T> ignored(UnaryOperatorWithException<T, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
 	}
 
 	/**
 	 * Transforms this {@code UnaryOperatorWithException} to a
 	 * {@code ConsumerWithException}.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -198,7 +199,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 */
 	static <T, E extends Exception> ConsumerWithException<T, Exception> asConsumer(
 			UnaryOperatorWithException<T, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.asConsumer();
 	}
 

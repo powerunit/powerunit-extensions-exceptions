@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -31,7 +32,7 @@ import java.util.function.Supplier;
 /**
  * Represents a function that accepts one argument, may throw exception and
  * produces a result.
- * 
+ *
  * @author borettim
  * @see Function
  * @param <T>
@@ -59,7 +60,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Converts this {@code FunctionWithException} to a {@code Function} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked function
 	 * @see #unchecked(FunctionWithException)
 	 * @see #unchecked(FunctionWithException, Function)
@@ -77,7 +78,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Converts this {@code FunctionWithException} to a lifted {@code Function}
 	 * using {@code Optional} as return value.
-	 * 
+	 *
 	 * @return the lifted function
 	 * @see #lifted(FunctionWithException)
 	 */
@@ -94,7 +95,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Converts this {@code FunctionWithException} to a lifted {@code Function}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
 	 */
@@ -111,7 +112,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Convert this {@code FunctionWithException} to a lifted {@code Function}
 	 * return {@code CompletionStage} as return value.
-	 * 
+	 *
 	 * @return the lifted function
 	 * @see #staged(FunctionWithException)
 	 */
@@ -131,7 +132,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Transforms this {@code FunctionWithException} to a
 	 * {@code ConsumerWithException}.
-	 * 
+	 *
 	 * @return the operation
 	 * @see #consumer(FunctionWithException)
 	 */
@@ -142,7 +143,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Transforms this {@code FunctionWithException} to a
 	 * {@code SupplierWithException}.
-	 * 
+	 *
 	 * @param input
 	 *            the input for the generated supplier.
 	 * @return the supplier
@@ -155,7 +156,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Transforms this {@code FunctionWithException} to a
 	 * {@code SupplierWithException}, passing {@code null} as input.
-	 * 
+	 *
 	 * @return the supplier
 	 * @see #asSupplier(Object)
 	 */
@@ -229,7 +230,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 
 	/**
 	 * Returns a function that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
@@ -249,7 +250,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Converts a {@code FunctionWithException} to a {@code Function} that convert
 	 * exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
@@ -263,14 +264,14 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #unchecked(FunctionWithException, Function)
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.uncheck();
 	}
 
 	/**
 	 * Converts a {@code FunctionWithException} to a {@code Function} that convert
 	 * exception to {@code RuntimeException} by using the provided mapping function.
-	 * 
+	 *
 	 * @param function
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -287,7 +288,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new FunctionWithException<T, R, E>() {
 
@@ -307,7 +308,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	/**
 	 * Converts a {@code FunctionWithException} to a lifted {@code Function} using
 	 * {@code Optional} as return value.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -320,14 +321,14 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #lift()
 	 */
 	static <T, R, E extends Exception> Function<T, Optional<R>> lifted(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.lift();
 	}
 
 	/**
 	 * Converts a {@code FunctionWithException} to a lifted {@code Function}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -340,14 +341,14 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #ignore()
 	 */
 	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
 	}
 
 	/**
 	 * Convert this {@code FunctionWithException} to a lifted {@code Function}
 	 * return {@code CompletionStage} as return value.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -360,14 +361,14 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #stage()
 	 */
 	static <T, R, E extends Exception> Function<T, CompletionStage<R>> staged(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.stage();
 	}
 
 	/**
 	 * Transforms this {@code FunctionWithException} to a
 	 * {@code ConsumerWithException}.
-	 * 
+	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
@@ -381,7 +382,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 */
 	static <T, R, E extends Exception> ConsumerWithException<T, Exception> consumer(
 			FunctionWithException<T, R, E> function) {
-		requireNonNull(function, "function can't be null");
+		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.asConsumer();
 	}
 

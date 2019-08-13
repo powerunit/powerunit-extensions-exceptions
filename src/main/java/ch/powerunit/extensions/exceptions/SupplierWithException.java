@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
@@ -30,7 +31,7 @@ import java.util.function.Supplier;
 
 /**
  * Represents a supplier of results that may throw exception
- * 
+ *
  * @author borettim
  * @see Supplier
  * @param <T>
@@ -54,7 +55,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Converts this {@code SupplierWithException} to a {@code Supplier} that
 	 * convert exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @return the unchecked supplier
 	 * @see #unchecked(SupplierWithException)
 	 * @see #unchecked(SupplierWithException, Function)
@@ -72,7 +73,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Converts this {@code SupplierWithException} to a lifted {@code Supplier}
 	 * using {@code Optional} as return value.
-	 * 
+	 *
 	 * @return the lifted supplier
 	 * @see #lifted(SupplierWithException)
 	 */
@@ -89,7 +90,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Converts this {@code SupplierWithException} to a lifted {@code Supplier}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @return the supplier that ignore error
 	 * @see #ignored(SupplierWithException)
 	 */
@@ -100,7 +101,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Convert this {@code SupplierWithException} to a lifted {@code Supplier}
 	 * return {@code CompletionStage} as return value.
-	 * 
+	 *
 	 * @return the lifted supplier
 	 * @see #staged(SupplierWithException)
 	 */
@@ -120,10 +121,10 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Transforms this {@code SupplierWithException} to a
 	 * {@code FunctionWithException}.
-	 * 
+	 *
 	 * @param <T1>
 	 *            The type of the input for the produced function
-	 * 
+	 *
 	 * @return the function
 	 * @see #function(SupplierWithException)
 	 */
@@ -133,7 +134,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 
 	/**
 	 * Returns a supplier that always throw exception.
-	 * 
+	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
@@ -151,7 +152,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Converts a {@code SupplierWithException} to a {@code Supplier} that convert
 	 * exception to {@code RuntimeException}.
-	 * 
+	 *
 	 * @param supplier
 	 *            to be unchecked
 	 * @param <T>
@@ -163,14 +164,14 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #unchecked(SupplierWithException, Function)
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, "supplier can't be null");
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.uncheck();
 	}
 
 	/**
 	 * Converts a {@code SupplierWithException} to a {@code Supplier} that convert
 	 * exception to {@code RuntimeException} by using the provided mapping function.
-	 * 
+	 *
 	 * @param supplier
 	 *            the be unchecked
 	 * @param exceptionMapper
@@ -185,7 +186,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(supplier, "supplier can't be null");
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new SupplierWithException<T, E>() {
 
@@ -205,7 +206,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	/**
 	 * Converts a {@code SupplierWithException} to a lifted {@code Supplier} using
 	 * {@code Optional} as return value.
-	 * 
+	 *
 	 * @param supplier
 	 *            to be lifted
 	 * @param <T>
@@ -216,14 +217,14 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #lift()
 	 */
 	static <T, E extends Exception> Supplier<Optional<T>> lifted(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, "supplier can't be null");
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.lift();
 	}
 
 	/**
 	 * Converts a {@code SupplierWithException} to a lifted {@code Supplier}
 	 * returning {@code null} in case of exception.
-	 * 
+	 *
 	 * @param supplier
 	 *            to be lifted
 	 * @param <T>
@@ -234,14 +235,14 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> Supplier<T> ignored(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, "supplier can't be null");
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.ignore();
 	}
 
 	/**
 	 * Convert this {@code SupplierWithException} to a lifted {@code Supplier}
 	 * return {@code CompletionStage} as return value.
-	 * 
+	 *
 	 * @param supplier
 	 *            to be lifted
 	 * @param <T>
@@ -252,14 +253,14 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #stage()
 	 */
 	static <T, E extends Exception> Supplier<CompletionStage<T>> staged(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, "supplier can't be null");
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.stage();
 	}
 
 	/**
 	 * Transforms a {@code SupplierWithException} to a
 	 * {@code FunctionWithException}.
-	 * 
+	 *
 	 * @param supplier
 	 *            to be lifted
 	 * @param <T>
@@ -272,7 +273,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #asFunction()
 	 */
 	static <T, R, E extends Exception> FunctionWithException<T, R, E> function(SupplierWithException<R, E> supplier) {
-		requireNonNull(supplier, "supplier can't be null");
+		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.asFunction();
 	}
 

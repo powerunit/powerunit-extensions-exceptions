@@ -21,7 +21,7 @@ package ch.powerunit.extensions.exceptions;
 
 /**
  * RuntimeException to wrap the Exception.
- * 
+ *
  * @author borettim
  *
  */

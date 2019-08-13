@@ -31,17 +31,59 @@ public class PredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAnd() throws Exception {
+	public void testAnd1() throws Exception {
 		PredicateWithException<String, Exception> fct1 = x -> true;
 		PredicateWithException<String, Exception> fct2 = x -> false;
 		assertThat(fct1.and(fct2).test("3")).is(false);
 	}
 
 	@Test
-	public void testOr() throws Exception {
+	public void testAnd2() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> false;
+		PredicateWithException<String, Exception> fct2 = x -> true;
+		assertThat(fct1.and(fct2).test("3")).is(false);
+	}
+
+	@Test
+	public void testAnd3() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> false;
+		PredicateWithException<String, Exception> fct2 = x -> false;
+		assertThat(fct1.and(fct2).test("3")).is(false);
+	}
+
+	@Test
+	public void testAnd4() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> true;
+		PredicateWithException<String, Exception> fct2 = x -> true;
+		assertThat(fct1.and(fct2).test("3")).is(true);
+	}
+
+	@Test
+	public void testOr1() throws Exception {
 		PredicateWithException<String, Exception> fct1 = x -> true;
 		PredicateWithException<String, Exception> fct2 = x -> false;
 		assertThat(fct1.or(fct2).test("3")).is(true);
+	}
+
+	@Test
+	public void testOr2() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> true;
+		PredicateWithException<String, Exception> fct2 = x -> true;
+		assertThat(fct1.or(fct2).test("3")).is(true);
+	}
+
+	@Test
+	public void testOr3() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> false;
+		PredicateWithException<String, Exception> fct2 = x -> true;
+		assertThat(fct1.or(fct2).test("3")).is(true);
+	}
+
+	@Test
+	public void testOr4() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> false;
+		PredicateWithException<String, Exception> fct2 = x -> false;
+		assertThat(fct1.or(fct2).test("3")).is(false);
 	}
 
 	@Test
