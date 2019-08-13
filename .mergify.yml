@@ -4,7 +4,7 @@ pull_request_rules:
     actions:
       delete_head_branch: {}
   - name: request review for dependencies
-    conditions: 
+    conditions:
       - "#approved-reviews-by=0"
       - "label=dependencies"
       - "status-success=Codacy/PR Quality Review"
@@ -20,7 +20,7 @@ pull_request_rules:
       - "base=master"
     actions:
       request_reviews:
-        users: 
+        users:
           - boretti
   - name : request milestone for dependencies
     conditions:
@@ -42,7 +42,7 @@ pull_request_rules:
         users:
           - boretti
   - name: merge dependencies update when reviewed and validated
-    conditions: 
+    conditions:
       - "label=dependencies"
       - "#approved-reviews-by>=1"
       - "files=pom.xml"
