@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface PredicateWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Predicate<T>, Predicate<T>, E> {
+		extends ExceptionHandlerSupport<Predicate<T>, Predicate<T>> {
 
 	/**
 	 * Evaluates this predicate on the given argument.

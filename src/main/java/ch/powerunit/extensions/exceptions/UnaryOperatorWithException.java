@@ -37,8 +37,6 @@ import java.util.function.UnaryOperator;
  * @see UnaryOperator
  * @param <T>
  *            the type of the input and output to the function
- * @param <E>
- *            the type of the potential exception of the function
  */
 @FunctionalInterface
 public interface UnaryOperatorWithException<T, E extends Exception> extends FunctionWithException<T, T, E> {

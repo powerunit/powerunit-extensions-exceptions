@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface SupplierWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, E> {
+		extends ExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>> {
 
 	/**
 	 * Gets a result.

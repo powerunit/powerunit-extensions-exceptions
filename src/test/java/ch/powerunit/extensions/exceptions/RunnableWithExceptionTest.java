@@ -53,6 +53,19 @@ public class RunnableWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testLiftedNoException() {
+		RunnableWithException.lifted(() -> {
+		}).run();
+	}
+
+	@Test
+	public void testLiftedException() {
+		RunnableWithException.lifted(() -> {
+			throw new Exception();
+		}).run();
+	}
+
+	@Test
 	public void testIgnoredNoException() {
 		RunnableWithException.ignored(() -> {
 		}).run();

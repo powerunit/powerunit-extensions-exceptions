@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BooleanSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<BooleanSupplier, BooleanSupplier, E> {
+		extends ExceptionHandlerSupport<BooleanSupplier, BooleanSupplier> {
 
 	/**
 	 * Gets a result.

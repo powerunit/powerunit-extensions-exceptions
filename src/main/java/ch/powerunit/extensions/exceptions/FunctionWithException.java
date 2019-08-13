@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FunctionWithException<T, R, E extends Exception>
-		extends ExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>, E> {
+		extends ExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>> {
 
 	/**
 	 * Applies this function to the given argument.
