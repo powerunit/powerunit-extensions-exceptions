@@ -43,7 +43,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface FunctionWithException<T, R, E extends Exception> extends ExceptionHandlerSupport {
+public interface FunctionWithException<T, R, E extends Exception>
+		extends ExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>, E> {
 
 	/**
 	 * Applies this function to the given argument.
@@ -65,6 +66,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @see #unchecked(FunctionWithException)
 	 * @see #unchecked(FunctionWithException, Function)
 	 */
+	@Override
 	default Function<T, R> uncheck() {
 		return t -> {
 			try {
@@ -82,6 +84,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @return the lifted function
 	 * @see #lifted(FunctionWithException)
 	 */
+	@Override
 	default Function<T, Optional<R>> lift() {
 		return t -> {
 			try {
@@ -99,6 +102,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends Except
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
 	 */
+	@Override
 	default Function<T, R> ignore() {
 		return t -> {
 			try {

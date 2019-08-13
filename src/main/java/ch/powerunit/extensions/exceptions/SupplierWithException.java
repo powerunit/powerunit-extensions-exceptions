@@ -40,7 +40,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface SupplierWithException<T, E extends Exception> extends ExceptionHandlerSupport {
+public interface SupplierWithException<T, E extends Exception>
+		extends ExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, E> {
 
 	/**
 	 * Gets a result.
@@ -60,6 +61,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @see #unchecked(SupplierWithException)
 	 * @see #unchecked(SupplierWithException, Function)
 	 */
+	@Override
 	default Supplier<T> uncheck() {
 		return () -> {
 			try {
@@ -77,6 +79,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @return the lifted supplier
 	 * @see #lifted(SupplierWithException)
 	 */
+	@Override
 	default Supplier<Optional<T>> lift() {
 		return () -> {
 			try {
@@ -94,6 +97,7 @@ public interface SupplierWithException<T, E extends Exception> extends Exception
 	 * @return the supplier that ignore error
 	 * @see #ignored(SupplierWithException)
 	 */
+	@Override
 	default Supplier<T> ignore() {
 		return () -> lift().get().orElse(null);
 	}

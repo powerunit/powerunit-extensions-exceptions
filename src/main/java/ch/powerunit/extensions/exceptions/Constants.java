@@ -32,7 +32,7 @@ final class Constants {
 	public static final String SUPPLIER_CANT_BE_NULL = "supplier can't be null";
 
 	public static final String PREDICATE_CANT_BE_NULL = "predicate can't be null";
-	
+
 	private Constants() {
 	}
 

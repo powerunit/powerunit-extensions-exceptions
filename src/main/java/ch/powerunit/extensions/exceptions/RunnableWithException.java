@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface RunnableWithException<E extends Exception> extends ExceptionHandlerSupport {
+public interface RunnableWithException<E extends Exception> extends ExceptionHandlerSupport<Runnable, Runnable, E> {
 
 	/**
 	 * Performs this operation.
@@ -56,6 +56,7 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * @see #unchecked(RunnableWithException)
 	 * @see #unchecked(RunnableWithException, Function)
 	 */
+	@Override
 	default Runnable uncheck() {
 		return () -> {
 			try {
@@ -72,8 +73,27 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 	 * {@code Runnable} ignoring exception.
 	 *
 	 * @return the operation that ignore error
+	 * @see #lifted(RunnableWithException)
+	 */
+	@Override
+	default Runnable lift() {
+		return () -> {
+			try {
+				run();
+			} catch (Exception e) {
+				// ignore
+			}
+		};
+	}
+
+	/**
+	 * Converts this {@code RunnableWithException} to a <i>lifted</i>
+	 * {@code Runnable} ignoring exception.
+	 *
+	 * @return the operation that ignore error
 	 * @see #ignored(RunnableWithException)
 	 */
+	@Override
 	default Runnable ignore() {
 		return () -> {
 			try {
@@ -176,6 +196,22 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 			}
 
 		}.uncheck();
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a lifted {@code Runnable}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #lift()
+	 */
+	static <E extends Exception> Runnable lifted(RunnableWithException<E> operation) {
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		return operation.lift();
 	}
 
 	/**

@@ -40,7 +40,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface ConsumerWithException<T, E extends Exception> extends ExceptionHandlerSupport {
+public interface ConsumerWithException<T, E extends Exception>
+		extends ExceptionHandlerSupport<Consumer<T>, Consumer<T>, E> {
 
 	/**
 	 * Performs this operation on the given argument.
@@ -61,6 +62,7 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 	 * @see #unchecked(ConsumerWithException)
 	 * @see #unchecked(ConsumerWithException, Function)
 	 */
+	@Override
 	default Consumer<T> uncheck() {
 		return t -> {
 			try {
@@ -69,7 +71,24 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 				throw exceptionMapper().apply(e);
 			}
 		};
+	}
 
+	/**
+	 * Converts this {@code ConsumerWithException} to a <i>lifted</i>
+	 * {@code Consumer} ignoring exception.
+	 *
+	 * @return the operation that ignore error
+	 * @see #lifted(ConsumerWithException)
+	 */
+	@Override
+	default Consumer<T> lift() {
+		return t -> {
+			try {
+				accept(t);
+			} catch (Exception e) {
+				// ignore
+			}
+		};
 	}
 
 	/**
@@ -79,6 +98,7 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 	 * @return the operation that ignore error
 	 * @see #ignored(ConsumerWithException)
 	 */
+	@Override
 	default Consumer<T> ignore() {
 		return t -> {
 			try {
@@ -197,6 +217,24 @@ public interface ConsumerWithException<T, E extends Exception> extends Exception
 			}
 
 		}.uncheck();
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a lifted {@code Consumer}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the input object to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #lift()
+	 */
+	static <T, E extends Exception> Consumer<T> lifted(ConsumerWithException<T, E> operation) {
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		return operation.lift();
 	}
 
 	/**
