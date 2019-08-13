@@ -17,6 +17,7 @@ pull_request_rules:
       - "status-success=codecov/project"
       - "status-success=guardrails/scan"
       - "status-success=LGTM analysis: Java"
+      - "status-success=SonarCloud Code Analysis"
       - "base=master"
     actions:
       request_reviews:
@@ -56,6 +57,7 @@ pull_request_rules:
       - "status-success=codecov/project"
       - "status-success=guardrails/scan"
       - "status-success=LGTM analysis: Java"
+      - "status-success=SonarCloud Code Analysis"
       - "base=master"
       - "milestone~=^.+$"
     actions:
