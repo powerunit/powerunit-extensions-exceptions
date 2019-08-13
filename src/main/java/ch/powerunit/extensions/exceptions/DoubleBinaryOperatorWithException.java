@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleBinaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleBinaryOperator, DoubleBinaryOperator, E> {
+		extends ExceptionHandlerSupport<DoubleBinaryOperator, DoubleBinaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
