@@ -32,7 +32,7 @@ public interface ExceptionHandlerSupport {
 	 * 
 	 * @return the mapping function
 	 */
-	default Function<Exception, ? extends RuntimeException> exceptionMapper() {
+	default Function<Exception,RuntimeException> exceptionMapper() {
 		return WrappedException::new;
 	}
 }
