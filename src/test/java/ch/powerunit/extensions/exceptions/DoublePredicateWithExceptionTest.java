@@ -110,6 +110,11 @@ public class DoublePredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testCheckedNoExceptionHandler() {
+		assertThat(DoublePredicateWithException.unchecked(x -> true, RuntimeException::new).test(12)).is(true);
+	}
+
+	@Test
 	public void testCheckedExceptionHandler() {
 		assertWhen((x) -> DoublePredicateWithException.unchecked(y -> {
 			throw new Exception();

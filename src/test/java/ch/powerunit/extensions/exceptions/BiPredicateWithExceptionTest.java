@@ -110,6 +110,11 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testCheckedNoExceptionHandler() {
+		assertThat(BiPredicateWithException.unchecked((x, y) -> true, RuntimeException::new).test(12, 48)).is(true);
+	}
+
+	@Test
 	public void testCheckedExceptionHandler() {
 		assertWhen((x) -> BiPredicateWithException.unchecked((y, z) -> {
 			throw new Exception();

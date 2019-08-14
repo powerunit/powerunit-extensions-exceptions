@@ -110,6 +110,11 @@ public class LongPredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testCheckedNoExceptionHandler() {
+		assertThat(LongPredicateWithException.unchecked(x -> true, RuntimeException::new).test(12)).is(true);
+	}
+
+	@Test
 	public void testCheckedExceptionHandler() {
 		assertWhen((x) -> LongPredicateWithException.unchecked(y -> {
 			throw new Exception();

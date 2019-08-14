@@ -110,6 +110,11 @@ public class IntPredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testCheckedNoExceptionHandler() {
+		assertThat(IntPredicateWithException.unchecked(x -> true, RuntimeException::new).test(12)).is(true);
+	}
+
+	@Test
 	public void testCheckedExceptionHandler() {
 		assertWhen((x) -> IntPredicateWithException.unchecked(y -> {
 			throw new Exception();
