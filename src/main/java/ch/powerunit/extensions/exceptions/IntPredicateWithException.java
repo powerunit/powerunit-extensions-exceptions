@@ -22,8 +22,8 @@ package ch.powerunit.extensions.exceptions;
 import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.IntPredicate;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 /**
@@ -258,6 +258,21 @@ public interface IntPredicateWithException<E extends Exception>
 	static <E extends Exception> IntPredicate ignored(IntPredicateWithException<E> predicate) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
+	}
+
+	/**
+	 * Negate a {@code IntPredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <E extends Exception> IntPredicateWithException<E> negate(IntPredicateWithException<E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
 	}
 
 }

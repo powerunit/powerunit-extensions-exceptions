@@ -49,7 +49,7 @@ public class BooleanSupplierWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}, RuntimeException::new).getAsBoolean()).throwException(instanceOf(RuntimeException.class));
 	}
-	
+
 	@Test
 	public void testLiftedNoException() {
 		assertThat(BooleanSupplierWithException.lifted(() -> true).getAsBoolean()).is(true);

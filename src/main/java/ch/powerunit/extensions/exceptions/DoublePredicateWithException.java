@@ -260,4 +260,19 @@ public interface DoublePredicateWithException<E extends Exception>
 		return predicate.ignore();
 	}
 
+	/**
+	 * Negate a {@code DoublePredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <E extends Exception> DoublePredicateWithException<E> negate(DoublePredicateWithException<E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
+	}
+
 }

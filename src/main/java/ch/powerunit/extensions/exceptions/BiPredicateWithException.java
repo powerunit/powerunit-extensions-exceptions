@@ -310,6 +310,26 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	}
 
 	/**
+	 * Negate a {@code DoublePredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <T>
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
+			BiPredicateWithException<T, U, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
+	}
+
+	/**
 	 * Transforms this {@code BiPredicateWithException} to a
 	 * {@code BiConsumerWithException}.
 	 *

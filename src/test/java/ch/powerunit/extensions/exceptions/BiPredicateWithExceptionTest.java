@@ -89,14 +89,12 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testNegate1() throws Exception {
-		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> true;
-		assertThat(fct1.negate().test("3", "4")).is(false);
+		assertThat(BiPredicateWithException.negate((x, y) -> true).test("3", "4")).is(false);
 	}
 
 	@Test
 	public void testNegate2() throws Exception {
-		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> false;
-		assertThat(fct1.negate().test("3", "4")).is(true);
+		assertThat(BiPredicateWithException.negate((x, y) -> false).test("3", "4")).is(true);
 	}
 
 	@Test
