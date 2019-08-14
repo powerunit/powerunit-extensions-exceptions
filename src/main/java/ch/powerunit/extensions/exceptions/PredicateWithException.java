@@ -83,13 +83,7 @@ public interface PredicateWithException<T, E extends Exception>
 	 */
 	@Override
 	default Predicate<T> lift() {
-		return t -> {
-			try {
-				return test(t);
-			} catch (Exception e) {
-				return false;
-			}
-		};
+		return ignore();
 	}
 
 	/**

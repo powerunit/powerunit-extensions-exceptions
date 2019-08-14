@@ -88,13 +88,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	@Override
 	default BiPredicate<T, U> lift() {
-		return (t, u) -> {
-			try {
-				return test(t, u);
-			} catch (Exception e) {
-				return false;
-			}
-		};
+		return ignore();
 	}
 
 	/**
