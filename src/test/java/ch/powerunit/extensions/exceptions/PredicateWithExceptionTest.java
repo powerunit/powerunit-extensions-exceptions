@@ -108,7 +108,7 @@ public class PredicateWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).test(x)).throwException(instanceOf(WrappedException.class));
 	}
-	
+
 	@Test
 	public void testCheckedNoExceptionHandler() {
 		assertThat(PredicateWithException.unchecked(x -> true, RuntimeException::new).test("2")).is(true);
