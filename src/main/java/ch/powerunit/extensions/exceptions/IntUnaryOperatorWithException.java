@@ -22,21 +22,21 @@ package ch.powerunit.extensions.exceptions;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.DoubleUnaryOperator;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a double unary operator with exception.
+ * Represents a int unary operator with exception.
  *
  * @author borettim
- * @see DoubleUnaryOperator
+ * @see IntUnaryOperator
  * @param <E>
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface DoubleUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleUnaryOperator, DoubleUnaryOperator> {
+public interface IntUnaryOperatorWithException<E extends Exception>
+		extends ExceptionHandlerSupport<IntUnaryOperator, IntUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -46,24 +46,23 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @return the function result
 	 * @throws E
 	 *             any exception
-	 * @see DoubleUnaryOperator#applyAsDouble(double)
+	 * @see IntUnaryOperator#applyAsInt(int)
 	 */
-	double applyAsDouble(double t) throws E;
+	int applyAsInt(int t) throws E;
 
 	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException}.
+	 * Converts this {@code IntUnaryOperatorWithException} to a
+	 * {@code IntUnaryOperator} that convert exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked function
-	 * @see #unchecked(DoubleUnaryOperatorWithException)
-	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
+	 * @see #unchecked(IntUnaryOperatorWithException)
+	 * @see #unchecked(IntUnaryOperatorWithException, Function)
 	 */
 	@Override
-	default DoubleUnaryOperator uncheck() {
+	default IntUnaryOperator uncheck() {
 		return t -> {
 			try {
-				return applyAsDouble(t);
+				return applyAsInt(t);
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
 			}
@@ -72,56 +71,56 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} return a zero by default.
+	 * Converts this {@code IntUnaryOperatorWithException} to a lifted
+	 * {@code IntUnaryOperator} return a zero by default.
 	 *
 	 * @return the lifted function
-	 * @see #lifted(DoubleUnaryOperatorWithException)
+	 * @see #lifted(IntUnaryOperatorWithException)
 	 */
 	@Override
-	default DoubleUnaryOperator lift() {
+	default IntUnaryOperator lift() {
 		return ignore();
 	}
 
 	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} returning uero in case of exception.
+	 * Converts this {@code IntUnaryOperatorWithException} to a lifted
+	 * {@code IntUnaryOperator} returning zero in case of exception.
 	 *
 	 * @return the function that ignore error
-	 * @see #ignored(DoubleUnaryOperatorWithException)
+	 * @see #ignored(IntUnaryOperatorWithException)
 	 */
 	@Override
-	default DoubleUnaryOperator ignore() {
+	default IntUnaryOperator ignore() {
 		return t -> {
 			try {
-				return applyAsDouble(t);
+				return applyAsInt(t);
 			} catch (Exception e) {
-				return 0d;
+				return 0;
 			}
 		};
 	}
 
 	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
+	 * Transforms this {@code IntUnaryOperatorWithException} to a
 	 * {@code ConsumerWithException}.
 	 *
 	 * @return the operation
-	 * @see #consumer(DoubleUnaryOperatorWithException)
+	 * @see #consumer(IntUnaryOperatorWithException)
 	 */
-	default ConsumerWithException<Double, Exception> asConsumer() {
-		return this::applyAsDouble;
+	default ConsumerWithException<Integer, Exception> asConsumer() {
+		return this::applyAsInt;
 	}
 
 	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
+	 * Transforms this {@code IntUnaryOperatorWithException} to a
 	 * {@code SupplierWithException}.
 	 *
 	 * @param t
 	 *            the first input for the generated supplier.
 	 * @return the supplier
 	 */
-	default SupplierWithException<Double, Exception> asSupplier(double t) {
-		return () -> applyAsDouble(t);
+	default SupplierWithException<Integer, Exception> asSupplier(int t) {
+		return () -> applyAsInt(t);
 	}
 
 	/**
@@ -137,11 +136,11 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @throws NullPointerException
 	 *             if before is null
 	 *
-	 * @see #andThen(DoubleUnaryOperatorWithException)
+	 * @see #andThen(IntUnaryOperatorWithException)
 	 */
-	default DoubleUnaryOperatorWithException<E> compose(DoubleUnaryOperatorWithException<? extends E> before) {
+	default IntUnaryOperatorWithException<E> compose(IntUnaryOperatorWithException<? extends E> before) {
 		requireNonNull(before);
-		return v -> applyAsDouble(before.applyAsDouble(v));
+		return v -> applyAsInt(before.applyAsInt(v));
 	}
 
 	/**
@@ -157,11 +156,11 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @throws NullPointerException
 	 *             if after is null
 	 *
-	 * @see #compose(DoubleUnaryOperatorWithException)
+	 * @see #compose(IntUnaryOperatorWithException)
 	 */
-	default DoubleUnaryOperatorWithException<E> andThen(DoubleUnaryOperatorWithException<? extends E> after) {
+	default IntUnaryOperatorWithException<E> andThen(IntUnaryOperatorWithException<? extends E> after) {
 		requireNonNull(after);
-		return t -> after.applyAsDouble(applyAsDouble(t));
+		return t -> after.applyAsInt(applyAsInt(t));
 	}
 
 	/**
@@ -172,7 +171,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @param <E>
 	 *            the exception that may be thrown
 	 */
-	static <E extends Exception> DoubleUnaryOperatorWithException<E> identity() {
+	static <E extends Exception> IntUnaryOperatorWithException<E> identity() {
 		return t -> t;
 	}
 
@@ -185,16 +184,15 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 *            the type of the exception
 	 * @return a function that always throw exception
 	 */
-	static <E extends Exception> DoubleUnaryOperatorWithException<E> failing(Supplier<E> exceptionBuilder) {
+	static <E extends Exception> IntUnaryOperatorWithException<E> failing(Supplier<E> exceptionBuilder) {
 		return t -> {
 			throw exceptionBuilder.get();
 		};
 	}
 
 	/**
-	 * Converts a {@code DoubleUnaryOperatorException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException}.
+	 * Converts a {@code IntUnaryOperatorException} to a {@code IntUnaryOperator}
+	 * that convert exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -202,17 +200,17 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
+	 * @see #unchecked(IntUnaryOperatorWithException, Function)
 	 */
-	static <E extends Exception> DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException<E> function) {
+	static <E extends Exception> IntUnaryOperator unchecked(IntUnaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.uncheck();
 	}
 
 	/**
-	 * Converts a {@code DoubleUnaryOperatorWithException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException} by using the provided mapping function.
+	 * Converts a {@code IntUnaryOperatorWithException} to a
+	 * {@code IntUnaryOperator} that convert exception to {@code RuntimeException}
+	 * by using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -222,17 +220,17 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(DoubleUnaryOperatorWithException)
+	 * @see #unchecked(IntUnaryOperatorWithException)
 	 */
-	static <E extends Exception> DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException<E> function,
+	static <E extends Exception> IntUnaryOperator unchecked(IntUnaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
-		return new DoubleUnaryOperatorWithException<E>() {
+		return new IntUnaryOperatorWithException<E>() {
 
 			@Override
-			public double applyAsDouble(double t) throws E {
-				return function.applyAsDouble(t);
+			public int applyAsInt(int t) throws E {
+				return function.applyAsInt(t);
 			}
 
 			@Override
@@ -244,8 +242,8 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} using {@code Optional} as return value.
+	 * Converts a {@code IntUnaryOperatorWithException} to a lifted
+	 * {@code IntUnaryOperator} using {@code Optional} as return value.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -254,14 +252,14 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @return the lifted function
 	 * @see #lift()
 	 */
-	static <E extends Exception> DoubleUnaryOperator lifted(DoubleUnaryOperatorWithException<E> function) {
+	static <E extends Exception> IntUnaryOperator lifted(IntUnaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.lift();
 	}
 
 	/**
-	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} returning {@code null} in case of exception.
+	 * Converts a {@code IntUnaryOperatorWithException} to a lifted
+	 * {@code IntUnaryOperator} returning {@code null} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -270,13 +268,13 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @return the lifted function
 	 * @see #ignore()
 	 */
-	static <E extends Exception> DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException<E> function) {
+	static <E extends Exception> IntUnaryOperator ignored(IntUnaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
 	}
 
 	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
+	 * Transforms this {@code IntUnaryOperatorWithException} to a
 	 * {@code BiConsumerWithException}.
 	 *
 	 * @param function
@@ -286,8 +284,8 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @return the operation function
 	 * @see #asConsumer()
 	 */
-	static <E extends Exception> ConsumerWithException<Double, Exception> consumer(
-			DoubleUnaryOperatorWithException<E> function) {
+	static <E extends Exception> ConsumerWithException<Integer, Exception> consumer(
+			IntUnaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.asConsumer();
 	}
