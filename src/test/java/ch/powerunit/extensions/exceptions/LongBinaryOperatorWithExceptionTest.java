@@ -9,7 +9,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Powerunit is distributed in the hope that it will be useful,
+ * Powerunit is distributed in the hope that it will be usefuL,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -76,14 +76,14 @@ public class LongBinaryOperatorWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testAsConsumerNoException() throws Exception {
-		LongBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2l, 1L);
+		LongBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2L, 1L);
 	}
 
 	@Test
 	public void testAsConsumerException() {
 		assertWhen((x) -> LongBinaryOperatorWithException.biConsumer((y, z) -> {
 			throw new Exception();
-		}).accept(2l, 1L)).throwException(instanceOf(Exception.class));
+		}).accept(2L, 1L)).throwException(instanceOf(Exception.class));
 	}
 
 	@Test
