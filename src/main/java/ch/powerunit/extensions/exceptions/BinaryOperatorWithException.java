@@ -53,13 +53,9 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 */
 	@Override
 	default BinaryOperator<T> uncheck() {
-		return (t, u) -> {
-			try {
-				return apply(t, u);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -71,13 +67,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 */
 	@Override
 	default BinaryOperator<T> ignore() {
-		return (t, u) -> {
-			try {
-				return apply(t, u);
-			} catch (Exception e) {
-				return null;
-			}
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> null);
 	}
 
 	/**

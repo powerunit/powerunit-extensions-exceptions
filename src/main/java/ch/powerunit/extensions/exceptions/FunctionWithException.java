@@ -21,10 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -44,7 +42,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FunctionWithException<T, R, E extends Exception>
-		extends ExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>> {
+		extends ObjectReturnExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>> {
 
 	/**
 	 * Applies this function to the given argument.
@@ -68,13 +66,9 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 */
 	@Override
 	default Function<T, R> uncheck() {
-		return t -> {
-			try {
-				return apply(t);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -86,13 +80,8 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 */
 	@Override
 	default Function<T, Optional<R>> lift() {
-		return t -> {
-			try {
-				return Optional.ofNullable(apply(t));
-			} catch (Exception e) {
-				return Optional.empty();
-			}
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t)),
+				e -> Optional.empty());
 	}
 
 	/**
@@ -104,13 +93,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 */
 	@Override
 	default Function<T, R> ignore() {
-		return t -> {
-			try {
-				return apply(t);
-			} catch (Exception e) {
-				return null;
-			}
-		};
+		return lift().andThen(o -> o.orElse(null));
 	}
 
 	/**
@@ -121,16 +104,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #staged(FunctionWithException)
 	 */
 	default Function<T, CompletionStage<R>> stage() {
-		return t -> {
-			try {
-				return completedFuture(apply(t));
-			} catch (Exception e) {
-				// failedStage only available since 9
-				CompletableFuture<R> result = new CompletableFuture<>();
-				result.completeExceptionally(e);
-				return result;
-			}
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t));
 	}
 
 	/**

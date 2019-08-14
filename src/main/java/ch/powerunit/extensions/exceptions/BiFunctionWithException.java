@@ -21,10 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -47,7 +45,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiFunctionWithException<T, U, R, E extends Exception>
-		extends ExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>> {
+		extends ObjectReturnExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -73,13 +71,9 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	@Override
 	default BiFunction<T, U, R> uncheck() {
-		return (t, u) -> {
-			try {
-				return apply(t, u);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> {
+			throw exceptionMapper().apply(e);
+		});
 
 	}
 
@@ -92,13 +86,8 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	@Override
 	default BiFunction<T, U, Optional<R>> lift() {
-		return (t, u) -> {
-			try {
-				return Optional.ofNullable(apply(t, u));
-			} catch (Exception e) {
-				return Optional.empty();
-			}
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t, u)),
+				e -> Optional.empty());
 	}
 
 	/**
@@ -110,13 +99,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	@Override
 	default BiFunction<T, U, R> ignore() {
-		return (t, u) -> {
-			try {
-				return apply(t, u);
-			} catch (Exception e) {
-				return null;
-			}
-		};
+		return lift().andThen(o -> o.orElse(null));
 	}
 
 	/**
@@ -127,16 +110,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @see #staged(BiFunctionWithException)
 	 */
 	default BiFunction<T, U, CompletionStage<R>> stage() {
-		return (t, u) -> {
-			try {
-				return completedFuture(apply(t, u));
-			} catch (Exception e) {
-				// failedStage only available since 9
-				CompletableFuture<R> result = new CompletableFuture<>();
-				result.completeExceptionally(e);
-				return result;
-			}
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t, u));
 	}
 
 	/**

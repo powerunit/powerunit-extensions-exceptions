@@ -21,10 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
-import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,7 +39,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface SupplierWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>> {
+		extends ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>> {
 
 	/**
 	 * Gets a result.
@@ -63,13 +61,9 @@ public interface SupplierWithException<T, E extends Exception>
 	 */
 	@Override
 	default Supplier<T> uncheck() {
-		return () -> {
-			try {
-				return get();
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return () -> ObjectReturnExceptionHandlerSupport.unchecked(this::get, e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -81,13 +75,8 @@ public interface SupplierWithException<T, E extends Exception>
 	 */
 	@Override
 	default Supplier<Optional<T>> lift() {
-		return () -> {
-			try {
-				return Optional.ofNullable(get());
-			} catch (Exception e) {
-				return Optional.empty();
-			}
-		};
+		return () -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(get()),
+				e -> Optional.empty());
 	}
 
 	/**
@@ -110,16 +99,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #staged(SupplierWithException)
 	 */
 	default Supplier<CompletionStage<T>> stage() {
-		return () -> {
-			try {
-				return completedFuture(get());
-			} catch (Exception e) {
-				// failedStage only available since 9
-				CompletableFuture<T> result = new CompletableFuture<>();
-				result.completeExceptionally(e);
-				return result;
-			}
-		};
+		return () -> ObjectReturnExceptionHandlerSupport.staged(this::get);
 	}
 
 	/**

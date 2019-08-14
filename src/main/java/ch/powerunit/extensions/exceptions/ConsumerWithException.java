@@ -40,8 +40,7 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface ConsumerWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Consumer<T>, Consumer<T>> {
+public interface ConsumerWithException<T, E extends Exception> extends NoReturnExceptionHandlerSupport<Consumer<T>> {
 
 	/**
 	 * Performs this operation on the given argument.
@@ -69,24 +68,6 @@ public interface ConsumerWithException<T, E extends Exception>
 				accept(t);
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
-			}
-		};
-	}
-
-	/**
-	 * Converts this {@code ConsumerWithException} to a <i>lifted</i>
-	 * {@code Consumer} ignoring exception.
-	 *
-	 * @return the operation that ignore error
-	 * @see #lifted(ConsumerWithException)
-	 */
-	@Override
-	default Consumer<T> lift() {
-		return t -> {
-			try {
-				accept(t);
-			} catch (Exception e) {
-				// ignore
 			}
 		};
 	}
