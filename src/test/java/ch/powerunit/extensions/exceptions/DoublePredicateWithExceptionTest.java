@@ -88,9 +88,15 @@ public class DoublePredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testNegate() throws Exception {
+	public void testNegate1() throws Exception {
 		DoublePredicateWithException<Exception> fct1 = x -> true;
 		assertThat(fct1.negate().test(4)).is(false);
+	}
+
+	@Test
+	public void testNegate2() throws Exception {
+		DoublePredicateWithException<Exception> fct1 = x -> false;
+		assertThat(fct1.negate().test(4)).is(true);
 	}
 
 	@Test

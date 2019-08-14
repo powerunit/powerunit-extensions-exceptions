@@ -88,9 +88,15 @@ public class PredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testNegate() throws Exception {
+	public void testNegate1() throws Exception {
 		PredicateWithException<String, Exception> fct1 = x -> true;
 		assertThat(fct1.negate().test("3")).is(false);
+	}
+
+	@Test
+	public void testNegate2() throws Exception {
+		PredicateWithException<String, Exception> fct1 = x -> false;
+		assertThat(fct1.negate().test("3")).is(true);
 	}
 
 	@Test
