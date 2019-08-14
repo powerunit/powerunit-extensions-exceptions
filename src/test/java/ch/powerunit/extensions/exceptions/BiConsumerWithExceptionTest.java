@@ -24,6 +24,7 @@ import java.util.concurrent.CompletionException;
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
+@SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
 public class BiConsumerWithExceptionTest implements TestSuite {
 
 	@Test

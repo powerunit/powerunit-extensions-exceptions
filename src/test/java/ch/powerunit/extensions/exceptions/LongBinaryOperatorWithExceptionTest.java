@@ -22,6 +22,7 @@ package ch.powerunit.extensions.exceptions;
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
+@SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
 public class LongBinaryOperatorWithExceptionTest implements TestSuite {
 
 	@Test
@@ -32,7 +33,7 @@ public class LongBinaryOperatorWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testCheckedNoException() {
-		assertThat(LongBinaryOperatorWithException.unchecked((x, y) -> x + y).applyAsLong(2, 1)).is(3l);
+		assertThat(LongBinaryOperatorWithException.unchecked((x, y) -> x + y).applyAsLong(2, 1)).is(3L);
 	}
 
 	@Test
@@ -51,44 +52,44 @@ public class LongBinaryOperatorWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testLiftedNoException() {
-		assertThat(LongBinaryOperatorWithException.lifted((x, y) -> x + y).applyAsLong(2, 1)).is(3l);
+		assertThat(LongBinaryOperatorWithException.lifted((x, y) -> x + y).applyAsLong(2, 1)).is(3L);
 	}
 
 	@Test
 	public void testLiftedException() {
 		assertThat(LongBinaryOperatorWithException.lifted((x, y) -> {
 			throw new Exception();
-		}).applyAsLong(1, 2)).is(0l);
+		}).applyAsLong(1, 2)).is(0L);
 	}
 
 	@Test
 	public void testIgnoredNoException() {
-		assertThat(LongBinaryOperatorWithException.ignored((x, y) -> x + y).applyAsLong(2, 1)).is(3l);
+		assertThat(LongBinaryOperatorWithException.ignored((x, y) -> x + y).applyAsLong(2, 1)).is(3L);
 	}
 
 	@Test
 	public void testIgnoredException() {
 		assertThat(LongBinaryOperatorWithException.ignored((x, y) -> {
 			throw new Exception();
-		}).applyAsLong(1, 2)).is(0l);
+		}).applyAsLong(1, 2)).is(0L);
 	}
 
 	@Test
 	public void testAsConsumerNoException() throws Exception {
-		LongBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2l, 1l);
+		LongBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2l, 1L);
 	}
 
 	@Test
 	public void testAsConsumerException() {
 		assertWhen((x) -> LongBinaryOperatorWithException.biConsumer((y, z) -> {
 			throw new Exception();
-		}).accept(2l, 1l)).throwException(instanceOf(Exception.class));
+		}).accept(2l, 1L)).throwException(instanceOf(Exception.class));
 	}
 
 	@Test
 	public void testAsSupplierNoException() throws Exception {
 		LongBinaryOperatorWithException<Exception> fct = (x, y) -> x + y;
-		assertThat(fct.asSupplier(1, 2).get()).is(3l);
+		assertThat(fct.asSupplier(1, 2).get()).is(3L);
 	}
 
 	@Test
