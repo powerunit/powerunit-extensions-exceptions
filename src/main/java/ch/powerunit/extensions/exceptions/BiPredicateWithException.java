@@ -88,13 +88,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	@Override
 	default BiPredicate<T, U> lift() {
-		return (t, u) -> {
-			try {
-				return test(t, u);
-			} catch (Exception e) {
-				return false;
-			}
-		};
+		return ignore();
 	}
 
 	/**
@@ -171,6 +165,26 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	default BiPredicateWithException<T, U, E> negate() {
 		return (t, u) -> !test(t, u);
+	}
+
+	/**
+	 * Negate a {@code DoublePredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <T>
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
+			BiPredicateWithException<T, U, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
 	}
 
 	/**

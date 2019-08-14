@@ -88,9 +88,13 @@ public class PredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testNegate() throws Exception {
-		PredicateWithException<String, Exception> fct1 = x -> true;
-		assertThat(fct1.negate().test("3")).is(false);
+	public void testNegate1() throws Exception {
+		assertThat(PredicateWithException.negate(x -> true).test("3")).is(false);
+	}
+
+	@Test
+	public void testNegate2() throws Exception {
+		assertThat(PredicateWithException.negate(x -> false).test("3")).is(true);
 	}
 
 	@Test
@@ -103,6 +107,11 @@ public class PredicateWithExceptionTest implements TestSuite {
 		assertWhen((x) -> PredicateWithException.unchecked(y -> {
 			throw new Exception();
 		}).test(x)).throwException(instanceOf(WrappedException.class));
+	}
+	
+	@Test
+	public void testCheckedNoExceptionHandler() {
+		assertThat(PredicateWithException.unchecked(x -> true, RuntimeException::new).test("2")).is(true);
 	}
 
 	@Test

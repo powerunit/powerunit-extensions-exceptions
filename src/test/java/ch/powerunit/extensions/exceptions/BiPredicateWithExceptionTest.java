@@ -88,9 +88,13 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testNegate() throws Exception {
-		BiPredicateWithException<String, String, Exception> fct1 = (x, y) -> true;
-		assertThat(fct1.negate().test("3", "4")).is(false);
+	public void testNegate1() throws Exception {
+		assertThat(BiPredicateWithException.negate((x, y) -> true).test("3", "4")).is(false);
+	}
+
+	@Test
+	public void testNegate2() throws Exception {
+		assertThat(BiPredicateWithException.negate((x, y) -> false).test("3", "4")).is(true);
 	}
 
 	@Test
@@ -103,6 +107,11 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 		assertWhen((x) -> BiPredicateWithException.unchecked((y, z) -> {
 			throw new Exception();
 		}).test(x, x)).throwException(instanceOf(WrappedException.class));
+	}
+
+	@Test
+	public void testCheckedNoExceptionHandler() {
+		assertThat(BiPredicateWithException.unchecked((x, y) -> true, RuntimeException::new).test(12, 48)).is(true);
 	}
 
 	@Test

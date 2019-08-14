@@ -83,13 +83,7 @@ public interface PredicateWithException<T, E extends Exception>
 	 */
 	@Override
 	default Predicate<T> lift() {
-		return t -> {
-			try {
-				return test(t);
-			} catch (Exception e) {
-				return false;
-			}
-		};
+		return ignore();
 	}
 
 	/**
@@ -166,6 +160,23 @@ public interface PredicateWithException<T, E extends Exception>
 	 */
 	default PredicateWithException<T, E> negate() {
 		return t -> !test(t);
+	}
+
+	/**
+	 * Negate a {@code PredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <T>
+	 *            the type of the input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <T, E extends Exception> PredicateWithException<T, E> negate(PredicateWithException<T, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
 	}
 
 	/**
