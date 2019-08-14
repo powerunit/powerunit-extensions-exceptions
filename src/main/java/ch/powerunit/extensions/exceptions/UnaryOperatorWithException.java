@@ -22,6 +22,7 @@ package ch.powerunit.extensions.exceptions;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -52,11 +53,9 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	@Override
 	default UnaryOperator<T> uncheck() {
 		return t -> {
-			try {
-				return apply(t);
-			} catch (Exception e) {
+			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
 				throw exceptionMapper().apply(e);
-			}
+			});
 		};
 	}
 
@@ -70,11 +69,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	@Override
 	default UnaryOperator<T> ignore() {
 		return t -> {
-			try {
-				return apply(t);
-			} catch (Exception e) {
-				return null;
-			}
+			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
 		};
 	}
 

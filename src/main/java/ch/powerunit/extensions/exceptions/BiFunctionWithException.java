@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiFunctionWithException<T, U, R, E extends Exception>
-		extends ExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>> {
+		extends ObjectReturnExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -74,11 +74,9 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	@Override
 	default BiFunction<T, U, R> uncheck() {
 		return (t, u) -> {
-			try {
-				return apply(t, u);
-			} catch (Exception e) {
+			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> {
 				throw exceptionMapper().apply(e);
-			}
+			});
 		};
 
 	}
@@ -93,11 +91,8 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	@Override
 	default BiFunction<T, U, Optional<R>> lift() {
 		return (t, u) -> {
-			try {
-				return Optional.ofNullable(apply(t, u));
-			} catch (Exception e) {
-				return Optional.empty();
-			}
+			return ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t, u)),
+					e -> Optional.empty());
 		};
 	}
 
@@ -110,13 +105,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	@Override
 	default BiFunction<T, U, R> ignore() {
-		return (t, u) -> {
-			try {
-				return apply(t, u);
-			} catch (Exception e) {
-				return null;
-			}
-		};
+		return lift().andThen(o -> o.orElse(null));
 	}
 
 	/**
