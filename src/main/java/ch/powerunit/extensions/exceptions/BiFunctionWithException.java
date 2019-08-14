@@ -73,11 +73,9 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	@Override
 	default BiFunction<T, U, R> uncheck() {
-		return (t, u) -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> {
-				throw exceptionMapper().apply(e);
-			});
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> {
+			throw exceptionMapper().apply(e);
+		});
 
 	}
 
@@ -90,10 +88,8 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	@Override
 	default BiFunction<T, U, Optional<R>> lift() {
-		return (t, u) -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t, u)),
-					e -> Optional.empty());
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t, u)),
+				e -> Optional.empty());
 	}
 
 	/**

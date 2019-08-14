@@ -22,8 +22,8 @@ package ch.powerunit.extensions.exceptions;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.LongUnaryOperator;
 import java.util.function.Function;
+import java.util.function.LongUnaryOperator;
 import java.util.function.Supplier;
 
 /**
@@ -167,7 +167,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * Returns a unary operator that always returns its input argument.
 	 *
 	 * @return a unary operator that always returns its input argument
-	 * 
+	 *
 	 * @param <E>
 	 *            the exception that may be thrown
 	 */

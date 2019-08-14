@@ -68,11 +68,9 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 */
 	@Override
 	default Function<T, R> uncheck() {
-		return t -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
-				throw exceptionMapper().apply(e);
-			});
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -84,10 +82,8 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 */
 	@Override
 	default Function<T, Optional<R>> lift() {
-		return t -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t)),
-					e -> Optional.empty());
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t)),
+				e -> Optional.empty());
 	}
 
 	/**

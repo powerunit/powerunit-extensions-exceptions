@@ -168,7 +168,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * Returns a unary operator that always returns its input argument.
 	 *
 	 * @return a unary operator that always returns its input argument
-	 * 
+	 *
 	 * @param <E>
 	 *            the exception that may be thrown
 	 */

@@ -51,11 +51,9 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 */
 	@Override
 	default UnaryOperator<T> uncheck() {
-		return t -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
-				throw exceptionMapper().apply(e);
-			});
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -67,9 +65,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 */
 	@Override
 	default UnaryOperator<T> ignore() {
-		return t -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
 	}
 
 	/**

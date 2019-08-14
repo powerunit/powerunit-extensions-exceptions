@@ -40,6 +40,7 @@ public interface ObjectReturnExceptionHandlerSupport<F, L> extends ExceptionHand
 	 *
 	 * @return the unchecked operation
 	 */
+	@Override
 	F uncheck();
 
 	/**
@@ -49,6 +50,7 @@ public interface ObjectReturnExceptionHandlerSupport<F, L> extends ExceptionHand
 	 *
 	 * @return the lifted function
 	 */
+	@Override
 	L lift();
 
 	/**
@@ -57,11 +59,12 @@ public interface ObjectReturnExceptionHandlerSupport<F, L> extends ExceptionHand
 	 *
 	 * @return the operation that ignore error
 	 */
+	@Override
 	F ignore();
 
 	/**
 	 * Used internally to support the exception interception.
-	 * 
+	 *
 	 * @param internal
 	 *            the call to be done
 	 * @param exceptionhandler

@@ -35,6 +35,7 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 	 *
 	 * @return the unchecked operation
 	 */
+	@Override
 	F uncheck();
 
 	/**
@@ -44,6 +45,7 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 	 *
 	 * @return the lifted function
 	 */
+	@Override
 	default F lift() {
 		return ignore();
 	}
@@ -54,5 +56,6 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 	 *
 	 * @return the operation that ignore error
 	 */
+	@Override
 	F ignore();
 }

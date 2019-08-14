@@ -63,11 +63,9 @@ public interface SupplierWithException<T, E extends Exception>
 	 */
 	@Override
 	default Supplier<T> uncheck() {
-		return () -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(this::get, e -> {
-				throw exceptionMapper().apply(e);
-			});
-		};
+		return () -> ObjectReturnExceptionHandlerSupport.unchecked(this::get, e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -79,10 +77,8 @@ public interface SupplierWithException<T, E extends Exception>
 	 */
 	@Override
 	default Supplier<Optional<T>> lift() {
-		return () -> {
-			return ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(get()),
-					e -> Optional.empty());
-		};
+		return () -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(get()),
+				e -> Optional.empty());
 	}
 
 	/**
