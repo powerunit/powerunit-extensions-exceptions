@@ -168,6 +168,26 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	}
 
 	/**
+	 * Negate a {@code DoublePredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <T>
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
+			BiPredicateWithException<T, U, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
+	}
+
+	/**
 	 * Returns a composed predicate that represents a short-circuiting logical OR of
 	 * this predicate and another. When evaluating the composed predicate, if this
 	 * predicate is {@code true}, then the {@code other} predicate is not evaluated.
@@ -307,26 +327,6 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
-	}
-
-	/**
-	 * Negate a {@code DoublePredicateWithException}.
-	 *
-	 * @param predicate
-	 *            to be negate
-	 * @param <T>
-	 *            the type of the first input object to the function
-	 * @param <U>
-	 *            the type of the second input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the negated predicate
-	 * @see #negate()
-	 */
-	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
-			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
 	}
 
 	/**

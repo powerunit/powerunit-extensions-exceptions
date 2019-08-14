@@ -163,6 +163,23 @@ public interface PredicateWithException<T, E extends Exception>
 	}
 
 	/**
+	 * Negate a {@code PredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <T>
+	 *            the type of the input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <T, E extends Exception> PredicateWithException<T, E> negate(PredicateWithException<T, E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
+	}
+
+	/**
 	 * Returns a composed predicate that represents a short-circuiting logical OR of
 	 * this predicate and another. When evaluating the composed predicate, if this
 	 * predicate is {@code true}, then the {@code other} predicate is not evaluated.
@@ -291,23 +308,6 @@ public interface PredicateWithException<T, E extends Exception>
 	static <T, E extends Exception> Predicate<T> ignored(PredicateWithException<T, E> predicate) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
-	}
-
-	/**
-	 * Negate a {@code PredicateWithException}.
-	 *
-	 * @param predicate
-	 *            to be negate
-	 * @param <T>
-	 *            the type of the input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the negated predicate
-	 * @see #negate()
-	 */
-	static <T, E extends Exception> PredicateWithException<T, E> negate(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
 	}
 
 	/**

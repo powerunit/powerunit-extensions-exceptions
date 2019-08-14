@@ -139,6 +139,21 @@ public interface IntPredicateWithException<E extends Exception>
 	}
 
 	/**
+	 * Negate a {@code IntPredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the negated predicate
+	 * @see #negate()
+	 */
+	static <E extends Exception> IntPredicateWithException<E> negate(IntPredicateWithException<E> predicate) {
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
+		return predicate.negate();
+	}
+
+	/**
 	 * Returns a composed predicate that represents a short-circuiting logical OR of
 	 * this predicate and another. When evaluating the composed predicate, if this
 	 * predicate is {@code true}, then the {@code other} predicate is not evaluated.
@@ -258,21 +273,6 @@ public interface IntPredicateWithException<E extends Exception>
 	static <E extends Exception> IntPredicate ignored(IntPredicateWithException<E> predicate) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
-	}
-
-	/**
-	 * Negate a {@code IntPredicateWithException}.
-	 *
-	 * @param predicate
-	 *            to be negate
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the negated predicate
-	 * @see #negate()
-	 */
-	static <E extends Exception> IntPredicateWithException<E> negate(IntPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
 	}
 
 }
