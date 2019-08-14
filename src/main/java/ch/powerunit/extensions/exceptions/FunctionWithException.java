@@ -106,16 +106,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #staged(FunctionWithException)
 	 */
 	default Function<T, CompletionStage<R>> stage() {
-		return t -> {
-			try {
-				return completedFuture(apply(t));
-			} catch (Exception e) {
-				// failedStage only available since 9
-				CompletableFuture<R> result = new CompletableFuture<>();
-				result.completeExceptionally(e);
-				return result;
-			}
-		};
+		return t -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t));
 	}
 
 	/**

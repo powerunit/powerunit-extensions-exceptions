@@ -101,16 +101,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #staged(SupplierWithException)
 	 */
 	default Supplier<CompletionStage<T>> stage() {
-		return () -> {
-			try {
-				return completedFuture(get());
-			} catch (Exception e) {
-				// failedStage only available since 9
-				CompletableFuture<T> result = new CompletableFuture<>();
-				result.completeExceptionally(e);
-				return result;
-			}
-		};
+		return () -> ObjectReturnExceptionHandlerSupport.staged(this::get);
 	}
 
 	/**

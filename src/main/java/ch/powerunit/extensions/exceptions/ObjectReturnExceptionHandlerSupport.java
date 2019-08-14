@@ -19,7 +19,11 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 /**
@@ -82,6 +86,28 @@ public interface ObjectReturnExceptionHandlerSupport<F, L> extends ExceptionHand
 		} catch (Exception e) {
 			// exceptionhandler must throw the exception if needed
 			return exceptionhandler.apply(e);
+		}
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @param internal
+	 *            the call to be done
+	 * @return the completion stage
+	 * @throws RuntimeException
+	 *             in case of error
+	 * @param <T>
+	 *            type of the return value
+	 */
+	static <T> CompletionStage<T> staged(Callable<T> internal) {
+		try {
+			return completedFuture(internal.call());
+		} catch (Exception e) {
+			// failedStage only available since 9
+			CompletableFuture<T> result = new CompletableFuture<>();
+			result.completeExceptionally(e);
+			return result;
 		}
 	}
 }

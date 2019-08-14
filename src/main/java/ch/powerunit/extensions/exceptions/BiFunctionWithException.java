@@ -112,16 +112,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @see #staged(BiFunctionWithException)
 	 */
 	default BiFunction<T, U, CompletionStage<R>> stage() {
-		return (t, u) -> {
-			try {
-				return completedFuture(apply(t, u));
-			} catch (Exception e) {
-				// failedStage only available since 9
-				CompletableFuture<R> result = new CompletableFuture<>();
-				result.completeExceptionally(e);
-				return result;
-			}
-		};
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t, u));
 	}
 
 	/**
