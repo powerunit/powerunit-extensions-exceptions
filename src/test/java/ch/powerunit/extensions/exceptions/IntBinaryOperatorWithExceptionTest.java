@@ -22,78 +22,78 @@ package ch.powerunit.extensions.exceptions;
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
-public class DoubleBinaryOperatorWithExceptionTest implements TestSuite {
+public class IntBinaryOperatorWithExceptionTest implements TestSuite {
 
 	@Test
 	public void testFailing() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.failing(Exception::new).applyAsDouble(1, 1), "x")
+		assertWhen((x) -> IntBinaryOperatorWithException.failing(Exception::new).applyAsInt(1, 1), "x")
 				.throwException(instanceOf(Exception.class));
 	}
 
 	@Test
 	public void testCheckedNoException() {
-		assertThat(DoubleBinaryOperatorWithException.unchecked((x, y) -> x + y).applyAsDouble(2, 1)).is(3d);
+		assertThat(IntBinaryOperatorWithException.unchecked((x, y) -> x + y).applyAsInt(2, 1)).is(3);
 	}
 
 	@Test
 	public void testCheckedException() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.unchecked((y, z) -> {
+		assertWhen((x) -> IntBinaryOperatorWithException.unchecked((y, z) -> {
 			throw new Exception();
-		}).applyAsDouble(1, 1)).throwException(instanceOf(WrappedException.class));
+		}).applyAsInt(1, 1)).throwException(instanceOf(WrappedException.class));
 	}
 
 	@Test
 	public void testCheckedExceptionHandler() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.unchecked((y, z) -> {
+		assertWhen((x) -> IntBinaryOperatorWithException.unchecked((y, z) -> {
 			throw new Exception();
-		}, RuntimeException::new).applyAsDouble(1, 1)).throwException(instanceOf(RuntimeException.class));
+		}, RuntimeException::new).applyAsInt(1, 1)).throwException(instanceOf(RuntimeException.class));
 	}
 
 	@Test
 	public void testLiftedNoException() {
-		assertThat(DoubleBinaryOperatorWithException.lifted((x, y) -> x + y).applyAsDouble(2, 1)).is(3d);
+		assertThat(IntBinaryOperatorWithException.lifted((x, y) -> x + y).applyAsInt(2, 1)).is(3);
 	}
 
 	@Test
 	public void testLiftedException() {
-		assertThat(DoubleBinaryOperatorWithException.lifted((x, y) -> {
+		assertThat(IntBinaryOperatorWithException.lifted((x, y) -> {
 			throw new Exception();
-		}).applyAsDouble(1, 2)).is(0d);
+		}).applyAsInt(1, 2)).is(0);
 	}
 
 	@Test
 	public void testIgnoredNoException() {
-		assertThat(DoubleBinaryOperatorWithException.ignored((x, y) -> x + y).applyAsDouble(2, 1)).is(3d);
+		assertThat(IntBinaryOperatorWithException.ignored((x, y) -> x + y).applyAsInt(2, 1)).is(3);
 	}
 
 	@Test
 	public void testIgnoredException() {
-		assertThat(DoubleBinaryOperatorWithException.ignored((x, y) -> {
+		assertThat(IntBinaryOperatorWithException.ignored((x, y) -> {
 			throw new Exception();
-		}).applyAsDouble(1, 2)).is(0d);
+		}).applyAsInt(1, 2)).is(0);
 	}
 
 	@Test
 	public void testAsConsumerNoException() throws Exception {
-		DoubleBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2d, 1d);
+		IntBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2, 1);
 	}
 
 	@Test
 	public void testAsConsumerException() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.biConsumer((y, z) -> {
+		assertWhen((x) -> IntBinaryOperatorWithException.biConsumer((y, z) -> {
 			throw new Exception();
-		}).accept(2d, 1d)).throwException(instanceOf(Exception.class));
+		}).accept(2, 1)).throwException(instanceOf(Exception.class));
 	}
 
 	@Test
 	public void testAsSupplierNoException() throws Exception {
-		DoubleBinaryOperatorWithException<Exception> fct = (x, y) -> x + y;
-		assertThat(fct.asSupplier(1, 2).get()).is(3d);
+		IntBinaryOperatorWithException<Exception> fct = (x, y) -> x + y;
+		assertThat(fct.asSupplier(1, 2).get()).is(3);
 	}
 
 	@Test
 	public void testAsSupplierException() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.failing(Exception::new).asSupplier(1, 2).get())
+		assertWhen((x) -> IntBinaryOperatorWithException.failing(Exception::new).asSupplier(1, 2).get())
 				.throwException(instanceOf(Exception.class));
 	}
 
