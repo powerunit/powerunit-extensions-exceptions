@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiConsumerWithException<T, U, E extends Exception>
-		extends ExceptionHandlerSupport<BiConsumer<T, U>, BiConsumer<T, U>> {
+		extends NoReturnExceptionHandlerSupport<BiConsumer<T, U>> {
 
 	/**
 	 * Performs this operation on the given arguments.
@@ -77,18 +77,6 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code BiConsumerWithException} to a <i>lifted</i>
-	 * {@code BiConsumer} ignoring exception.
-	 *
-	 * @return the operation that ignore error
-	 * @see #lifted(BiConsumerWithException)
-	 */
-	@Override
-	default BiConsumer<T, U> lift() {
-		return ignore();
 	}
 
 	/**

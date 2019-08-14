@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface RunnableWithException<E extends Exception> extends ExceptionHandlerSupport<Runnable, Runnable> {
+public interface RunnableWithException<E extends Exception> extends NoReturnExceptionHandlerSupport<Runnable> {
 
 	/**
 	 * Performs this operation.
@@ -66,24 +66,6 @@ public interface RunnableWithException<E extends Exception> extends ExceptionHan
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code RunnableWithException} to a <i>lifted</i>
-	 * {@code Runnable} ignoring exception.
-	 *
-	 * @return the operation that ignore error
-	 * @see #lifted(RunnableWithException)
-	 */
-	@Override
-	default Runnable lift() {
-		return () -> {
-			try {
-				run();
-			} catch (Exception e) {
-				// ignore
-			}
-		};
 	}
 
 	/**
