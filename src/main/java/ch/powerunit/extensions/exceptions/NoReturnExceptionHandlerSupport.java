@@ -19,6 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.util.function.Consumer;
+
 /**
  * Root interface to support global operations related to exception handling for
  * function interface without return value.
@@ -58,4 +60,23 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 	 */
 	@Override
 	F ignore();
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @param internal
+	 *            the call to be done
+	 * @param exceptionhandler
+	 *            the exception handler. May throw RuntimeException..
+	 * @throws RuntimeException
+	 *             in case of error
+	 */
+	static void unchecked(RunnableWithException<?> internal, Consumer<Exception> exceptionhandler) {
+		try {
+			internal.run();
+		} catch (Exception e) {
+			// exceptionhandler must throw the exception if needed
+			exceptionhandler.accept(e);
+		}
+	}
 }

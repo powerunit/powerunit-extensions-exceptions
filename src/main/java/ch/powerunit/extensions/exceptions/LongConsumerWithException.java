@@ -61,13 +61,9 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 */
 	@Override
 	default LongConsumer uncheck() {
-		return t -> {
-			try {
-				accept(t);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return (t) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -79,13 +75,8 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 */
 	@Override
 	default LongConsumer ignore() {
-		return t -> {
-			try {
-				accept(t);
-			} catch (Exception e) {
-				// ignore
-			}
-		};
+		return (t) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
+		});
 	}
 
 	/**

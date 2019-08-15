@@ -67,14 +67,9 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjIntConsumer<T> uncheck() {
-		return (t, u) -> {
-			try {
-				accept(t, u);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -86,13 +81,8 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjIntConsumer<T> ignore() {
-		return (t, u) -> {
-			try {
-				accept(t, u);
-			} catch (Exception e) {
-				// ignore
-			}
-		};
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), e -> {
+		});
 	}
 
 	/**

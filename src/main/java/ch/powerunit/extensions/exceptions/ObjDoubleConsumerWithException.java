@@ -66,14 +66,9 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjDoubleConsumer<T> uncheck() {
-		return (t, u) -> {
-			try {
-				accept(t, u);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), e -> {
+			throw exceptionMapper().apply(e);
+		});
 	}
 
 	/**
@@ -85,13 +80,8 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjDoubleConsumer<T> ignore() {
-		return (t, u) -> {
-			try {
-				accept(t, u);
-			} catch (Exception e) {
-				// ignore
-			}
-		};
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), e -> {
+		});
 	}
 
 	/**
