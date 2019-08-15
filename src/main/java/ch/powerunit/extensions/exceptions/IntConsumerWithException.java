@@ -23,8 +23,8 @@ import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.DoubleConsumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -33,13 +33,12 @@ import java.util.function.Supplier;
  * {@code Consumer} is expected to operate via side-effects.
  *
  * @author borettim
- * @see DoubleConsumer
+ * @see IntConsumer
  * @param <E>
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface DoubleConsumerWithException<E extends Exception>
-		extends NoReturnExceptionHandlerSupport<DoubleConsumer> {
+public interface IntConsumerWithException<E extends Exception> extends NoReturnExceptionHandlerSupport<IntConsumer> {
 
 	/**
 	 * Performs this operation on the given argument.
@@ -48,20 +47,20 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            the input argument
 	 * @throws E
 	 *             any exception
-	 * @see DoubleConsumer#accept(double)
+	 * @see IntConsumer#accept(int)
 	 */
-	void accept(double t) throws E;
+	void accept(int t) throws E;
 
 	/**
-	 * Converts this {@code DoubleConsumerWithException} to a {@code DoubleConsumer}
-	 * that convert exception to {@code RuntimeException}.
+	 * Converts this {@code IntConsumerWithException} to a {@code IntConsumer} that
+	 * convert exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
-	 * @see #unchecked(DoubleConsumerWithException)
-	 * @see #unchecked(DoubleConsumerWithException, Function)
+	 * @see #unchecked(IntConsumerWithException)
+	 * @see #unchecked(IntConsumerWithException, Function)
 	 */
 	@Override
-	default DoubleConsumer uncheck() {
+	default IntConsumer uncheck() {
 		return t -> {
 			try {
 				accept(t);
@@ -72,14 +71,14 @@ public interface DoubleConsumerWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleConsumerWithException} to a <i>lifted</i>
-	 * {@code DoubleConsumer} ignoring exception.
+	 * Converts this {@code IntConsumerWithException} to a <i>lifted</i>
+	 * {@code IntConsumer} ignoring exception.
 	 *
 	 * @return the operation that ignore error
-	 * @see #ignored(DoubleConsumerWithException)
+	 * @see #ignored(IntConsumerWithException)
 	 */
 	@Override
-	default DoubleConsumer ignore() {
+	default IntConsumer ignore() {
 		return t -> {
 			try {
 				accept(t);
@@ -90,13 +89,13 @@ public interface DoubleConsumerWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code DoubleConsumerWithException} to a
+	 * Transforms this {@code IntConsumerWithException} to a
 	 * {@code FunctionWithException} that returns nothing.
 	 *
 	 * @return the function
-	 * @see #function(DoubleConsumerWithException)
+	 * @see #function(IntConsumerWithException)
 	 */
-	default FunctionWithException<Double, Void, E> asFunction() {
+	default FunctionWithException<Integer, Void, E> asFunction() {
 		return t -> {
 			accept(t);
 			return null;
@@ -104,7 +103,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	}
 
 	/**
-	 * Returns a composed {@code DoubleConsumerWithException} that performs, in
+	 * Returns a composed {@code IntConsumerWithException} that performs, in
 	 * sequence, this operation followed by the {@code after} operation. If
 	 * performing either operation throws an exception, it is relayed to the caller
 	 * of the composed operation. If performing this operation throws an exception,
@@ -112,15 +111,15 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *
 	 * @param after
 	 *            the operation to perform after this operation
-	 * @return a composed {@code DoubleConsumer} that performs in sequence this
+	 * @return a composed {@code IntConsumer} that performs in sequence this
 	 *         operation followed by the {@code after} operation
 	 * @throws NullPointerException
 	 *             if {@code after} is null
 	 *
 	 *
-	 * @see DoubleConsumer#andThen(DoubleConsumer)
+	 * @see IntConsumer#andThen(IntConsumer)
 	 */
-	default DoubleConsumerWithException<E> andThen(DoubleConsumerWithException<? extends E> after) {
+	default IntConsumerWithException<E> andThen(IntConsumerWithException<? extends E> after) {
 		requireNonNull(after);
 		return t -> {
 			accept(t);
@@ -137,15 +136,15 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            the type of the exception
 	 * @return an operation that always throw exception
 	 */
-	static <E extends Exception> DoubleConsumerWithException<E> failing(Supplier<E> exceptionBuilder) {
+	static <E extends Exception> IntConsumerWithException<E> failing(Supplier<E> exceptionBuilder) {
 		return t -> {
 			throw exceptionBuilder.get();
 		};
 	}
 
 	/**
-	 * Converts a {@code DoubleConsumerWithException} to a {@code DoubleConsumer}
-	 * that convert exception to {@code RuntimeException}.
+	 * Converts a {@code IntConsumerWithException} to a {@code IntConsumer} that
+	 * convert exception to {@code RuntimeException}.
 	 *
 	 * @param operation
 	 *            to be unchecked
@@ -153,17 +152,17 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(DoubleConsumerWithException, Function)
+	 * @see #unchecked(IntConsumerWithException, Function)
 	 */
-	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation) {
+	static <E extends Exception> IntConsumer unchecked(IntConsumerWithException<E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.uncheck();
 	}
 
 	/**
-	 * Converts a {@code DoubleConsumerWithException} to a {@code DoubleConsumer}
-	 * that convert exception to {@code RuntimeException} by using the provided
-	 * mapping function.
+	 * Converts a {@code IntConsumerWithException} to a {@code IntConsumer} that
+	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * function.
 	 *
 	 * @param operation
 	 *            the be unchecked
@@ -173,16 +172,16 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(DoubleConsumerWithException)
+	 * @see #unchecked(IntConsumerWithException)
 	 */
-	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation,
+	static <E extends Exception> IntConsumer unchecked(IntConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
-		return new DoubleConsumerWithException<E>() {
+		return new IntConsumerWithException<E>() {
 
 			@Override
-			public void accept(double t) throws E {
+			public void accept(int t) throws E {
 				operation.accept(t);
 			}
 
@@ -195,8 +194,8 @@ public interface DoubleConsumerWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleConsumerWithException} to a lifted
-	 * {@code DoubleConsumer} returning {@code null} in case of exception.
+	 * Converts a {@code IntConsumerWithException} to a lifted {@code IntConsumer}
+	 * returning {@code null} in case of exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -205,14 +204,14 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @return the lifted operation
 	 * @see #lift()
 	 */
-	static <E extends Exception> DoubleConsumer lifted(DoubleConsumerWithException<E> operation) {
+	static <E extends Exception> IntConsumer lifted(IntConsumerWithException<E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.lift();
 	}
 
 	/**
-	 * Converts a {@code DoubleConsumerWithException} to a lifted
-	 * {@code DoubleConsumer} returning {@code null} in case of exception.
+	 * Converts a {@code IntConsumerWithException} to a lifted {@code IntConsumer}
+	 * returning {@code null} in case of exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -221,7 +220,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @return the lifted operation
 	 * @see #ignore()
 	 */
-	static <E extends Exception> DoubleConsumer ignored(DoubleConsumerWithException<E> operation) {
+	static <E extends Exception> IntConsumer ignored(IntConsumerWithException<E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
 	}
@@ -237,8 +236,8 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @return the function
 	 * @see #asFunction()
 	 */
-	static <E extends Exception> FunctionWithException<Double, Void, E> function(
-			DoubleConsumerWithException<E> operation) {
+	static <E extends Exception> FunctionWithException<Integer, Void, E> function(
+			IntConsumerWithException<E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.asFunction();
 	}
