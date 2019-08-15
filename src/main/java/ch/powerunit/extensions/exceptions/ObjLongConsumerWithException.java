@@ -23,9 +23,8 @@ import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.ObjIntConsumer;
+import java.util.function.ObjLongConsumer;
 import java.util.function.Supplier;
 
 /**
@@ -34,15 +33,15 @@ import java.util.function.Supplier;
  * {@code Consumer} is expected to operate via side-effects.
  *
  * @author borettim
- * @see Consumer
+ * @see ObjLongConsumer
  * @param <T>
  *            the type of the input to the operation
  * @param <E>
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface ObjIntConsumerWithException<T, E extends Exception>
-		extends NoReturnExceptionHandlerSupport<ObjIntConsumer<T>> {
+public interface ObjLongConsumerWithException<T, E extends Exception>
+		extends NoReturnExceptionHandlerSupport<ObjLongConsumer<T>> {
 
 	/**
 	 * Performs this operation on the given arguments.
@@ -53,20 +52,20 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 *            the second input argument
 	 * @throws E
 	 *             any exception
-	 * @see ObjIntConsumer#accept(Object,int)
+	 * @see ObjLongConsumer#accept(Object,long)
 	 */
-	void accept(T t, int u) throws E;
+	void accept(T t, long u) throws E;
 
 	/**
-	 * Converts this {@code ObjIntConsumerWithException} to a {@code ObjIntConsumer}
-	 * that convert exception to {@code RuntimeException}.
+	 * Converts this {@code ObjLongConsumerWithException} to a
+	 * {@code ObjLongConsumer} that convert exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
-	 * @see #unchecked(ObjIntConsumerWithException)
-	 * @see #unchecked(ObjIntConsumerWithException, Function)
+	 * @see #unchecked(ObjLongConsumerWithException)
+	 * @see #unchecked(ObjLongConsumerWithException, Function)
 	 */
 	@Override
-	default ObjIntConsumer<T> uncheck() {
+	default ObjLongConsumer<T> uncheck() {
 		return (t, u) -> {
 			try {
 				accept(t, u);
@@ -78,14 +77,14 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code ObjIntConsumerWithException} to a <i>lifted</i>
-	 * {@code ObjIntConsumer} ignoring exception.
+	 * Converts this {@code ObjLongConsumerWithException} to a <i>lifted</i>
+	 * {@code ObjLongConsumer} ignoring exception.
 	 *
 	 * @return the operation that ignore error
-	 * @see #ignored(ObjIntConsumerWithException)
+	 * @see #ignored(ObjLongConsumerWithException)
 	 */
 	@Override
-	default ObjIntConsumer<T> ignore() {
+	default ObjLongConsumer<T> ignore() {
 		return (t, u) -> {
 			try {
 				accept(t, u);
@@ -96,13 +95,13 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code ObjIntConsumerWithException} to a
+	 * Transforms this {@code ObjLongConsumerWithException} to a
 	 * {@code BiFunctionWithException} that returns nothing.
 	 *
 	 * @return the function
-	 * @see #biFunction(ObjIntConsumerWithException)
+	 * @see #biFunction(ObjLongConsumerWithException)
 	 */
-	default BiFunctionWithException<T, Integer, Void, E> asBiFunction() {
+	default BiFunctionWithException<T, Long, Void, E> asBiFunction() {
 		return (t, u) -> {
 			accept(t, u);
 			return null;
@@ -120,7 +119,7 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 *            the type of the exception
 	 * @return an operation that always throw exception
 	 */
-	static <T, E extends Exception> ObjIntConsumerWithException<T, E> failing(Supplier<E> exceptionBuilder) {
+	static <T, E extends Exception> ObjLongConsumerWithException<T, E> failing(Supplier<E> exceptionBuilder) {
 		return (t, u) -> {
 			throw exceptionBuilder.get();
 		};
@@ -138,15 +137,15 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(ObjIntConsumerWithException, Function)
+	 * @see #unchecked(ObjLongConsumerWithException, Function)
 	 */
-	static <T, E extends Exception> ObjIntConsumer<T> unchecked(ObjIntConsumerWithException<T, E> operation) {
+	static <T, E extends Exception> ObjLongConsumer<T> unchecked(ObjLongConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.uncheck();
 	}
 
 	/**
-	 * Converts a {@code ObjIntConsumerWithException} to a {@code ObjIntConsumer}
+	 * Converts a {@code ObjLongConsumerWithException} to a {@code ObjLongConsumer}
 	 * that convert exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
@@ -160,16 +159,16 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(ObjIntConsumerWithException)
+	 * @see #unchecked(ObjLongConsumerWithException)
 	 */
-	static <T, E extends Exception> ObjIntConsumer<T> unchecked(ObjIntConsumerWithException<T, E> operation,
+	static <T, E extends Exception> ObjLongConsumer<T> unchecked(ObjLongConsumerWithException<T, E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
-		return new ObjIntConsumerWithException<T, E>() {
+		return new ObjLongConsumerWithException<T, E>() {
 
 			@Override
-			public void accept(T t, int u) throws E {
+			public void accept(T t, long u) throws E {
 				operation.accept(t, u);
 			}
 
@@ -182,8 +181,8 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code ObjIntConsumerWithException} to a lifted
-	 * {@code ObjIntConsumer} returning {@code null} in case of exception.
+	 * Converts a {@code ObjLongConsumerWithException} to a lifted
+	 * {@code ObjLongConsumer} returning {@code null} in case of exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -194,14 +193,14 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 * @return the lifted operation
 	 * @see #lift()
 	 */
-	static <T, E extends Exception> ObjIntConsumer<T> lifted(ObjIntConsumerWithException<T, E> operation) {
+	static <T, E extends Exception> ObjLongConsumer<T> lifted(ObjLongConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.lift();
 	}
 
 	/**
-	 * Converts a {@code ObjIntConsumerWithException} to a lifted
-	 * {@code ObjIntConsumer} returning {@code null} in case of exception.
+	 * Converts a {@code ObjLongConsumerWithException} to a lifted
+	 * {@code ObjLongConsumer} returning {@code null} in case of exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -212,14 +211,14 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 * @return the lifted operation
 	 * @see #ignore()
 	 */
-	static <T, E extends Exception> ObjIntConsumer<T> ignored(ObjIntConsumerWithException<T, E> operation) {
+	static <T, E extends Exception> ObjLongConsumer<T> ignored(ObjLongConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
 	}
 
 	/**
-	 * Transforms a {@code ObjIntConsumerWithException} to a
-	 * {@code ObjIntConsumerWithException} that returns nothing.
+	 * Transforms a {@code ObjLongConsumerWithException} to a
+	 * {@code ObjLongConsumerWithException} that returns nothing.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -230,8 +229,8 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	 * @return the function
 	 * @see #asBiFunction()
 	 */
-	static <T, E extends Exception> BiFunctionWithException<T, Integer, Void, E> biFunction(
-			ObjIntConsumerWithException<T, E> operation) {
+	static <T, E extends Exception> BiFunctionWithException<T, Long, Void, E> biFunction(
+			ObjLongConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.asBiFunction();
 	}
