@@ -77,20 +77,6 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	}
 
 	/**
-	 * Transforms this {@code LongConsumerWithException} to a
-	 * {@code FunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #function(LongConsumerWithException)
-	 */
-	default FunctionWithException<Long, Void, E> asFunction() {
-		return t -> {
-			accept(t);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns a composed {@code LongConsumerWithException} that performs, in
 	 * sequence, this operation followed by the {@code after} operation. If
 	 * performing either operation throws an exception, it is relayed to the caller
@@ -212,21 +198,4 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
 	}
-
-	/**
-	 * Transforms a {@code ConsumerWithException} to a {@code FunctionWithException}
-	 * that returns nothing.
-	 *
-	 * @param operation
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <E extends Exception> FunctionWithException<Long, Void, E> function(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asFunction();
-	}
-
 }

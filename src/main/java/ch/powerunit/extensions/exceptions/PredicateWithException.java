@@ -105,28 +105,6 @@ public interface PredicateWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(PredicateWithException)
-	 */
-	default ConsumerWithException<T, E> asConsumer() {
-		return this::test;
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @return the function
-	 * @see #function(PredicateWithException)
-	 */
-	default FunctionWithException<T, Boolean, Exception> asFunction() {
-		return this::test;
-	}
-
-	/**
 	 * Returns a composed predicate that represents a short-circuiting logical AND
 	 * of this predicate and another. When evaluating the composed predicate, if
 	 * this predicate is {@code false}, then the {@code other} predicate is not
@@ -308,43 +286,6 @@ public interface PredicateWithException<T, E extends Exception>
 	static <T, E extends Exception> Predicate<T> ignored(PredicateWithException<T, E> predicate) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <T, E extends Exception> ConsumerWithException<T, E> consumer(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asConsumer();
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Boolean, Exception> function(
-			PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asFunction();
 	}
 
 }

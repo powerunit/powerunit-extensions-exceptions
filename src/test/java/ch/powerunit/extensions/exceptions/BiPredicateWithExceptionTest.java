@@ -145,28 +145,4 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 		}).test("x", "x")).is(false);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		BiPredicateWithException.biConsumer((x, y) -> true).accept("2", "3");
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> BiPredicateWithException.biConsumer((y, z) -> {
-			throw new Exception();
-		}).accept("2", "3")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsFunctionNoException() throws Exception {
-		BiPredicateWithException<String, String, Exception> fct = (x, y) -> true;
-		assertThat(fct.asBiFunction().apply("x", "y")).is(true);
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> BiPredicateWithException.failing(Exception::new).asBiFunction().apply("x", "y"))
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

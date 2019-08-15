@@ -101,29 +101,6 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code LongUnaryOperatorWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(LongUnaryOperatorWithException)
-	 */
-	default ConsumerWithException<Long, Exception> asConsumer() {
-		return this::applyAsLong;
-	}
-
-	/**
-	 * Transforms this {@code LongUnaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Long, Exception> asSupplier(int t) {
-		return () -> applyAsLong(t);
-	}
-
-	/**
 	 * Returns a composed operator that first applies the {@code before} operator to
 	 * its input, and then applies this operator to the result. If evaluation of
 	 * either operator throws an exception, it is relayed to the caller of the
@@ -271,23 +248,6 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code LongUnaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <E extends Exception> ConsumerWithException<Long, Exception> consumer(
-			LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asConsumer();
 	}
 
 }

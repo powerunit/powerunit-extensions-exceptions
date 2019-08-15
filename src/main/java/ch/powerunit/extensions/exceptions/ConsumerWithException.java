@@ -79,20 +79,6 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	}
 
 	/**
-	 * Transforms this {@code ConsumerWithException} to a
-	 * {@code FunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #function(ConsumerWithException)
-	 */
-	default FunctionWithException<T, Void, E> asFunction() {
-		return t -> {
-			accept(t);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns a composed {@code ConsumerWithException} that performs, in sequence,
 	 * this operation followed by the {@code after} operation. If performing either
 	 * operation throws an exception, it is relayed to the caller of the composed
@@ -222,24 +208,6 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	static <T, E extends Exception> Consumer<T> ignored(ConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
-	}
-
-	/**
-	 * Transforms a {@code ConsumerWithException} to a {@code FunctionWithException}
-	 * that returns nothing.
-	 *
-	 * @param operation
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Void, E> function(ConsumerWithException<T, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asFunction();
 	}
 
 }

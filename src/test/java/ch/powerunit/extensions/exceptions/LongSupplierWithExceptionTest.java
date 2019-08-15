@@ -74,28 +74,4 @@ public class LongSupplierWithExceptionTest implements TestSuite {
 		}).getAsLong()).is(0L);
 	}
 
-	@Test
-	public void testAsFunctionNoException() throws Exception {
-		assertThat(LongSupplierWithException.function(() -> 1).apply(1)).is(1L);
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> LongSupplierWithException.function(() -> {
-			throw new Exception();
-		}).apply("1")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		assertThat(LongSupplierWithException.supplier(() -> 1).get()).is(1L);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> LongSupplierWithException.supplier(() -> {
-			throw new Exception();
-		}).get()).throwException(instanceOf(Exception.class));
-	}
-
 }

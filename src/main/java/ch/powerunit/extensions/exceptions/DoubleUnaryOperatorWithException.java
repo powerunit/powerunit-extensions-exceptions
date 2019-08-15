@@ -102,29 +102,6 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(DoubleUnaryOperatorWithException)
-	 */
-	default ConsumerWithException<Double, Exception> asConsumer() {
-		return this::applyAsDouble;
-	}
-
-	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Double, Exception> asSupplier(double t) {
-		return () -> applyAsDouble(t);
-	}
-
-	/**
 	 * Returns a composed operator that first applies the {@code before} operator to
 	 * its input, and then applies this operator to the result. If evaluation of
 	 * either operator throws an exception, it is relayed to the caller of the
@@ -273,23 +250,6 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	static <E extends Exception> DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <E extends Exception> ConsumerWithException<Double, Exception> consumer(
-			DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asConsumer();
 	}
 
 }

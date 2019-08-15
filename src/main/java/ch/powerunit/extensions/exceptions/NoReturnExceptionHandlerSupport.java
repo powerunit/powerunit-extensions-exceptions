@@ -19,6 +19,10 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static java.util.concurrent.CompletableFuture.completedFuture;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 
 /**
@@ -77,6 +81,27 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 		} catch (Exception e) {
 			// exceptionhandler must throw the exception if needed
 			exceptionhandler.accept(e);
+		}
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @param internal
+	 *            the call to be done
+	 * @return the completion stage
+	 * @throws RuntimeException
+	 *             in case of error
+	 */
+	static CompletionStage<Void> staged(RunnableWithException<?> internal) {
+		try {
+			internal.run();
+			return completedFuture(null);
+		} catch (Exception e) {
+			// failedStage only available since 9
+			CompletableFuture<Void> result = new CompletableFuture<>();
+			result.completeExceptionally(e);
+			return result;
 		}
 	}
 

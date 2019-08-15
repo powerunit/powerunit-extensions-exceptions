@@ -82,20 +82,6 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code ObjLongConsumerWithException} to a
-	 * {@code BiFunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #biFunction(ObjDoubleConsumerWithException)
-	 */
-	default BiFunctionWithException<T, Double, Void, E> asBiFunction() {
-		return (t, u) -> {
-			accept(t, u);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns an operation that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -201,25 +187,6 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	static <T, E extends Exception> ObjDoubleConsumer<T> ignored(ObjDoubleConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
-	}
-
-	/**
-	 * Transforms a {@code ObjLongConsumerWithException} to a
-	 * {@code ObjLongConsumerWithException} that returns nothing.
-	 *
-	 * @param operation
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the first input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asBiFunction()
-	 */
-	static <T, E extends Exception> BiFunctionWithException<T, Double, Void, E> biFunction(
-			ObjDoubleConsumerWithException<T, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asBiFunction();
 	}
 
 }

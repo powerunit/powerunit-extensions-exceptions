@@ -100,31 +100,6 @@ public interface IntSupplierWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code IntSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T>
-	 *            The type for the input parameter of the function
-	 *
-	 * @return the function
-	 * @see #function(IntSupplierWithException)
-	 */
-	default <T> FunctionWithException<T, Integer, E> asFunction() {
-		return t -> getAsInt();
-	}
-
-	/**
-	 * Transforms this {@code IntSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @return the function
-	 * @see #supplier(IntSupplierWithException)
-	 */
-	default SupplierWithException<Integer, E> asSupplier() {
-		return this::getAsInt;
-	}
-
-	/**
 	 * Returns a supplier that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -220,41 +195,6 @@ public interface IntSupplierWithException<E extends Exception>
 	static <E extends Exception> IntSupplier ignored(IntSupplierWithException<E> supplier) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.ignore();
-	}
-
-	/**
-	 * Transforms a {@code IntSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Integer, E> function(
-			IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code IntSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asSupplier()
-	 */
-	static <E extends Exception> SupplierWithException<Integer, E> supplier(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asSupplier();
 	}
 
 }

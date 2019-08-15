@@ -106,31 +106,6 @@ public interface BooleanSupplierWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code BooleanSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T>
-	 *            The type for the input parameter of the function
-	 *
-	 * @return the function
-	 * @see #function(BooleanSupplierWithException)
-	 */
-	default <T> FunctionWithException<T, Boolean, E> asFunction() {
-		return t -> getAsBoolean();
-	}
-
-	/**
-	 * Transforms this {@code BooleanSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @return the function
-	 * @see #supplier(BooleanSupplierWithException)
-	 */
-	default SupplierWithException<Boolean, E> asSupplier() {
-		return this::getAsBoolean;
-	}
-
-	/**
 	 * Returns a supplier that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -226,41 +201,6 @@ public interface BooleanSupplierWithException<E extends Exception>
 	static <E extends Exception> BooleanSupplier ignored(BooleanSupplierWithException<E> supplier) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
 		return supplier.ignore();
-	}
-
-	/**
-	 * Transforms a {@code BooleanSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Boolean, E> function(
-			BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code BooleanSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asSupplier()
-	 */
-	static <E extends Exception> SupplierWithException<Boolean, E> supplier(BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asSupplier();
 	}
 
 }

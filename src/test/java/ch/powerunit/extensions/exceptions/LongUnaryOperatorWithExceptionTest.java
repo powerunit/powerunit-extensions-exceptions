@@ -93,28 +93,4 @@ public class LongUnaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsLong(1)).is(0L);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		LongUnaryOperatorWithException.consumer(x -> x + 1).accept(2L);
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> LongUnaryOperatorWithException.consumer(y -> {
-			throw new Exception();
-		}).accept(2L)).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		LongUnaryOperatorWithException<Exception> fct = x -> x + 1;
-		assertThat(fct.asSupplier(2).get()).is(3L);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> LongUnaryOperatorWithException.failing(Exception::new).asSupplier(1).get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

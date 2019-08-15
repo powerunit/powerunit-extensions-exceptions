@@ -104,31 +104,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #biConsumer(DoubleBinaryOperatorWithException)
-	 */
-	default BiConsumerWithException<Double, Double, Exception> asBiConsumer() {
-		return this::applyAsDouble;
-	}
-
-	/**
-	 * Transforms this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @param u
-	 *            the second input for the generated suppoler.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Double, Exception> asSupplier(double t, double u) {
-		return () -> applyAsDouble(t, u);
-	}
-
-	/**
 	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -225,23 +200,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	static <E extends Exception> DoubleBinaryOperator ignored(DoubleBinaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <E extends Exception> BiConsumerWithException<Double, Double, Exception> biConsumer(
-			DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asBiConsumer();
 	}
 
 }

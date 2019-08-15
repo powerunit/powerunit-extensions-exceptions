@@ -93,28 +93,4 @@ public class IntUnaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsInt(1)).is(0);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		IntUnaryOperatorWithException.consumer(x -> x + 1).accept(2);
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> IntUnaryOperatorWithException.consumer(y -> {
-			throw new Exception();
-		}).accept(2)).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		IntUnaryOperatorWithException<Exception> fct = x -> x + 1;
-		assertThat(fct.asSupplier(2).get()).is(3);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> IntUnaryOperatorWithException.failing(Exception::new).asSupplier(1).get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

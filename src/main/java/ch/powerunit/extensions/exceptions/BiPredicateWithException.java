@@ -110,28 +110,6 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #biConsumer(BiPredicateWithException)
-	 */
-	default BiConsumerWithException<T, U, E> asBiConsumer() {
-		return this::test;
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiFunctionWithException}.
-	 *
-	 * @return the function
-	 * @see #biFunction(BiPredicateWithException)
-	 */
-	default BiFunctionWithException<T, U, Boolean, E> asBiFunction() {
-		return this::test;
-	}
-
-	/**
 	 * Returns a composed predicate that represents a short-circuiting logical AND
 	 * of this predicate and another. When evaluating the composed predicate, if
 	 * this predicate is {@code false}, then the {@code other} predicate is not
@@ -327,48 +305,6 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		return predicate.ignore();
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the first input object to the function
-	 * @param <U>
-	 *            the type of the second input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <T, U, E extends Exception> BiConsumerWithException<T, U, E> biConsumer(
-			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asBiConsumer();
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiFunctionWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the first input object to the function
-	 * @param <U>
-	 *            the type of the second input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiFunction()
-	 */
-	static <T, U, E extends Exception> BiFunctionWithException<T, U, Boolean, E> biFunction(
-			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asBiFunction();
 	}
 
 }

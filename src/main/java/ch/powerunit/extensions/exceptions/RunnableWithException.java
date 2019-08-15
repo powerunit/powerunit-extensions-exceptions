@@ -74,35 +74,6 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	}
 
 	/**
-	 * Transforms this {@code RunnableWithException} to a
-	 * {@code FunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @param <T>
-	 *            The type for the ignored input parameter
-	 * @see #function(RunnableWithException)
-	 */
-	default <T> FunctionWithException<T, Void, E> asFunction() {
-		return t -> {
-			run();
-			return null;
-		};
-	}
-
-	/**
-	 * Transforms this {@code RunnableWithException} to a
-	 * {@code ConsumerWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @param <T>
-	 *            The type for the ignored input parameter
-	 * @see #function(RunnableWithException)
-	 */
-	default <T> ConsumerWithException<T, E> asConsumer() {
-		return t -> run();
-	}
-
-	/**
 	 * Returns an operation that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -197,42 +168,6 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	static <E extends Exception> Runnable ignored(RunnableWithException<E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
-	}
-
-	/**
-	 * Transforms a {@code RunnableWithException} to a {@code FunctionWithException}
-	 * that returns nothing.
-	 *
-	 * @param operation
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Void, E> function(RunnableWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code RunnableWithException} to a {@code ConsumerWithException}
-	 * that returns nothing.
-	 *
-	 * @param operation
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> ConsumerWithException<T, E> consumer(RunnableWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asConsumer();
 	}
 
 }

@@ -19,8 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import java.util.concurrent.CompletionException;
-
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
@@ -78,31 +76,4 @@ public class RunnableWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).run();
 	}
-
-	@Test
-	public void testAsFunctionNoException() {
-		assertThat(RunnableWithException.function(() -> {
-		}).stage().apply("2").toCompletableFuture().join()).isNull();
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> RunnableWithException.function(() -> {
-			throw new Exception();
-		}).stage().apply("x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
-	}
-
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		RunnableWithException.consumer(() -> {
-		}).accept("2");
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> RunnableWithException.consumer(() -> {
-			throw new Exception();
-		}).accept("x")).throwException(instanceOf(Exception.class));
-	}
-
 }

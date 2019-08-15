@@ -158,23 +158,4 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 		return function.ignore();
 	}
 
-	/**
-	 * Transforms this {@code BinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input and output object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <T, E extends Exception> BiConsumerWithException<T, T, Exception> asBiConsumer(
-			BinaryOperatorWithException<T, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asBiConsumer();
-	}
-
 }

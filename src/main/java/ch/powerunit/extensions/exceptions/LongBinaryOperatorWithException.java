@@ -104,31 +104,6 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code LongBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #biConsumer(LongBinaryOperatorWithException)
-	 */
-	default BiConsumerWithException<Long, Long, Exception> asBiConsumer() {
-		return this::applyAsLong;
-	}
-
-	/**
-	 * Transforms this {@code LongBinaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @param u
-	 *            the second input for the generated suppoler.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Long, Exception> asSupplier(long t, long u) {
-		return () -> applyAsLong(t, u);
-	}
-
-	/**
 	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -225,23 +200,6 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	static <E extends Exception> LongBinaryOperator ignored(LongBinaryOperatorWithException<E> function) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code LongBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <E extends Exception> BiConsumerWithException<Long, Long, Exception> biConsumer(
-			LongBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asBiConsumer();
 	}
 
 }

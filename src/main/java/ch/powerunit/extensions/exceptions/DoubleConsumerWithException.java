@@ -78,20 +78,6 @@ public interface DoubleConsumerWithException<E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code DoubleConsumerWithException} to a
-	 * {@code FunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #function(DoubleConsumerWithException)
-	 */
-	default FunctionWithException<Double, Void, E> asFunction() {
-		return t -> {
-			accept(t);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns a composed {@code DoubleConsumerWithException} that performs, in
 	 * sequence, this operation followed by the {@code after} operation. If
 	 * performing either operation throws an exception, it is relayed to the caller
@@ -212,23 +198,6 @@ public interface DoubleConsumerWithException<E extends Exception>
 	static <E extends Exception> DoubleConsumer ignored(DoubleConsumerWithException<E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		return operation.ignore();
-	}
-
-	/**
-	 * Transforms a {@code ConsumerWithException} to a {@code FunctionWithException}
-	 * that returns nothing.
-	 *
-	 * @param operation
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <E extends Exception> FunctionWithException<Double, Void, E> function(
-			DoubleConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asFunction();
 	}
 
 }

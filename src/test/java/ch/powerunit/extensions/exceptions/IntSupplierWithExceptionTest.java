@@ -74,28 +74,4 @@ public class IntSupplierWithExceptionTest implements TestSuite {
 		}).getAsInt()).is(0);
 	}
 
-	@Test
-	public void testAsFunctionNoException() throws Exception {
-		assertThat(IntSupplierWithException.function(() -> 1).apply(1)).is(1);
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> IntSupplierWithException.function(() -> {
-			throw new Exception();
-		}).apply("1")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		assertThat(IntSupplierWithException.supplier(() -> 1).get()).is(1);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> IntSupplierWithException.supplier(() -> {
-			throw new Exception();
-		}).get()).throwException(instanceOf(Exception.class));
-	}
-
 }
