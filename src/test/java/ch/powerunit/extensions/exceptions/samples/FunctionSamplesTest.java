@@ -20,6 +20,7 @@
 package ch.powerunit.extensions.exceptions.samples;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.function.Function;
 
 import ch.powerunit.TestSuite;
@@ -48,6 +49,17 @@ public class FunctionSamplesTest implements TestSuite {
 
 		assertWhen(x -> functionThrowingRuntimeException.apply(x), "x")
 				.throwException(instanceOf(IllegalArgumentException.class));
+
+	}
+
+	public void sample3() {
+
+		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> x;
+
+		Function<String, Optional<String>> functionWithOptionalResult = FunctionWithException
+				.lifted(fonctionThrowingException);
+
+		assertThatFunction(functionWithOptionalResult, "x").is(optionalIs("x"));
 
 	}
 

@@ -47,6 +47,16 @@
  *                                  );
  * </pre>
  * 
+ * When the exception should not be thrown in case of error, it is possible to
+ * create a {@code Function} with {@code Optional} result :
+ * 
+ * <pre>
+ * FunctionWithException&lt;String, String, IOException&gt; fonctionThrowingException = ...;
+ * 
+ * Function&lt;String, Optional&lt;String&gt;&gt; functionWithOptionalResult = 
+ *   FunctionWithException.lifted(fonctionThrowingException);
+ * </pre>
+ * 
  * @see java.util.function
  * 
  */
