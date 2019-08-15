@@ -21,6 +21,7 @@ package ch.powerunit.extensions.exceptions;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -35,8 +36,10 @@ import java.util.function.Function;
  *            the type of the java standard function interface
  * @param <L>
  *            the type of the lifted function interface
+ * @param <T>
+ *            the type of the return type
  */
-public interface ObjectReturnExceptionHandlerSupport<F, L> extends ExceptionHandlerSupport<F, L> {
+public interface ObjectReturnExceptionHandlerSupport<F, L, T> extends ExceptionHandlerSupport<F, L> {
 
 	/**
 	 * Converts this function interface to the corresponding one in java and wrap
@@ -109,5 +112,25 @@ public interface ObjectReturnExceptionHandlerSupport<F, L> extends ExceptionHand
 			result.completeExceptionally(e);
 			return result;
 		}
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @return exception handler to support exception control
+	 */
+	default Function<Exception, T> throwingHandler() {
+		return e -> {
+			throw exceptionMapper().apply(e);
+		};
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @return exception handler to ignore exception
+	 */
+	default Function<Exception, Optional<T>> notThrowingHandler() {
+		return e -> Optional.empty();
 	}
 }

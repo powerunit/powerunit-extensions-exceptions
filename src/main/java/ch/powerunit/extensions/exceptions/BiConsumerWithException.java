@@ -69,14 +69,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	@Override
 	default BiConsumer<T, U> uncheck() {
-		return (t, u) -> {
-			try {
-				accept(t, u);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), throwingHandler());
 	}
 
 	/**
@@ -88,13 +81,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	@Override
 	default BiConsumer<T, U> ignore() {
-		return (t, u) -> {
-			try {
-				accept(t, u);
-			} catch (Exception e) {
-				// ignore
-			}
-		};
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), notThrowingHandler());
 	}
 
 	/**

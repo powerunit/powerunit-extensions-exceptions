@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FunctionWithException<T, R, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>> {
+		extends ObjectReturnExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>, R> {
 
 	/**
 	 * Applies this function to the given argument.
@@ -66,9 +66,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 */
 	@Override
 	default Function<T, R> uncheck() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> {
-			throw exceptionMapper().apply(e);
-		});
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), throwingHandler());
 	}
 
 	/**
@@ -81,7 +79,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	@Override
 	default Function<T, Optional<R>> lift() {
 		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t)),
-				e -> Optional.empty());
+				notThrowingHandler());
 	}
 
 	/**
