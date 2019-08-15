@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -129,8 +128,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 * @see #unchecked(LongConsumerWithException, Function)
 	 */
 	static <E extends Exception> LongConsumer unchecked(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.uncheck();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -150,7 +148,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 */
 	static <E extends Exception> LongConsumer unchecked(LongConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new LongConsumerWithException<E>() {
 
@@ -179,8 +177,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongConsumer lifted(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.lift();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -195,7 +192,6 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongConsumer ignored(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.ignore();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 }

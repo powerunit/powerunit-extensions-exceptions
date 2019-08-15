@@ -100,8 +100,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @see #unchecked(BinaryOperatorWithException, Function)
 	 */
 	static <T, E extends Exception> BinaryOperator<T> unchecked(BinaryOperatorWithException<T, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -154,8 +153,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> BinaryOperator<T> ignored(BinaryOperatorWithException<T, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

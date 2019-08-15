@@ -19,8 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import java.util.concurrent.CompletionException;
-
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
@@ -77,19 +75,6 @@ public class ObjIntConsumerWithExceptionTest implements TestSuite {
 		ObjIntConsumerWithException.ignored((x, y) -> {
 			throw new Exception();
 		}).accept("2", 12);
-	}
-
-	@Test
-	public void testAsFunctionNoException() {
-		assertThat(ObjIntConsumerWithException.biFunction((x, y) -> {
-		}).stage().apply("2", 12).toCompletableFuture().join()).isNull();
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> ObjIntConsumerWithException.biFunction((y, z) -> {
-			throw new Exception();
-		}).stage().apply("x", 12).toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
 }

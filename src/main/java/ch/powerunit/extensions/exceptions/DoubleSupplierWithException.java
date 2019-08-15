@@ -127,8 +127,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 * @see #unchecked(DoubleSupplierWithException, Function)
 	 */
 	static <E extends Exception> DoubleSupplier unchecked(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -177,8 +176,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleSupplier lifted(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -193,8 +191,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleSupplier ignored(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 }

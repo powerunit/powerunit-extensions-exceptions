@@ -132,7 +132,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(DoubleBinaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> DoubleBinaryOperator unchecked(DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.uncheck();
 	}
 
@@ -182,8 +181,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleBinaryOperator lifted(DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -198,8 +196,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleBinaryOperator ignored(DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

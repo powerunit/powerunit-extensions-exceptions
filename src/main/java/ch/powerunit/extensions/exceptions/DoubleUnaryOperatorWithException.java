@@ -182,8 +182,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -232,8 +231,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleUnaryOperator lifted(DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -248,8 +246,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

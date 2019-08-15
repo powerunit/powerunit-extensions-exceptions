@@ -205,8 +205,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #unchecked(FunctionWithException, Function)
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -262,8 +261,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, R, E extends Exception> Function<T, Optional<R>> lifted(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -282,8 +280,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 	/**
@@ -302,8 +299,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #stage()
 	 */
 	static <T, R, E extends Exception> Function<T, CompletionStage<R>> staged(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.stage();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
 	}
 
 }

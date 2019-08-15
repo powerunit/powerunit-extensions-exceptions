@@ -149,8 +149,7 @@ public interface IntPredicateWithException<E extends Exception>
 	 * @see #negate()
 	 */
 	static <E extends Exception> IntPredicateWithException<E> negate(IntPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
 	}
 
 	/**
@@ -206,8 +205,7 @@ public interface IntPredicateWithException<E extends Exception>
 	 * @see #unchecked(IntPredicateWithException, Function)
 	 */
 	static <E extends Exception> IntPredicate unchecked(IntPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.uncheck();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -255,8 +253,7 @@ public interface IntPredicateWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> IntPredicate lifted(IntPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.lift();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -271,8 +268,7 @@ public interface IntPredicateWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> IntPredicate ignored(IntPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.ignore();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
 	}
 
 }

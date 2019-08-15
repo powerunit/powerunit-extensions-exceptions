@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -130,8 +129,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @see #unchecked(DoubleConsumerWithException, Function)
 	 */
 	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.uncheck();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -151,7 +149,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new DoubleConsumerWithException<E>() {
 
@@ -180,8 +178,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleConsumer lifted(DoubleConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.lift();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -196,8 +193,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleConsumer ignored(DoubleConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.ignore();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 
 }

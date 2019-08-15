@@ -180,8 +180,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(LongUnaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> LongUnaryOperator unchecked(LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -230,8 +229,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongUnaryOperator lifted(LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -246,8 +244,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

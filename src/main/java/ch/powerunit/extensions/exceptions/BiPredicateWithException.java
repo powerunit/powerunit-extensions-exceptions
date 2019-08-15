@@ -161,8 +161,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
 			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
 	}
 
 	/**
@@ -225,8 +224,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @see #unchecked(BiPredicateWithException, Function)
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.uncheck();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -250,7 +248,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(predicate, "redicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiPredicateWithException<T, U, E>() {
 
@@ -283,8 +281,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> lifted(BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.lift();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -303,8 +300,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.ignore();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
 	}
 
 }

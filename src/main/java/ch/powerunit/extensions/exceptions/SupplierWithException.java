@@ -132,8 +132,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #unchecked(SupplierWithException, Function)
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -185,8 +184,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, E extends Exception> Supplier<Optional<T>> lifted(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -203,8 +201,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> Supplier<T> ignored(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 	/**
@@ -221,8 +218,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #stage()
 	 */
 	static <T, E extends Exception> Supplier<CompletionStage<T>> staged(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.stage();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).stage();
 	}
 
 }

@@ -174,8 +174,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @see #unchecked(BiFunctionWithException, Function)
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -237,8 +236,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, Optional<R>> lifted(
 			BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -259,8 +257,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 	/**
@@ -282,8 +279,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, CompletionStage<R>> staged(
 			BiFunctionWithException<T, U, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.stage();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
 	}
 
 }

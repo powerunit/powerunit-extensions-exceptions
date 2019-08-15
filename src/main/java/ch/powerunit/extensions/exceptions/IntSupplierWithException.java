@@ -127,8 +127,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 * @see #unchecked(IntSupplierWithException, Function)
 	 */
 	static <E extends Exception> IntSupplier unchecked(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -177,8 +176,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> IntSupplier lifted(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -193,8 +191,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> IntSupplier ignored(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 }

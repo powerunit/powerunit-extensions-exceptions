@@ -112,8 +112,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #unchecked(UnaryOperatorWithException, Function)
 	 */
 	static <T, E extends Exception> UnaryOperator<T> unchecked(UnaryOperatorWithException<T, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -166,8 +165,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> UnaryOperator<T> ignored(UnaryOperatorWithException<T, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }
