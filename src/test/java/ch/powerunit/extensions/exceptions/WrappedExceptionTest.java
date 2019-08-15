@@ -36,4 +36,10 @@ public class WrappedExceptionTest implements TestSuite {
 		assertThatFunction(WrappedException::new, "y").is(exceptionMessage("y"));
 	}
 
+	@Test
+	public void testConstructorStringThrowable() {
+		Throwable t = new Throwable("z");
+		assertThatBiFunction(WrappedException::new, "y", t).is(exceptionMessage("y"));
+	}
+
 }

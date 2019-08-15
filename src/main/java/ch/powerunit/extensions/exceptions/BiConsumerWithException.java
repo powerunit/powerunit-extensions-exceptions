@@ -23,19 +23,18 @@ import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NUL
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
  * Represents an operation that accepts two input arguments and returns no
  * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * {@code BiConsumerWithException} is expected to operate via side-effects.
  *
  * @author borettim
- * @see Consumer
+ * @see BiConsumer
  * @param <T>
- *            the type of the input to the operation
+ *            the type of the first argument to the operation
  * @param <U>
  *            the type of the second argument to the operation
  * @param <E>

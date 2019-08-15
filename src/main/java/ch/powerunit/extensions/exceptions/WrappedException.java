@@ -30,26 +30,6 @@ public final class WrappedException extends RuntimeException {
 	private static final long serialVersionUID = -5914178098082781979L;
 
 	/**
-	 * Constructs a new wrapped exception with the specified detail message, cause,
-	 * suppression enabled or disabled, and writable stack trace enabled or
-	 * disabled.
-	 *
-	 * @param message
-	 *            the detail message.
-	 * @param cause
-	 *            the cause. (A {@code null} value is permitted, and indicates that
-	 *            the cause is nonexistent or unknown.)
-	 * @param enableSuppression
-	 *            whether or not suppression is enabled or disabled
-	 * @param writableStackTrace
-	 *            whether or not the stack trace should be writable
-	 *
-	 */
-	public WrappedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
-	/**
 	 * Constructs a new wrapped exception with the specified detail message and
 	 * cause.
 	 * <p>
