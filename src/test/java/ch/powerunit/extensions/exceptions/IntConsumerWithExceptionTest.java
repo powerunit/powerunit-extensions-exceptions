@@ -88,7 +88,7 @@ public class IntConsumerWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAsConsumerNoException() {
+	public void testAsConsumerNoException() throws Exception {
 		IntConsumerWithException.asConsumer(x -> {
 		}).accept(2);
 	}
