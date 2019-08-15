@@ -61,7 +61,7 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	 */
 	@Override
 	default IntConsumer uncheck() {
-		return (t) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
+		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
 			throw exceptionMapper().apply(e);
 		});
 	}
@@ -75,7 +75,7 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	 */
 	@Override
 	default IntConsumer ignore() {
-		return (t) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
+		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
 		});
 	}
 

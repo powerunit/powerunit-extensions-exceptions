@@ -63,7 +63,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 */
 	@Override
 	default Consumer<T> uncheck() {
-		return (t) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
+		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
 			throw exceptionMapper().apply(e);
 		});
 	}
@@ -77,7 +77,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 */
 	@Override
 	default Consumer<T> ignore() {
-		return (t) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
+		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
 		});
 	}
 
