@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -77,20 +76,6 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	}
 
 	/**
-	 * Transforms this {@code LongConsumerWithException} to a
-	 * {@code FunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #function(LongConsumerWithException)
-	 */
-	default FunctionWithException<Long, Void, E> asFunction() {
-		return t -> {
-			accept(t);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns a composed {@code LongConsumerWithException} that performs, in
 	 * sequence, this operation followed by the {@code after} operation. If
 	 * performing either operation throws an exception, it is relayed to the caller
@@ -143,8 +128,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 * @see #unchecked(LongConsumerWithException, Function)
 	 */
 	static <E extends Exception> LongConsumer unchecked(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.uncheck();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -164,7 +148,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 */
 	static <E extends Exception> LongConsumer unchecked(LongConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new LongConsumerWithException<E>() {
 
@@ -193,8 +177,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongConsumer lifted(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.lift();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -209,24 +192,20 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongConsumer ignored(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.ignore();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 
 	/**
-	 * Transforms a {@code ConsumerWithException} to a {@code FunctionWithException}
-	 * that returns nothing.
+	 * Converts a {@code LongConsumerWithException} to a
+	 * {@code ConsumerWithException} returning {@code null}.
 	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
-	 * @see #asFunction()
 	 */
-	static <E extends Exception> FunctionWithException<Long, Void, E> function(LongConsumerWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asFunction();
+	static <E extends Exception> ConsumerWithException<Long, E> asConsumer(LongConsumerWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
 	}
-
 }

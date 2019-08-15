@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleUnaryOperator, DoubleUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -73,18 +73,6 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(DoubleUnaryOperatorWithException)
-	 */
-	@Override
-	default DoubleUnaryOperator lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
 	 * {@code DoubleUnaryOperator} returning uero in case of exception.
 	 *
 	 * @return the function that ignore error
@@ -99,29 +87,6 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 				return 0d;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(DoubleUnaryOperatorWithException)
-	 */
-	default ConsumerWithException<Double, Exception> asConsumer() {
-		return this::applyAsDouble;
-	}
-
-	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Double, Exception> asSupplier(double t) {
-		return () -> applyAsDouble(t);
 	}
 
 	/**
@@ -205,8 +170,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -255,8 +219,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleUnaryOperator lifted(DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -271,25 +234,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <E extends Exception> ConsumerWithException<Double, Exception> consumer(
-			DoubleUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asConsumer();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

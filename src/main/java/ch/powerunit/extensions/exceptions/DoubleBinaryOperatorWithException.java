@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleBinaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleBinaryOperator, DoubleBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -75,18 +75,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code DoubleBinaryOperatorWithException} to a lifted
-	 * {@code DoubleBinaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(DoubleBinaryOperatorWithException)
-	 */
-	@Override
-	default DoubleBinaryOperator lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code DoubleBinaryOperatorWithException} to a lifted
 	 * {@code DoubleBinaryOperator} returning uero in case of exception.
 	 *
 	 * @return the function that ignore error
@@ -101,31 +89,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 				return 0d;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #biConsumer(DoubleBinaryOperatorWithException)
-	 */
-	default BiConsumerWithException<Double, Double, Exception> asBiConsumer() {
-		return this::applyAsDouble;
-	}
-
-	/**
-	 * Transforms this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @param u
-	 *            the second input for the generated suppoler.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Double, Exception> asSupplier(double t, double u) {
-		return () -> applyAsDouble(t, u);
 	}
 
 	/**
@@ -157,7 +120,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(DoubleBinaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> DoubleBinaryOperator unchecked(DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		return function.uncheck();
 	}
 
@@ -207,8 +169,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleBinaryOperator lifted(DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -223,25 +184,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleBinaryOperator ignored(DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <E extends Exception> BiConsumerWithException<Double, Double, Exception> biConsumer(
-			DoubleBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asBiConsumer();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

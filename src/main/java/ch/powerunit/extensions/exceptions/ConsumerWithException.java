@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -79,20 +78,6 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	}
 
 	/**
-	 * Transforms this {@code ConsumerWithException} to a
-	 * {@code FunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #function(ConsumerWithException)
-	 */
-	default FunctionWithException<T, Void, E> asFunction() {
-		return t -> {
-			accept(t);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns a composed {@code ConsumerWithException} that performs, in sequence,
 	 * this operation followed by the {@code after} operation. If performing either
 	 * operation throws an exception, it is relayed to the caller of the composed
@@ -149,8 +134,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @see #unchecked(ConsumerWithException, Function)
 	 */
 	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.uncheck();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -171,7 +155,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 */
 	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new ConsumerWithException<T, E>() {
 
@@ -202,8 +186,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @see #lift()
 	 */
 	static <T, E extends Exception> Consumer<T> lifted(ConsumerWithException<T, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.lift();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -220,26 +203,30 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> Consumer<T> ignored(ConsumerWithException<T, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.ignore();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 
 	/**
-	 * Transforms a {@code ConsumerWithException} to a {@code FunctionWithException}
-	 * that returns nothing.
+	 * Converts a {@code ConsumerWithException} to a {@code FunctionWithException}
+	 * returning {@code null}.
 	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the operation
+	 *            the type of the first input object to the operation
+	 * @param <R>
+	 *            the type of the return value
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
-	 * @see #asFunction()
 	 */
-	static <T, E extends Exception> FunctionWithException<T, Void, E> function(ConsumerWithException<T, E> operation) {
+	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(
+			ConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asFunction();
+		return t -> {
+			operation.accept(t);
+			return null;
+		};
 	}
 
 }

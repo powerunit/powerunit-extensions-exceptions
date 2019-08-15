@@ -74,28 +74,4 @@ public class DoubleSupplierWithExceptionTest implements TestSuite {
 		}).getAsDouble()).is(0d);
 	}
 
-	@Test
-	public void testAsFunctionNoException() throws Exception {
-		assertThat(DoubleSupplierWithException.function(() -> 1).apply(1)).is(1d);
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> DoubleSupplierWithException.function(() -> {
-			throw new Exception();
-		}).apply("1")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		assertThat(DoubleSupplierWithException.supplier(() -> 1).get()).is(1d);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> DoubleSupplierWithException.supplier(() -> {
-			throw new Exception();
-		}).get()).throwException(instanceOf(Exception.class));
-	}
-
 }

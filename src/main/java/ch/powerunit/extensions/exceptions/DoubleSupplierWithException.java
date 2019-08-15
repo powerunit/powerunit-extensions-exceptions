@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleSupplier, DoubleSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier> {
 
 	/**
 	 * Gets a result.
@@ -71,18 +71,6 @@ public interface DoubleSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code DoubleSupplierWithException} to a lifted
-	 * {@code DoubleSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(DoubleSupplierWithException)
-	 */
-	@Override
-	default DoubleSupplier lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code DoubleSupplierWithException} to a lifted
 	 * {@code DoubleSupplier} returning {@code 0} in case of exception.
 	 *
 	 * @return the supplier that ignore error
@@ -97,31 +85,6 @@ public interface DoubleSupplierWithException<E extends Exception>
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code DoubleSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T>
-	 *            The type for the input parameter of the function
-	 *
-	 * @return the function
-	 * @see #function(DoubleSupplierWithException)
-	 */
-	default <T> FunctionWithException<T, Double, E> asFunction() {
-		return t -> getAsDouble();
-	}
-
-	/**
-	 * Transforms this {@code DoubleSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @return the function
-	 * @see #supplier(DoubleSupplierWithException)
-	 */
-	default SupplierWithException<Double, E> asSupplier() {
-		return this::getAsDouble;
 	}
 
 	/**
@@ -152,8 +115,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 * @see #unchecked(DoubleSupplierWithException, Function)
 	 */
 	static <E extends Exception> DoubleSupplier unchecked(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -202,8 +164,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoubleSupplier lifted(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -218,43 +179,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoubleSupplier ignored(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
-	}
-
-	/**
-	 * Transforms a {@code DoubleSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Double, E> function(
-			DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code DoubleSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asSupplier()
-	 */
-	static <E extends Exception> SupplierWithException<Double, E> supplier(DoubleSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asSupplier();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 }

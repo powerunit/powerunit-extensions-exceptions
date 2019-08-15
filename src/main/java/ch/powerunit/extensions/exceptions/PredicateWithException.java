@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface PredicateWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Predicate<T>, Predicate<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<Predicate<T>> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -79,18 +79,6 @@ public interface PredicateWithException<T, E extends Exception>
 	 * returning {@code null} in case of exception.
 	 *
 	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(PredicateWithException)
-	 */
-	@Override
-	default Predicate<T> lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code PredicateWithException} to a lifted {@code Predicate}
-	 * returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
 	 * @see #ignored(PredicateWithException)
 	 */
 	@Override
@@ -102,28 +90,6 @@ public interface PredicateWithException<T, E extends Exception>
 				return false;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(PredicateWithException)
-	 */
-	default ConsumerWithException<T, E> asConsumer() {
-		return this::test;
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @return the function
-	 * @see #function(PredicateWithException)
-	 */
-	default FunctionWithException<T, Boolean, Exception> asFunction() {
-		return this::test;
 	}
 
 	/**
@@ -175,8 +141,7 @@ public interface PredicateWithException<T, E extends Exception>
 	 * @see #negate()
 	 */
 	static <T, E extends Exception> PredicateWithException<T, E> negate(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
 	}
 
 	/**
@@ -235,8 +200,7 @@ public interface PredicateWithException<T, E extends Exception>
 	 * @see #unchecked(PredicateWithException, Function)
 	 */
 	static <T, E extends Exception> Predicate<T> unchecked(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.uncheck();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -288,8 +252,7 @@ public interface PredicateWithException<T, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, E extends Exception> Predicate<T> lifted(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.lift();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -306,45 +269,7 @@ public interface PredicateWithException<T, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> Predicate<T> ignored(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.ignore();
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <T, E extends Exception> ConsumerWithException<T, E> consumer(PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asConsumer();
-	}
-
-	/**
-	 * Transforms this {@code PredicateWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Boolean, Exception> function(
-			PredicateWithException<T, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asFunction();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
 	}
 
 }

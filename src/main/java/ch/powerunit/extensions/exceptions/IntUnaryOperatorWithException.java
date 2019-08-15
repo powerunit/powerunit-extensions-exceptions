@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<IntUnaryOperator, IntUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -72,18 +72,6 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code IntUnaryOperatorWithException} to a lifted
-	 * {@code IntUnaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(IntUnaryOperatorWithException)
-	 */
-	@Override
-	default IntUnaryOperator lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code IntUnaryOperatorWithException} to a lifted
 	 * {@code IntUnaryOperator} returning zero in case of exception.
 	 *
 	 * @return the function that ignore error
@@ -98,29 +86,6 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code IntUnaryOperatorWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(IntUnaryOperatorWithException)
-	 */
-	default ConsumerWithException<Integer, Exception> asConsumer() {
-		return this::applyAsInt;
-	}
-
-	/**
-	 * Transforms this {@code IntUnaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Integer, Exception> asSupplier(int t) {
-		return () -> applyAsInt(t);
 	}
 
 	/**
@@ -203,8 +168,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(IntUnaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> IntUnaryOperator unchecked(IntUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -253,8 +217,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> IntUnaryOperator lifted(IntUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -269,25 +232,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> IntUnaryOperator ignored(IntUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code IntUnaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <E extends Exception> ConsumerWithException<Integer, Exception> consumer(
-			IntUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asConsumer();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

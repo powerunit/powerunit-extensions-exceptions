@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongBinaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongBinaryOperator, LongBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -75,18 +75,6 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code LongBinaryOperatorWithException} to a lifted
-	 * {@code LongBinaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(LongBinaryOperatorWithException)
-	 */
-	@Override
-	default LongBinaryOperator lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code LongBinaryOperatorWithException} to a lifted
 	 * {@code LongBinaryOperatorOperator} returning zero in case of exception.
 	 *
 	 * @return the function that ignore error
@@ -101,31 +89,6 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code LongBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #biConsumer(LongBinaryOperatorWithException)
-	 */
-	default BiConsumerWithException<Long, Long, Exception> asBiConsumer() {
-		return this::applyAsLong;
-	}
-
-	/**
-	 * Transforms this {@code LongBinaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @param u
-	 *            the second input for the generated suppoler.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Long, Exception> asSupplier(long t, long u) {
-		return () -> applyAsLong(t, u);
 	}
 
 	/**
@@ -157,8 +120,7 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(LongBinaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> LongBinaryOperator unchecked(LongBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -207,8 +169,7 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongBinaryOperator lifted(LongBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -223,25 +184,7 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongBinaryOperator ignored(LongBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code LongBinaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <E extends Exception> BiConsumerWithException<Long, Long, Exception> biConsumer(
-			LongBinaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asBiConsumer();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

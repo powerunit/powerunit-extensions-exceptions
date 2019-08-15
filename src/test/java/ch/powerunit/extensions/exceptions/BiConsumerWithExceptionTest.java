@@ -19,8 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import java.util.concurrent.CompletionException;
-
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
@@ -90,16 +88,16 @@ public class BiConsumerWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAsFunctionNoException() {
-		assertThat(BiConsumerWithException.biFunction((x, y) -> {
-		}).stage().apply("2", "3").toCompletableFuture().join()).isNull();
+	public void testAsFunctionNoException() throws Exception {
+		assertThat(BiConsumerWithException.asBiFunction((x, y) -> {
+		}).apply("2", "3")).isNull();
 	}
 
 	@Test
 	public void testAsFunctionException() {
-		assertWhen((x) -> BiConsumerWithException.biFunction((y, z) -> {
+		assertWhen((x) -> BiConsumerWithException.asBiFunction((y, z) -> {
 			throw new Exception();
-		}).stage().apply("x", "x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
+		}).apply("2", "3")).throwException(instanceOf(Exception.class));
 	}
 
 }

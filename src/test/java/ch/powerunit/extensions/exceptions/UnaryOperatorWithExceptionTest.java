@@ -80,29 +80,4 @@ public class UnaryOperatorWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).apply("x")).isNull();
 	}
-
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		UnaryOperatorWithException.asConsumer(x -> x).accept("2");
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> UnaryOperatorWithException.asConsumer(y -> {
-			throw new Exception();
-		}).accept("2")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		UnaryOperatorWithException<String, Exception> fct = x -> x;
-		assertThat(fct.asSupplier().get()).isNull();
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> UnaryOperatorWithException.failing(Exception::new).asSupplier().get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

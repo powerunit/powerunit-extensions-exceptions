@@ -74,28 +74,4 @@ public class LongBinaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsLong(1, 2)).is(0L);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		LongBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2L, 1L);
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> LongBinaryOperatorWithException.biConsumer((y, z) -> {
-			throw new Exception();
-		}).accept(2L, 1L)).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		LongBinaryOperatorWithException<Exception> fct = (x, y) -> x + y;
-		assertThat(fct.asSupplier(1, 2).get()).is(3L);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> LongBinaryOperatorWithException.failing(Exception::new).asSupplier(1, 2).get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

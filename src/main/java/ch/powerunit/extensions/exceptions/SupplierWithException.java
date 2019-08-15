@@ -101,20 +101,6 @@ public interface SupplierWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code SupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T1>
-	 *            The type of the input for the produced function
-	 *
-	 * @return the function
-	 * @see #function(SupplierWithException)
-	 */
-	default <T1> FunctionWithException<T1, T, E> asFunction() {
-		return t -> get();
-	}
-
-	/**
 	 * Returns a supplier that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -146,8 +132,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #unchecked(SupplierWithException, Function)
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -199,8 +184,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, E extends Exception> Supplier<Optional<T>> lifted(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -217,8 +201,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, E extends Exception> Supplier<T> ignored(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 	/**
@@ -235,28 +218,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @see #stage()
 	 */
 	static <T, E extends Exception> Supplier<CompletionStage<T>> staged(SupplierWithException<T, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.stage();
-	}
-
-	/**
-	 * Transforms a {@code SupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <R>
-	 *            the type of the output object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, R, E extends Exception> FunctionWithException<T, R, E> function(SupplierWithException<R, E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).stage();
 	}
 
 }

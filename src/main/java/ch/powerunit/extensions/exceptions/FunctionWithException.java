@@ -106,41 +106,6 @@ public interface FunctionWithException<T, R, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code FunctionWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(FunctionWithException)
-	 */
-	default ConsumerWithException<T, Exception> asConsumer() {
-		return this::apply;
-	}
-
-	/**
-	 * Transforms this {@code FunctionWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param input
-	 *            the input for the generated supplier.
-	 * @return the supplier
-	 * @see #asSupplier()
-	 */
-	default SupplierWithException<R, Exception> asSupplier(T input) {
-		return () -> apply(input);
-	}
-
-	/**
-	 * Transforms this {@code FunctionWithException} to a
-	 * {@code SupplierWithException}, passing {@code null} as input.
-	 *
-	 * @return the supplier
-	 * @see #asSupplier(Object)
-	 */
-	default SupplierWithException<R, Exception> asSupplier() {
-		return asSupplier(null);
-	}
-
-	/**
 	 * Returns a composed function that first applies the {@code before} function to
 	 * its input, and then applies this function to the result. If evaluation of
 	 * either function throws an exception, it is relayed to the caller of the
@@ -240,8 +205,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #unchecked(FunctionWithException, Function)
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -297,8 +261,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, R, E extends Exception> Function<T, Optional<R>> lifted(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -317,8 +280,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 	/**
@@ -337,29 +299,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @see #stage()
 	 */
 	static <T, R, E extends Exception> Function<T, CompletionStage<R>> staged(FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.stage();
-	}
-
-	/**
-	 * Transforms this {@code FunctionWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the function
-	 * @param <R>
-	 *            the type of the output object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <T, R, E extends Exception> ConsumerWithException<T, Exception> consumer(
-			FunctionWithException<T, R, E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asConsumer();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
 	}
 
 }

@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoublePredicateWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoublePredicate, DoublePredicate> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoublePredicate> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -70,18 +70,6 @@ public interface DoublePredicateWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code DoublePredicateWithException} to a lifted
-	 * {@code DoublePredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(DoublePredicateWithException)
-	 */
-	@Override
-	default DoublePredicate lift() {
-		return ignore();
 	}
 
 	/**
@@ -149,8 +137,7 @@ public interface DoublePredicateWithException<E extends Exception>
 	 * @see #negate()
 	 */
 	static <E extends Exception> DoublePredicateWithException<E> negate(DoublePredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
 	}
 
 	/**
@@ -206,8 +193,7 @@ public interface DoublePredicateWithException<E extends Exception>
 	 * @see #unchecked(DoublePredicateWithException, Function)
 	 */
 	static <E extends Exception> DoublePredicate unchecked(DoublePredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.uncheck();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -255,8 +241,7 @@ public interface DoublePredicateWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> DoublePredicate lifted(DoublePredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.lift();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -271,8 +256,7 @@ public interface DoublePredicateWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> DoublePredicate ignored(DoublePredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.ignore();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
 	}
 
 }

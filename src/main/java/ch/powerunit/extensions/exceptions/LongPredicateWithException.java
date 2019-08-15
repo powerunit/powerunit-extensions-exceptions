@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongPredicateWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongPredicate, LongPredicate> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongPredicate> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -70,18 +70,6 @@ public interface LongPredicateWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code LongPredicateWithException} to a lifted
-	 * {@code LongPredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(LongPredicateWithException)
-	 */
-	@Override
-	default LongPredicate lift() {
-		return ignore();
 	}
 
 	/**
@@ -149,8 +137,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 * @see #negate()
 	 */
 	static <E extends Exception> LongPredicateWithException<E> negate(LongPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
 	}
 
 	/**
@@ -206,8 +193,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 * @see #unchecked(LongPredicateWithException, Function)
 	 */
 	static <E extends Exception> LongPredicate unchecked(LongPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.uncheck();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -255,8 +241,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongPredicate lifted(LongPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.lift();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -271,8 +256,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongPredicate ignored(LongPredicateWithException<E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.ignore();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
 	}
 
 }

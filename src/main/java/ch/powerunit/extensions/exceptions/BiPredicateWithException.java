@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiPredicateWithException<T, U, E extends Exception>
-		extends ExceptionHandlerSupport<BiPredicate<T, U>, BiPredicate<T, U>> {
+		extends PrimitiveReturnExceptionHandlerSupport<BiPredicate<T, U>> {
 
 	/**
 	 * Evaluates this predicate on the given arguments.
@@ -84,18 +84,6 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * {@code BiPredicate} returning {@code null} in case of exception.
 	 *
 	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(BiPredicateWithException)
-	 */
-	@Override
-	default BiPredicate<T, U> lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code BiPredicate} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
 	 * @see #ignored(BiPredicateWithException)
 	 */
 	@Override
@@ -107,28 +95,6 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 				return false;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #biConsumer(BiPredicateWithException)
-	 */
-	default BiConsumerWithException<T, U, E> asBiConsumer() {
-		return this::test;
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiFunctionWithException}.
-	 *
-	 * @return the function
-	 * @see #biFunction(BiPredicateWithException)
-	 */
-	default BiFunctionWithException<T, U, Boolean, E> asBiFunction() {
-		return this::test;
 	}
 
 	/**
@@ -183,8 +149,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
 			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.negate();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
 	}
 
 	/**
@@ -247,8 +212,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @see #unchecked(BiPredicateWithException, Function)
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.uncheck();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -272,7 +236,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(predicate, "redicate can't be null");
+		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiPredicateWithException<T, U, E>() {
 
@@ -305,8 +269,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> lifted(BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.lift();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -325,50 +288,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.ignore();
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the first input object to the function
-	 * @param <U>
-	 *            the type of the second input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiConsumer()
-	 */
-	static <T, U, E extends Exception> BiConsumerWithException<T, U, E> biConsumer(
-			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asBiConsumer();
-	}
-
-	/**
-	 * Transforms this {@code BiPredicateWithException} to a
-	 * {@code BiFunctionWithException}.
-	 *
-	 * @param predicate
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the first input object to the function
-	 * @param <U>
-	 *            the type of the second input object to the function
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asBiFunction()
-	 */
-	static <T, U, E extends Exception> BiFunctionWithException<T, U, Boolean, E> biFunction(
-			BiPredicateWithException<T, U, E> predicate) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		return predicate.asBiFunction();
+		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
 	}
 
 }

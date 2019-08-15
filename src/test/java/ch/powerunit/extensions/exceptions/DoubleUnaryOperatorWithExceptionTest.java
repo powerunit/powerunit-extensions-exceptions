@@ -93,28 +93,4 @@ public class DoubleUnaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsDouble(1)).is(0d);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		DoubleUnaryOperatorWithException.consumer(x -> x + 1).accept(2d);
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> DoubleUnaryOperatorWithException.consumer(y -> {
-			throw new Exception();
-		}).accept(2d)).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		DoubleUnaryOperatorWithException<Exception> fct = x -> x + 1;
-		assertThat(fct.asSupplier(2).get()).is(3d);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> DoubleUnaryOperatorWithException.failing(Exception::new).asSupplier(1).get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

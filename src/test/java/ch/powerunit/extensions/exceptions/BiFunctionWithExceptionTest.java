@@ -96,28 +96,4 @@ public class BiFunctionWithExceptionTest implements TestSuite {
 		}).apply("x", "x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		BiFunctionWithException.biConsumer((x, y) -> "" + x + y).accept("2", "1");
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> BiFunctionWithException.biConsumer((y, z) -> {
-			throw new Exception();
-		}).accept("2", "1")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		BiFunctionWithException<String, String, String, Exception> fct = (x, y) -> "" + x + y;
-		assertThat(fct.asSupplier().get()).is("nullnull");
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> BiFunctionWithException.failing(Exception::new).asSupplier().get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

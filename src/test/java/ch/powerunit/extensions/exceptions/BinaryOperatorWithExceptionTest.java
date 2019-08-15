@@ -62,28 +62,4 @@ public class BinaryOperatorWithExceptionTest implements TestSuite {
 		}).apply("x", "x")).isNull();
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		BinaryOperatorWithException.asBiConsumer((x, y) -> "" + x + y).accept("2", "1");
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> BinaryOperatorWithException.asBiConsumer((y, z) -> {
-			throw new Exception();
-		}).accept("2", "1")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		BinaryOperatorWithException<String, Exception> fct = (x, y) -> "" + x + y;
-		assertThat(fct.asSupplier().get()).is("nullnull");
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> BinaryOperatorWithException.failing(Exception::new).asSupplier().get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

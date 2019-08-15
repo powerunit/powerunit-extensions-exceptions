@@ -145,28 +145,4 @@ public class PredicateWithExceptionTest implements TestSuite {
 		}).test("x")).is(false);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		PredicateWithException.consumer(x -> true).accept("2");
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> PredicateWithException.consumer(y -> {
-			throw new Exception();
-		}).accept("2")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsFunctionNoException() throws Exception {
-		PredicateWithException<String, Exception> fct = x -> true;
-		assertThat(fct.asFunction().apply("x")).is(true);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> PredicateWithException.failing(Exception::new).asFunction().apply("x"))
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongSupplier, LongSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongSupplier> {
 
 	/**
 	 * Gets a result.
@@ -71,18 +71,6 @@ public interface LongSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code LongSupplierWithException} to a lifted
-	 * {@code LongSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(LongSupplierWithException)
-	 */
-	@Override
-	default LongSupplier lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code LongSupplierWithException} to a lifted
 	 * {@code LongSupplier} returning {@code 0} in case of exception.
 	 *
 	 * @return the supplier that ignore error
@@ -97,31 +85,6 @@ public interface LongSupplierWithException<E extends Exception>
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code LongSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T>
-	 *            The type for the input parameter of the function
-	 *
-	 * @return the function
-	 * @see #function(LongSupplierWithException)
-	 */
-	default <T> FunctionWithException<T, Long, E> asFunction() {
-		return t -> getAsLong();
-	}
-
-	/**
-	 * Transforms this {@code LongSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @return the function
-	 * @see #supplier(LongSupplierWithException)
-	 */
-	default SupplierWithException<Long, E> asSupplier() {
-		return this::getAsLong;
 	}
 
 	/**
@@ -152,8 +115,7 @@ public interface LongSupplierWithException<E extends Exception>
 	 * @see #unchecked(LongSupplierWithException, Function)
 	 */
 	static <E extends Exception> LongSupplier unchecked(LongSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -202,8 +164,7 @@ public interface LongSupplierWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongSupplier lifted(LongSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -218,42 +179,7 @@ public interface LongSupplierWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongSupplier ignored(LongSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
-	}
-
-	/**
-	 * Transforms a {@code LongSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Long, E> function(LongSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code LongSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asSupplier()
-	 */
-	static <E extends Exception> SupplierWithException<Long, E> supplier(LongSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asSupplier();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 }

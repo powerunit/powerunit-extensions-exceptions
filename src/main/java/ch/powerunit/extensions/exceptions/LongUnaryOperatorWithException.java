@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongUnaryOperator, LongUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -72,18 +72,6 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code LongUnaryOperatorWithException} to a lifted
-	 * {@code LongUnaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(LongUnaryOperatorWithException)
-	 */
-	@Override
-	default LongUnaryOperator lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code LongUnaryOperatorWithException} to a lifted
 	 * {@code LongUnaryOperator} returning zero in case of exception.
 	 *
 	 * @return the function that ignore error
@@ -98,29 +86,6 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code LongUnaryOperatorWithException} to a
-	 * {@code ConsumerWithException}.
-	 *
-	 * @return the operation
-	 * @see #consumer(LongUnaryOperatorWithException)
-	 */
-	default ConsumerWithException<Long, Exception> asConsumer() {
-		return this::applyAsLong;
-	}
-
-	/**
-	 * Transforms this {@code LongUnaryOperatorWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param t
-	 *            the first input for the generated supplier.
-	 * @return the supplier
-	 */
-	default SupplierWithException<Long, Exception> asSupplier(int t) {
-		return () -> applyAsLong(t);
 	}
 
 	/**
@@ -203,8 +168,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @see #unchecked(LongUnaryOperatorWithException, Function)
 	 */
 	static <E extends Exception> LongUnaryOperator unchecked(LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.uncheck();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -253,8 +217,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> LongUnaryOperator lifted(LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.lift();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -269,25 +232,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.ignore();
-	}
-
-	/**
-	 * Transforms this {@code LongUnaryOperatorWithException} to a
-	 * {@code BiConsumerWithException}.
-	 *
-	 * @param function
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the operation function
-	 * @see #asConsumer()
-	 */
-	static <E extends Exception> ConsumerWithException<Long, Exception> consumer(
-			LongUnaryOperatorWithException<E> function) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		return function.asConsumer();
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 }

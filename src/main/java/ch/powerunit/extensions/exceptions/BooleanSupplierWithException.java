@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BooleanSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<BooleanSupplier, BooleanSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<BooleanSupplier> {
 
 	/**
 	 * Gets a result.
@@ -74,24 +74,6 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 * {@code BooleanSupplier} returning {@code false} in case of exception.
 	 *
 	 * @return the supplier that ignore error
-	 * @see #lifted(BooleanSupplierWithException)
-	 */
-	@Override
-	default BooleanSupplier lift() {
-		return () -> {
-			try {
-				return getAsBoolean();
-			} catch (Exception e) {
-				return false;
-			}
-		};
-	}
-
-	/**
-	 * Converts this {@code BooleanSupplierWithException} to a lifted
-	 * {@code BooleanSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
 	 * @see #ignored(BooleanSupplierWithException)
 	 */
 	@Override
@@ -103,31 +85,6 @@ public interface BooleanSupplierWithException<E extends Exception>
 				return false;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code BooleanSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T>
-	 *            The type for the input parameter of the function
-	 *
-	 * @return the function
-	 * @see #function(BooleanSupplierWithException)
-	 */
-	default <T> FunctionWithException<T, Boolean, E> asFunction() {
-		return t -> getAsBoolean();
-	}
-
-	/**
-	 * Transforms this {@code BooleanSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @return the function
-	 * @see #supplier(BooleanSupplierWithException)
-	 */
-	default SupplierWithException<Boolean, E> asSupplier() {
-		return this::getAsBoolean;
 	}
 
 	/**
@@ -158,8 +115,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 * @see #unchecked(BooleanSupplierWithException, Function)
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -208,8 +164,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> BooleanSupplier lifted(BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -224,43 +179,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> BooleanSupplier ignored(BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
-	}
-
-	/**
-	 * Transforms a {@code BooleanSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Boolean, E> function(
-			BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code BooleanSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asSupplier()
-	 */
-	static <E extends Exception> SupplierWithException<Boolean, E> supplier(BooleanSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asSupplier();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 }

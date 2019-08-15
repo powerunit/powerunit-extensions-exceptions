@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -85,20 +84,6 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	}
 
 	/**
-	 * Transforms this {@code BiConsumerWithException} to a
-	 * {@code BiFunctionWithException} that returns nothing.
-	 *
-	 * @return the function
-	 * @see #biFunction(BiConsumerWithException)
-	 */
-	default BiFunctionWithException<T, U, Void, E> asBiFunction() {
-		return (t, u) -> {
-			accept(t, u);
-			return null;
-		};
-	}
-
-	/**
 	 * Returns a composed {@code BiConsumerWithException} that performs, in
 	 * sequence, this operation followed by the {@code after} operation. If
 	 * performing either operation throws an exception, it is relayed to the caller
@@ -159,8 +144,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * @see #unchecked(BiConsumerWithException, Function)
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.uncheck();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -184,7 +168,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, FUNCTION_CANT_BE_NULL);
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
 		return new BiConsumerWithException<T, U, E>() {
 
@@ -217,8 +201,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * @see #lift()
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> lifted(BiConsumerWithException<T, U, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.lift();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -237,13 +220,12 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * @see #ignore()
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> ignored(BiConsumerWithException<T, U, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.ignore();
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 
 	/**
-	 * Transforms a {@code BiConsumerWithException} to a
-	 * {@code BiFunctionWithException} that returns nothing.
+	 * Converts a {@code BiConsumerWithException} to a
+	 * {@code BiFunctionWithException} returning {@code null}.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -251,15 +233,19 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *            the type of the first input object to the operation
 	 * @param <U>
 	 *            the type of the second input object to the operation
+	 * @param <R>
+	 *            the type of the return value
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
-	 * @see #asBiFunction()
 	 */
-	static <T, U, E extends Exception> BiFunctionWithException<T, U, Void, E> biFunction(
+	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
 			BiConsumerWithException<T, U, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return operation.asBiFunction();
+		return (t, u) -> {
+			operation.accept(t, u);
+			return null;
+		};
 	}
 
 }

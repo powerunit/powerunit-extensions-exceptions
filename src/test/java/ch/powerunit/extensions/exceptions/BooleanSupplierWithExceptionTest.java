@@ -74,28 +74,4 @@ public class BooleanSupplierWithExceptionTest implements TestSuite {
 		}).getAsBoolean()).is(false);
 	}
 
-	@Test
-	public void testAsFunctionNoException() throws Exception {
-		assertThat(BooleanSupplierWithException.function(() -> true).apply("1")).is(true);
-	}
-
-	@Test
-	public void testAsFunctionException() {
-		assertWhen((x) -> BooleanSupplierWithException.function(() -> {
-			throw new Exception();
-		}).apply("1")).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		assertThat(BooleanSupplierWithException.supplier(() -> true).get()).is(true);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> BooleanSupplierWithException.supplier(() -> {
-			throw new Exception();
-		}).get()).throwException(instanceOf(Exception.class));
-	}
-
 }

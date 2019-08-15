@@ -74,28 +74,4 @@ public class DoubleBinaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsDouble(1, 2)).is(0d);
 	}
 
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		DoubleBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2d, 1d);
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.biConsumer((y, z) -> {
-			throw new Exception();
-		}).accept(2d, 1d)).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		DoubleBinaryOperatorWithException<Exception> fct = (x, y) -> x + y;
-		assertThat(fct.asSupplier(1, 2).get()).is(3d);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> DoubleBinaryOperatorWithException.failing(Exception::new).asSupplier(1, 2).get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }

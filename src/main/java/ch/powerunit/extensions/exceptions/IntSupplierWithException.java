@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<IntSupplier, IntSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntSupplier> {
 
 	/**
 	 * Gets a result.
@@ -71,18 +71,6 @@ public interface IntSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code IntSupplierWithException} to a lifted
-	 * {@code IntSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(IntSupplierWithException)
-	 */
-	@Override
-	default IntSupplier lift() {
-		return ignore();
-	}
-
-	/**
-	 * Converts this {@code IntSupplierWithException} to a lifted
 	 * {@code IntSupplier} returning {@code 0} in case of exception.
 	 *
 	 * @return the supplier that ignore error
@@ -97,31 +85,6 @@ public interface IntSupplierWithException<E extends Exception>
 				return 0;
 			}
 		};
-	}
-
-	/**
-	 * Transforms this {@code IntSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param <T>
-	 *            The type for the input parameter of the function
-	 *
-	 * @return the function
-	 * @see #function(IntSupplierWithException)
-	 */
-	default <T> FunctionWithException<T, Integer, E> asFunction() {
-		return t -> getAsInt();
-	}
-
-	/**
-	 * Transforms this {@code IntSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @return the function
-	 * @see #supplier(IntSupplierWithException)
-	 */
-	default SupplierWithException<Integer, E> asSupplier() {
-		return this::getAsInt;
 	}
 
 	/**
@@ -152,8 +115,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 * @see #unchecked(IntSupplierWithException, Function)
 	 */
 	static <E extends Exception> IntSupplier unchecked(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.uncheck();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
@@ -202,8 +164,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> IntSupplier lifted(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.lift();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
 	}
 
 	/**
@@ -218,43 +179,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 * @see #ignore()
 	 */
 	static <E extends Exception> IntSupplier ignored(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.ignore();
-	}
-
-	/**
-	 * Transforms a {@code IntSupplierWithException} to a
-	 * {@code FunctionWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <T>
-	 *            the type of the input object to the operation
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asFunction()
-	 */
-	static <T, E extends Exception> FunctionWithException<T, Integer, E> function(
-			IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asFunction();
-	}
-
-	/**
-	 * Transforms a {@code IntSupplierWithException} to a
-	 * {@code SupplierWithException}.
-	 *
-	 * @param supplier
-	 *            to be lifted
-	 * @param <E>
-	 *            the type of the potential exception
-	 * @return the function
-	 * @see #asSupplier()
-	 */
-	static <E extends Exception> SupplierWithException<Integer, E> supplier(IntSupplierWithException<E> supplier) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		return supplier.asSupplier();
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
 	}
 
 }

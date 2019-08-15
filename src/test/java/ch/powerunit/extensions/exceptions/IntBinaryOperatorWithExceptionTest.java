@@ -73,29 +73,4 @@ public class IntBinaryOperatorWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).applyAsInt(1, 2)).is(0);
 	}
-
-	@Test
-	public void testAsConsumerNoException() throws Exception {
-		IntBinaryOperatorWithException.biConsumer((x, y) -> x + y).accept(2, 1);
-	}
-
-	@Test
-	public void testAsConsumerException() {
-		assertWhen((x) -> IntBinaryOperatorWithException.biConsumer((y, z) -> {
-			throw new Exception();
-		}).accept(2, 1)).throwException(instanceOf(Exception.class));
-	}
-
-	@Test
-	public void testAsSupplierNoException() throws Exception {
-		IntBinaryOperatorWithException<Exception> fct = (x, y) -> x + y;
-		assertThat(fct.asSupplier(1, 2).get()).is(3);
-	}
-
-	@Test
-	public void testAsSupplierException() {
-		assertWhen((x) -> IntBinaryOperatorWithException.failing(Exception::new).asSupplier(1, 2).get())
-				.throwException(instanceOf(Exception.class));
-	}
-
 }
