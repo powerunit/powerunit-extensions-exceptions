@@ -58,9 +58,7 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 */
 	@Override
 	default Runnable uncheck() {
-		return () -> NoReturnExceptionHandlerSupport.unchecked(this::run, e -> {
-			throw exceptionMapper().apply(e);
-		});
+		return () -> NoReturnExceptionHandlerSupport.unchecked(this::run, throwingHandler());
 	}
 
 	/**
@@ -72,8 +70,7 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 */
 	@Override
 	default Runnable ignore() {
-		return () -> NoReturnExceptionHandlerSupport.unchecked(this::run, e -> {
-		});
+		return () -> NoReturnExceptionHandlerSupport.unchecked(this::run, notThrowingHandler());
 	}
 
 	/**

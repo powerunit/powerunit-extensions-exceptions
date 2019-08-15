@@ -66,9 +66,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjLongConsumer<T> uncheck() {
-		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), e -> {
-			throw exceptionMapper().apply(e);
-		});
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), throwingHandler());
 	}
 
 	/**
@@ -80,8 +78,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjLongConsumer<T> ignore() {
-		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), e -> {
-		});
+		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), notThrowingHandler());
 	}
 
 	/**

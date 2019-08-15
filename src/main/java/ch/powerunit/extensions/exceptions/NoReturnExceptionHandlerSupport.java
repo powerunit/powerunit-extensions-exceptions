@@ -79,4 +79,25 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 			exceptionhandler.accept(e);
 		}
 	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @return exception handler to support exception control
+	 */
+	default Consumer<Exception> throwingHandler() {
+		return e -> {
+			throw exceptionMapper().apply(e);
+		};
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @return exception handler to ignore exception control
+	 */
+	default Consumer<Exception> notThrowingHandler() {
+		return e -> {
+		};
+	}
 }

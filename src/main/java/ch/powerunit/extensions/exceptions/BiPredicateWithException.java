@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiPredicateWithException<T, U, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<BiPredicate<T, U>, BiPredicate<T, U>> {
+		extends ExceptionHandlerSupport<BiPredicate<T, U>, BiPredicate<T, U>> {
 
 	/**
 	 * Evaluates this predicate on the given arguments.

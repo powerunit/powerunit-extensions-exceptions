@@ -62,9 +62,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 */
 	@Override
 	default DoubleConsumer uncheck() {
-		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
-			throw exceptionMapper().apply(e);
-		});
+		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), throwingHandler());
 	}
 
 	/**
@@ -76,8 +74,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 */
 	@Override
 	default DoubleConsumer ignore() {
-		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), e -> {
-		});
+		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), notThrowingHandler());
 	}
 
 	/**

@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface SupplierWithException<T, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>> {
+		extends ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, T> {
 
 	/**
 	 * Gets a result.
@@ -61,9 +61,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 */
 	@Override
 	default Supplier<T> uncheck() {
-		return () -> ObjectReturnExceptionHandlerSupport.unchecked(this::get, e -> {
-			throw exceptionMapper().apply(e);
-		});
+		return () -> ObjectReturnExceptionHandlerSupport.unchecked(this::get, throwingHandler());
 	}
 
 	/**
@@ -76,7 +74,7 @@ public interface SupplierWithException<T, E extends Exception>
 	@Override
 	default Supplier<Optional<T>> lift() {
 		return () -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(get()),
-				e -> Optional.empty());
+				notThrowingHandler());
 	}
 
 	/**

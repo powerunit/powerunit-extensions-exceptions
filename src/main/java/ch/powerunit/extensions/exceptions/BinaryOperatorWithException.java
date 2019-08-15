@@ -53,9 +53,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 */
 	@Override
 	default BinaryOperator<T> uncheck() {
-		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> {
-			throw exceptionMapper().apply(e);
-		});
+		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), throwingHandler());
 	}
 
 	/**
