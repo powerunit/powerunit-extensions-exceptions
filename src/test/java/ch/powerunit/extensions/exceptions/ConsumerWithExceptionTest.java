@@ -87,4 +87,17 @@ public class ConsumerWithExceptionTest implements TestSuite {
 		}).accept("2");
 	}
 
+	@Test
+	public void testAsFunctionNoException() {
+		assertThat(ConsumerWithException.asFunction(x -> {
+		}).apply("2")).isNull();
+	}
+
+	@Test
+	public void testAsFunctionException() {
+		assertWhen((x) -> ConsumerWithException.asFunction(y -> {
+			throw new Exception();
+		}).apply("2")).throwException(instanceOf(Exception.class));
+	}
+
 }

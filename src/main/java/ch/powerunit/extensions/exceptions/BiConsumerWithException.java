@@ -223,4 +223,29 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 
+	/**
+	 * Converts a {@code BiConsumerWithException} to a
+	 * {@code BiFunctionWithException} returning {@code null}.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the first input object to the operation
+	 * @param <U>
+	 *            the type of the second input object to the operation
+	 * @param <R>
+	 *            the type of the return value
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 */
+	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
+			BiConsumerWithException<T, U, E> operation) {
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		return (t, u) -> {
+			operation.accept(t, u);
+			return null;
+		};
+	}
+
 }
