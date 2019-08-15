@@ -194,4 +194,20 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	static <E extends Exception> LongConsumer ignored(LongConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
+
+	/**
+	 * Converts a {@code LongConsumerWithException} to a
+	 * {@code ConsumerWithException} returning {@code null}.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the first input object to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 */
+	static <T, E extends Exception> ConsumerWithException<Long, E> asConsumer(LongConsumerWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
+	}
 }

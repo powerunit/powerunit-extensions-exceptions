@@ -87,4 +87,17 @@ public class DoubleConsumerWithExceptionTest implements TestSuite {
 		}).accept(12);
 	}
 
+	@Test
+	public void testAsConsumerNoException() {
+		DoubleConsumerWithException.asConsumer(x -> {
+		}).accept(2d);
+	}
+
+	@Test
+	public void testAsConsumerException() {
+		assertWhen((x) -> DoubleConsumerWithException.asConsumer(y -> {
+			throw new Exception();
+		}).accept(3d)).throwException(instanceOf(Exception.class));
+	}
+
 }

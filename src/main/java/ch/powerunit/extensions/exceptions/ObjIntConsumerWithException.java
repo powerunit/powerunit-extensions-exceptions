@@ -186,4 +186,21 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
 	}
 
+	/**
+	 * Converts a {@code ObjIntConsumerWithException} to a
+	 * {@code BiConsumerWithException} returning {@code null}.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the first input object to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 */
+	static <T, E extends Exception> BiConsumerWithException<T, Integer, E> asBiConsumer(
+			ObjIntConsumerWithException<T, E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
+	}
+
 }

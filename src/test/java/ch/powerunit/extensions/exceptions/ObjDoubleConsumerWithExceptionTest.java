@@ -77,4 +77,17 @@ public class ObjDoubleConsumerWithExceptionTest implements TestSuite {
 		}).accept("2", 12);
 	}
 
+	@Test
+	public void testAsBiConsumerNoException() {
+		ObjDoubleConsumerWithException.asBiConsumer((x, y) -> {
+		}).accept("2", 2d);
+	}
+
+	@Test
+	public void testAsBiConsumerException() {
+		assertWhen((x) -> ObjDoubleConsumerWithException.asBiConsumer((y, z) -> {
+			throw new Exception();
+		}).accept("2", 3d)).throwException(instanceOf(Exception.class));
+	}
+
 }

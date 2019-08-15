@@ -223,7 +223,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(
 			ConsumerWithException<T, E> operation) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		return (t) -> {
+		return t -> {
 			operation.accept(t);
 			return null;
 		};

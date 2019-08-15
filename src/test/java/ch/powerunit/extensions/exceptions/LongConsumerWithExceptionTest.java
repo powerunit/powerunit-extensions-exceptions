@@ -87,4 +87,16 @@ public class LongConsumerWithExceptionTest implements TestSuite {
 		}).accept(12);
 	}
 
+	@Test
+	public void testAsConsumerNoException() {
+		LongConsumerWithException.asConsumer(x -> {
+		}).accept(2L);
+	}
+
+	@Test
+	public void testAsConsumerException() {
+		assertWhen((x) -> LongConsumerWithException.asConsumer(y -> {
+			throw new Exception();
+		}).accept(3L)).throwException(instanceOf(Exception.class));
+	}
 }

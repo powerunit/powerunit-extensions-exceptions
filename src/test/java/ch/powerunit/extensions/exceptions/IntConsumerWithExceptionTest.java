@@ -86,4 +86,17 @@ public class IntConsumerWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).accept(12);
 	}
+
+	@Test
+	public void testAsConsumerNoException() {
+		IntConsumerWithException.asConsumer(x -> {
+		}).accept(2);
+	}
+
+	@Test
+	public void testAsConsumerException() {
+		assertWhen((x) -> IntConsumerWithException.asConsumer(y -> {
+			throw new Exception();
+		}).accept(3)).throwException(instanceOf(Exception.class));
+	}
 }

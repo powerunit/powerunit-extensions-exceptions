@@ -77,4 +77,17 @@ public class ObjLongConsumerWithExceptionTest implements TestSuite {
 		}).accept("2", 12);
 	}
 
+	@Test
+	public void testAsBiConsumerNoException() {
+		ObjLongConsumerWithException.asBiConsumer((x, y) -> {
+		}).accept("2", 2L);
+	}
+
+	@Test
+	public void testAsBiConsumerException() {
+		assertWhen((x) -> ObjLongConsumerWithException.asBiConsumer((y, z) -> {
+			throw new Exception();
+		}).accept("2", 3L)).throwException(instanceOf(Exception.class));
+	}
+
 }
