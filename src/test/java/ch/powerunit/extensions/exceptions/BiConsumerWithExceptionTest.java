@@ -88,7 +88,7 @@ public class BiConsumerWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAsFunctionNoException() {
+	public void testAsFunctionNoException() throws Exception {
 		assertThat(BiConsumerWithException.asBiFunction((x, y) -> {
 		}).apply("2", "3")).isNull();
 	}
