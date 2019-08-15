@@ -78,7 +78,7 @@ public class ObjIntConsumerWithExceptionTest implements TestSuite {
 	}
 
 	@Test
-	public void testAsBiConsumerNoException() {
+	public void testAsBiConsumerNoException() throws Exception {
 		ObjIntConsumerWithException.asBiConsumer((x, y) -> {
 		}).accept("2", 2);
 	}
