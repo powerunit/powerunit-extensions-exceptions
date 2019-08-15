@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<IntSupplier, IntSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntSupplier> {
 
 	/**
 	 * Gets a result.
@@ -67,18 +67,6 @@ public interface IntSupplierWithException<E extends Exception>
 				throw exceptionMapper().apply(e);
 			}
 		};
-	}
-
-	/**
-	 * Converts this {@code IntSupplierWithException} to a lifted
-	 * {@code IntSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(IntSupplierWithException)
-	 */
-	@Override
-	default IntSupplier lift() {
-		return ignore();
 	}
 
 	/**

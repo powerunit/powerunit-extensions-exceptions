@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BooleanSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<BooleanSupplier, BooleanSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<BooleanSupplier> {
 
 	/**
 	 * Gets a result.
@@ -65,24 +65,6 @@ public interface BooleanSupplierWithException<E extends Exception>
 				return getAsBoolean();
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
-			}
-		};
-	}
-
-	/**
-	 * Converts this {@code BooleanSupplierWithException} to a lifted
-	 * {@code BooleanSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(BooleanSupplierWithException)
-	 */
-	@Override
-	default BooleanSupplier lift() {
-		return () -> {
-			try {
-				return getAsBoolean();
-			} catch (Exception e) {
-				return false;
 			}
 		};
 	}

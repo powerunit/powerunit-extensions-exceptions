@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface PredicateWithException<T, E extends Exception>
-		extends ExceptionHandlerSupport<Predicate<T>, Predicate<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<Predicate<T>> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -72,18 +72,6 @@ public interface PredicateWithException<T, E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code PredicateWithException} to a lifted {@code Predicate}
-	 * returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(PredicateWithException)
-	 */
-	@Override
-	default Predicate<T> lift() {
-		return ignore();
 	}
 
 	/**

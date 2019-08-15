@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleBinaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleBinaryOperator, DoubleBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -71,18 +71,6 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code DoubleBinaryOperatorWithException} to a lifted
-	 * {@code DoubleBinaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(DoubleBinaryOperatorWithException)
-	 */
-	@Override
-	default DoubleBinaryOperator lift() {
-		return ignore();
 	}
 
 	/**

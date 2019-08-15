@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleSupplier, DoubleSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier> {
 
 	/**
 	 * Gets a result.
@@ -67,18 +67,6 @@ public interface DoubleSupplierWithException<E extends Exception>
 				throw exceptionMapper().apply(e);
 			}
 		};
-	}
-
-	/**
-	 * Converts this {@code DoubleSupplierWithException} to a lifted
-	 * {@code DoubleSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(DoubleSupplierWithException)
-	 */
-	@Override
-	default DoubleSupplier lift() {
-		return ignore();
 	}
 
 	/**

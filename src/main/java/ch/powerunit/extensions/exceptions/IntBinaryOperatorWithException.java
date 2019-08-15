@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntBinaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<IntBinaryOperator, IntBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntBinaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -70,18 +70,6 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code IntBinaryOperatorWithException} to a lifted
-	 * {@code IntBinaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(IntBinaryOperatorWithException)
-	 */
-	@Override
-	default IntBinaryOperator lift() {
-		return ignore();
 	}
 
 	/**

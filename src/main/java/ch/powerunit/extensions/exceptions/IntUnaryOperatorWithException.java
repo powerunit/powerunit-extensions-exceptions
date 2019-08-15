@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<IntUnaryOperator, IntUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -68,18 +68,6 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code IntUnaryOperatorWithException} to a lifted
-	 * {@code IntUnaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(IntUnaryOperatorWithException)
-	 */
-	@Override
-	default IntUnaryOperator lift() {
-		return ignore();
 	}
 
 	/**

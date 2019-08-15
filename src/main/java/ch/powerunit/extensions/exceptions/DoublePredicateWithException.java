@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoublePredicateWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoublePredicate, DoublePredicate> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoublePredicate> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -70,18 +70,6 @@ public interface DoublePredicateWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code DoublePredicateWithException} to a lifted
-	 * {@code DoublePredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(DoublePredicateWithException)
-	 */
-	@Override
-	default DoublePredicate lift() {
-		return ignore();
 	}
 
 	/**

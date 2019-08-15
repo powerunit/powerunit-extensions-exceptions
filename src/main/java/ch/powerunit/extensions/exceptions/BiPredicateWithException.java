@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiPredicateWithException<T, U, E extends Exception>
-		extends ExceptionHandlerSupport<BiPredicate<T, U>, BiPredicate<T, U>> {
+		extends PrimitiveReturnExceptionHandlerSupport<BiPredicate<T, U>> {
 
 	/**
 	 * Evaluates this predicate on the given arguments.
@@ -77,18 +77,6 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code BiPredicate} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(BiPredicateWithException)
-	 */
-	@Override
-	default BiPredicate<T, U> lift() {
-		return ignore();
 	}
 
 	/**

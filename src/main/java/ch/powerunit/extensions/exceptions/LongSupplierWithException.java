@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongSupplierWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongSupplier, LongSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongSupplier> {
 
 	/**
 	 * Gets a result.
@@ -67,18 +67,6 @@ public interface LongSupplierWithException<E extends Exception>
 				throw exceptionMapper().apply(e);
 			}
 		};
-	}
-
-	/**
-	 * Converts this {@code LongSupplierWithException} to a lifted
-	 * {@code LongSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #lifted(LongSupplierWithException)
-	 */
-	@Override
-	default LongSupplier lift() {
-		return ignore();
 	}
 
 	/**

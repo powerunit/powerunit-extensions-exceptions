@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<DoubleUnaryOperator, DoubleUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -69,18 +69,6 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(DoubleUnaryOperatorWithException)
-	 */
-	@Override
-	default DoubleUnaryOperator lift() {
-		return ignore();
 	}
 
 	/**

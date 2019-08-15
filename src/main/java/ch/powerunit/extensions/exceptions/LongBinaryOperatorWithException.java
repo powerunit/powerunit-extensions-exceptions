@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongBinaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongBinaryOperator, LongBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -71,18 +71,6 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code LongBinaryOperatorWithException} to a lifted
-	 * {@code LongBinaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(LongBinaryOperatorWithException)
-	 */
-	@Override
-	default LongBinaryOperator lift() {
-		return ignore();
 	}
 
 	/**

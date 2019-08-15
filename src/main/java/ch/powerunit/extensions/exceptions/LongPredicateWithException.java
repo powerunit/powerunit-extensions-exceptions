@@ -37,7 +37,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongPredicateWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongPredicate, LongPredicate> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongPredicate> {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -70,18 +70,6 @@ public interface LongPredicateWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code LongPredicateWithException} to a lifted
-	 * {@code LongPredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #lifted(LongPredicateWithException)
-	 */
-	@Override
-	default LongPredicate lift() {
-		return ignore();
 	}
 
 	/**

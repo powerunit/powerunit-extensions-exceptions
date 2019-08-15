@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongUnaryOperatorWithException<E extends Exception>
-		extends ExceptionHandlerSupport<LongUnaryOperator, LongUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -68,18 +68,6 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 			}
 		};
 
-	}
-
-	/**
-	 * Converts this {@code LongUnaryOperatorWithException} to a lifted
-	 * {@code LongUnaryOperator} return a zero by default.
-	 *
-	 * @return the lifted function
-	 * @see #lifted(LongUnaryOperatorWithException)
-	 */
-	@Override
-	default LongUnaryOperator lift() {
-		return ignore();
 	}
 
 	/**

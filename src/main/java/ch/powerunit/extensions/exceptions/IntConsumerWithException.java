@@ -201,14 +201,11 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	 *
 	 * @param operation
 	 *            to be lifted
-	 * @param <T>
-	 *            the type of the first input object to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
 	 */
-	static <T, E extends Exception> ConsumerWithException<Integer, E> asConsumer(
-			IntConsumerWithException<E> operation) {
+	static <E extends Exception> ConsumerWithException<Integer, E> asConsumer(IntConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
 	}
 
