@@ -21,6 +21,7 @@ package ch.powerunit.extensions.exceptions.samples;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
 
 import ch.powerunit.Test;
@@ -78,6 +79,20 @@ public class BiFunctionSamplesTest implements TestSuite {
 				.unchecked(fonctionThrowingException, IllegalArgumentException::new);
 
 		assertThatBiFunction(functionThrowingRuntimeException, "x", "y").is("xy");
+
+	}
+
+	@Test
+	public void sample5() {
+
+		BiFunctionWithException<String, String, String, IOException> fonctionThrowingException = String::concat;
+
+		BiFunction<String, String, CompletionStage<String>> functionWithOptionalResult = BiFunctionWithException
+				.staged(fonctionThrowingException);
+
+		CompletionStage<String> result = functionWithOptionalResult.apply("x", "z");
+
+		assertThat(result.whenComplete((r, t) -> assertThat(t).isNull()).toCompletableFuture().join()).is("xz");
 
 	}
 
