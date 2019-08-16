@@ -69,4 +69,16 @@ public class BiFunctionSamplesTest implements TestSuite {
 
 	}
 
+	@Test
+	public void sample4() {
+
+		BiFunctionWithException<String, String, String, IOException> fonctionThrowingException = String::concat;
+
+		BiFunction<String, String, String> functionThrowingRuntimeException = BiFunctionWithException
+				.unchecked(fonctionThrowingException, IllegalArgumentException::new);
+
+		assertThatBiFunction(functionThrowingRuntimeException, "x", "y").is("xy");
+
+	}
+
 }
