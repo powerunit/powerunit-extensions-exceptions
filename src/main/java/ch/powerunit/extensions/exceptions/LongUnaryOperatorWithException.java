@@ -54,6 +54,25 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	long applyAsLong(long operand) throws E;
 
 	/**
+	 * Uncheck or ignore, depending on the param.
+	 * 
+	 * @param uncheck
+	 * @return the function
+	 */
+	default LongUnaryOperator uncheckOrIgnore(boolean uncheck) {
+		return operand -> {
+			try {
+				return applyAsLong(operand);
+			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
+				return 0;
+			}
+		};
+	}
+
+	/**
 	 * Converts this {@code LongUnaryOperatorWithException} to a
 	 * {@code LongUnaryOperator} that convert exception to {@code RuntimeException}.
 	 *
@@ -63,13 +82,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default LongUnaryOperator uncheck() {
-		return operand -> {
-			try {
-				return applyAsLong(operand);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return uncheckOrIgnore(true);
 
 	}
 
@@ -82,13 +95,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default LongUnaryOperator ignore() {
-		return operand -> {
-			try {
-				return applyAsLong(operand);
-			} catch (Exception e) {
-				return 0;
-			}
-		};
+		return uncheckOrIgnore(false);
 	}
 
 	/**
