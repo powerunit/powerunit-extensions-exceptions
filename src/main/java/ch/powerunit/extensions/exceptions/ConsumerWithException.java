@@ -103,7 +103,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	}
 
 	/**
-	 * Returns a {@code Consumer} that always throw exception.
+	 * Returns a {@code ConsumerWithException} that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
