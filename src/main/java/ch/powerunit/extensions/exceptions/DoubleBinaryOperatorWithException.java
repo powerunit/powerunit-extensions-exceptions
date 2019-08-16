@@ -60,9 +60,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 			try {
 				return applyAsDouble(left, right);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

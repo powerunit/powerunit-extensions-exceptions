@@ -65,9 +65,7 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 			try {
 				return applyAsInt(t, u);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

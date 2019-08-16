@@ -56,9 +56,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 			try {
 				return applyAsInt(t);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

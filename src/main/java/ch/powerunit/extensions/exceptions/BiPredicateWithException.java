@@ -65,9 +65,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 			try {
 				return test(t, u);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return false;
 			}
 		};

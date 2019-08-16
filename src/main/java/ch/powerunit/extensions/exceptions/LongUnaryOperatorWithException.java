@@ -59,9 +59,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 			try {
 				return applyAsLong(operand);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

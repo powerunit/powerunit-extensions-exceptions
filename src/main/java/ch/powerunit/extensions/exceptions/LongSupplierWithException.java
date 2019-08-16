@@ -56,9 +56,7 @@ public interface LongSupplierWithException<E extends Exception>
 			try {
 				return getAsLong();
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

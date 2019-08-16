@@ -56,9 +56,7 @@ public interface IntSupplierWithException<E extends Exception>
 			try {
 				return getAsInt();
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

@@ -65,9 +65,7 @@ public interface ToLongBiFunctionWithException<T, U, E extends Exception>
 			try {
 				return applyAsLong(t, u);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

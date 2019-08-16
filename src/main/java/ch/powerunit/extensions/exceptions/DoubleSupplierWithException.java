@@ -56,9 +56,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 			try {
 				return getAsDouble();
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

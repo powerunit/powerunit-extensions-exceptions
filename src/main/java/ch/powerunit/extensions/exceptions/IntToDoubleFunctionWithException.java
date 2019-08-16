@@ -57,9 +57,7 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 			try {
 				return applyAsDouble(value);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

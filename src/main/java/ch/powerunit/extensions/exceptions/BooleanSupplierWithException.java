@@ -56,9 +56,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 			try {
 				return getAsBoolean();
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return false;
 			}
 		};

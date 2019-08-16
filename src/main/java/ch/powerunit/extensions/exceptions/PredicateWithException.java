@@ -60,9 +60,7 @@ public interface PredicateWithException<T, E extends Exception>
 			try {
 				return test(value);
 			} catch (Exception e) {
-				if (uncheck) {
-					throw exceptionMapper().apply(e);
-				}
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return false;
 			}
 		};
