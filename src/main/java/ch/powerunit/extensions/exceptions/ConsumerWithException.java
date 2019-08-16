@@ -19,19 +19,22 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
+
 import static java.util.Objects.requireNonNull;
 
+import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
- * Represents an operation that accepts a single input argument and returns no
- * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * Represents an operation that accepts a single input argument, may thrown
+ * exception and returns no result. Unlike most other functional interfaces,
+ * {@code ConsumerWithException} is expected to operate via side-effects.
  *
- * @author borettim
  * @see Consumer
  * @param <T>
  *            the type of the input to the operation
@@ -53,12 +56,13 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	void accept(T t) throws E;
 
 	/**
-	 * Converts this {@code ConsumerWithException} to a {@code Consumer} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts this {@code ConsumerWithException} to a {@code Consumer} that wraps
+	 * exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(ConsumerWithException)
 	 * @see #unchecked(ConsumerWithException, Function)
+	 * @see Consumer
 	 */
 	@Override
 	default Consumer<T> uncheck() {
@@ -67,10 +71,11 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts this {@code ConsumerWithException} to a <i>lifted</i>
-	 * {@code Consumer} ignoring exception.
+	 * {@code Consumer} that ignore exception.
 	 *
 	 * @return the operation that ignore error
 	 * @see #ignored(ConsumerWithException)
+	 * @see Consumer
 	 */
 	@Override
 	default Consumer<T> ignore() {
@@ -86,12 +91,10 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 *
 	 * @param after
 	 *            the operation to perform after this operation
-	 * @return a composed {@code Consumer} that performs in sequence this operation
-	 *         followed by the {@code after} operation
+	 * @return a composed {@code ConsumerWithException} that performs in sequence
+	 *         this operation followed by the {@code after} operation
 	 * @throws NullPointerException
 	 *             if {@code after} is null
-	 *
-	 *
 	 * @see Consumer#andThen(Consumer)
 	 */
 	default ConsumerWithException<T, E> andThen(ConsumerWithException<? super T, ? extends E> after) {
@@ -103,7 +106,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	}
 
 	/**
-	 * Returns an operation that always throw exception.
+	 * Returns a {@code Consumer} that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
@@ -120,10 +123,25 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	}
 
 	/**
-	 * Converts a {@code ConsumerWithException} to a {@code Consumer} that convert
+	 * Converts a {@code ConsumerWithException} to a {@code Consumer} that wraps
 	 * exception to {@code RuntimeException}.
+	 * <p>
+	 * For example :
+	 * 
+	 * <pre>
+	 * ConsumerWithException&lt;String, IOException&gt; consumerThrowingException = ...;
+	 * 
+	 * Consumer&lt;String&gt; consumerThrowingRuntimeException = 
+	 *   ConsumerWithException.unchecked(consumerThrowingException);
+	 * 
+	 * Stream....forEach(consumerThrowingRuntimeException);
+	 * </pre>
+	 * 
+	 * In case of exception inside {@code consumerThrowingRuntimeException} an
+	 * instance of {@code WrappedException} with the original exception as cause
+	 * will be thrown.
 	 *
-	 * @param operation
+	 * @param consumer
 	 *            to be unchecked
 	 * @param <T>
 	 *            the type of the input object to the operation
@@ -132,16 +150,36 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(ConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
-	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
+	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> consumer) {
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code ConsumerWithException} to a {@code Consumer} that convert
+	 * Converts a {@code ConsumerWithException} to a {@code Consumer} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
+	 * <p>
+	 * For example :
+	 * 
+	 * <pre>
+	 * ConsumerWithException&lt;String, IOException&gt; consumerThrowingException = ...;
+	 * 
+	 * Consumer&lt;String&gt; consumerThrowingRuntimeException = 
+	 *   ConsumerWithException.unchecked(
+	 *     consumerThrowingException,
+	 *     IllegalArgumentException::new
+	 *   );
+	 * 
+	 * Stream....forEach(consumerThrowingRuntimeException);
+	 * </pre>
+	 * 
+	 * In case of exception inside {@code consumerThrowingRuntimeException} an
+	 * instance of {@code IllegalArgumentException} with the original exception as
+	 * cause will be thrown.
 	 *
-	 * @param operation
+	 * @param consumer
 	 *            the be unchecked
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
@@ -152,16 +190,18 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(ConsumerWithException)
+	 * @throws NullPointerException
+	 *             if consumer or exceptionMapper is null
 	 */
-	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> operation,
+	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> consumer,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new ConsumerWithException<T, E>() {
 
 			@Override
 			public void accept(T t) throws E {
-				operation.accept(t);
+				consumer.accept(t);
 			}
 
 			@Override
@@ -174,9 +214,9 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts a {@code ConsumerWithException} to a lifted {@code Consumer}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
-	 * @param operation
+	 * @param consumer
 	 *            to be lifted
 	 * @param <T>
 	 *            the type of the input object to the operation
@@ -184,16 +224,18 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
-	static <T, E extends Exception> Consumer<T> lifted(ConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
+	static <T, E extends Exception> Consumer<T> lifted(ConsumerWithException<T, E> consumer) {
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).lift();
 	}
 
 	/**
 	 * Converts a {@code ConsumerWithException} to a lifted {@code Consumer}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
-	 * @param operation
+	 * @param consumer
 	 *            to be lifted
 	 * @param <T>
 	 *            the type of the input object to the operation
@@ -201,16 +243,18 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
-	static <T, E extends Exception> Consumer<T> ignored(ConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+	static <T, E extends Exception> Consumer<T> ignored(ConsumerWithException<T, E> consumer) {
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).ignore();
 	}
 
 	/**
 	 * Converts a {@code ConsumerWithException} to a {@code FunctionWithException}
 	 * returning {@code null}.
 	 *
-	 * @param operation
+	 * @param consumer
 	 *            to be lifted
 	 * @param <T>
 	 *            the type of the first input object to the operation
@@ -219,12 +263,13 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
-	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(
-			ConsumerWithException<T, E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(ConsumerWithException<T, E> consumer) {
+		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
 		return t -> {
-			operation.accept(t);
+			consumer.accept(t);
 			return null;
 		};
 	}

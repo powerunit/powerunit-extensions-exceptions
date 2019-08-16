@@ -20,6 +20,7 @@
 package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.BiConsumer;
@@ -107,7 +108,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	}
 
 	/**
-	 * Returns an {@code BiConsumerWithException} that always throw exception.
+	 * Returns a {@code BiConsumerWithException} that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
@@ -204,7 +205,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> consumer,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new BiConsumerWithException<T, U, E>() {
 
 			@Override
