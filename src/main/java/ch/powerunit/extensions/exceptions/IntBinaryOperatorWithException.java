@@ -27,9 +27,10 @@ import java.util.function.IntBinaryOperator;
 import java.util.function.Supplier;
 
 /**
- * Represents a int binary operator with exception.
+ * Represents an operation upon two {@code int}-valued operands, may thrown
+ * exception and producing an {@code int}-valued result. This is the primitive
+ * type specialization of {@link BinaryOperatorWithException} for {@code int}.
  *
- * @author borettim
  * @see IntBinaryOperator
  * @param <E>
  *            the type of the potential exception of the function
@@ -39,18 +40,18 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<IntBinaryOperator> {
 
 	/**
-	 * Applies this function to the given arguments.
+	 * Applies this operator to the given operands.
 	 *
-	 * @param t
-	 *            the first function argument
-	 * @param u
-	 *            the second function argument
-	 * @return the function result
+	 * @param left
+	 *            the first operand
+	 * @param right
+	 *            the second operand
+	 * @return the operator result
 	 * @throws E
 	 *             any exception
 	 * @see IntBinaryOperator#applyAsInt(int, int)
 	 */
-	int applyAsInt(int t, int u) throws E;
+	int applyAsInt(int left, int right) throws E;
 
 	/**
 	 * Converts this {@code IntBinaryOperatorWithException} to a
@@ -62,9 +63,9 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default IntBinaryOperator uncheck() {
-		return (t, u) -> {
+		return (left, right) -> {
 			try {
-				return applyAsInt(t, u);
+				return applyAsInt(left, right);
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
 			}
@@ -81,9 +82,9 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default IntBinaryOperator ignore() {
-		return (t, u) -> {
+		return (left, right) -> {
 			try {
-				return applyAsInt(t, u);
+				return applyAsInt(left, right);
 			} catch (Exception e) {
 				return 0;
 			}
@@ -100,7 +101,7 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> IntBinaryOperatorWithException<E> failing(Supplier<E> exceptionBuilder) {
-		return (t, u) -> {
+		return (left, right) -> {
 			throw exceptionBuilder.get();
 		};
 	}
@@ -143,8 +144,8 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 		return new IntBinaryOperatorWithException<E>() {
 
 			@Override
-			public int applyAsInt(int t, int u) throws E {
-				return function.applyAsInt(t, u);
+			public int applyAsInt(int left, int right) throws E {
+				return function.applyAsInt(left, right);
 			}
 
 			@Override
