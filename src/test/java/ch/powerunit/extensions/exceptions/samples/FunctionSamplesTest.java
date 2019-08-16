@@ -23,12 +23,14 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
+import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 import ch.powerunit.extensions.exceptions.FunctionWithException;
 
 @SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
 public class FunctionSamplesTest implements TestSuite {
 
+	@Test
 	public void sample1() {
 
 		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> x;
@@ -40,9 +42,12 @@ public class FunctionSamplesTest implements TestSuite {
 
 	}
 
+	@Test
 	public void sample2() {
 
-		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> x;
+		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> {
+			throw new IOException();
+		};
 
 		Function<String, String> functionThrowingRuntimeException = FunctionWithException
 				.unchecked(fonctionThrowingException, IllegalArgumentException::new);
@@ -52,6 +57,7 @@ public class FunctionSamplesTest implements TestSuite {
 
 	}
 
+	@Test
 	public void sample3() {
 
 		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> x;
