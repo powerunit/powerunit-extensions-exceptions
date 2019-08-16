@@ -53,41 +53,16 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 */
 	double applyAsDouble(double operand) throws E;
 
-	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked function
-	 * @see #unchecked(DoubleUnaryOperatorWithException)
-	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
-	 */
 	@Override
-	default DoubleUnaryOperator uncheck() {
+	default DoubleUnaryOperator uncheckOrIgnore(boolean uncheck) {
 		return operand -> {
 			try {
 				return applyAsDouble(operand);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} returning uero in case of exception.
-	 *
-	 * @return the function that ignore error
-	 * @see #ignored(DoubleUnaryOperatorWithException)
-	 */
-	@Override
-	default DoubleUnaryOperator ignore() {
-		return operand -> {
-			try {
-				return applyAsDouble(operand);
-			} catch (Exception e) {
-				return 0d;
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
+				return 0;
 			}
 		};
 	}

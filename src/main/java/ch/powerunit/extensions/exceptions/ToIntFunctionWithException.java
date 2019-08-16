@@ -53,39 +53,15 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	 */
 	int applyAsInt(T t) throws E;
 
-	/**
-	 * Converts this {@code ToLongFunctionWithException} to a {@code ToIntFunction}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(ToIntFunctionWithException)
-	 * @see #unchecked(ToIntFunctionWithException, Function)
-	 */
 	@Override
-	default ToIntFunction<T> uncheck() {
-		return t -> {
+	default ToIntFunction<T> uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return applyAsInt(t);
+				return applyAsInt(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToIntFunction} returning zero in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(ToIntFunctionWithException)
-	 */
-	@Override
-	default ToIntFunction<T> ignore() {
-		return t -> {
-			try {
-				return applyAsInt(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

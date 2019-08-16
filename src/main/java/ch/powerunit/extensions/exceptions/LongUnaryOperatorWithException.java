@@ -53,12 +53,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	long applyAsLong(long operand) throws E;
 
-	/**
-	 * Uncheck or ignore, depending on the param.
-	 * 
-	 * @param uncheck
-	 * @return the function
-	 */
+	@Override
 	default LongUnaryOperator uncheckOrIgnore(boolean uncheck) {
 		return operand -> {
 			try {

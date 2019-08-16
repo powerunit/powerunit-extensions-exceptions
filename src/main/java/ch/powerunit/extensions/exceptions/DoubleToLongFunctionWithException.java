@@ -52,25 +52,18 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 */
 	long applyAsLong(double value) throws E;
 
-	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a
-	 * {@code DoubleToLongFunction} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(DoubleToLongFunctionWithException)
-	 * @see #unchecked(DoubleToLongFunctionWithException, Function)
-	 */
 	@Override
-	default DoubleToLongFunction uncheck() {
+	default DoubleToLongFunction uncheckOrIgnore(boolean uncheck) {
 		return value -> {
 			try {
 				return applyAsLong(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
+				return 0;
 			}
 		};
-
 	}
 
 	/**

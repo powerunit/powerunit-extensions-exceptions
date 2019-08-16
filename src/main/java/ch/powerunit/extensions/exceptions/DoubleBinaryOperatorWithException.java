@@ -54,40 +54,15 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 */
 	double applyAsDouble(double left, double right) throws E;
 
-	/**
-	 * Converts this {@code DoubleBinaryOperatorWithException} to a
-	 * {@code DoubleBinaryOperator} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked function
-	 * @see #unchecked(DoubleBinaryOperatorWithException)
-	 * @see #unchecked(DoubleBinaryOperatorWithException, Function)
-	 */
 	@Override
-	default DoubleBinaryOperator uncheck() {
+	default DoubleBinaryOperator uncheckOrIgnore(boolean uncheck) {
 		return (left, right) -> {
 			try {
 				return applyAsDouble(left, right);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code DoubleBinaryOperatorWithException} to a lifted
-	 * {@code DoubleBinaryOperator} returning {@code 0} in case of exception.
-	 *
-	 * @return the function that ignore error
-	 * @see #ignored(DoubleBinaryOperatorWithException)
-	 */
-	@Override
-	default DoubleBinaryOperator ignore() {
-		return (left, right) -> {
-			try {
-				return applyAsDouble(left, right);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

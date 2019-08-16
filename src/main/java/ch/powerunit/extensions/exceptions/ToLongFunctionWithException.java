@@ -54,39 +54,15 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 */
 	long applyAsLong(T value) throws E;
 
-	/**
-	 * Converts this {@code ToLongFunctionWithException} to a {@code ToLongFunction}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(ToLongFunctionWithException)
-	 * @see #unchecked(ToLongFunctionWithException, Function)
-	 */
 	@Override
-	default ToLongFunction<T> uncheck() {
+	default ToLongFunction<T> uncheckOrIgnore(boolean uncheck) {
 		return value -> {
 			try {
 				return applyAsLong(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToLongFunction} returning zero in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(ToLongFunctionWithException)
-	 */
-	@Override
-	default ToLongFunction<T> ignore() {
-		return value -> {
-			try {
-				return applyAsLong(value);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

@@ -57,40 +57,15 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	 */
 	double applyAsDouble(T t, U u) throws E;
 
-	/**
-	 * Converts this {@code BiPredicateWithException} to a
-	 * {@code ToDoubleBiFunction} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(ToDoubleBiFunctionWithException)
-	 * @see #unchecked(ToDoubleBiFunctionWithException, Function)
-	 */
 	@Override
-	default ToDoubleBiFunction<T, U> uncheck() {
+	default ToDoubleBiFunction<T, U> uncheckOrIgnore(boolean uncheck) {
 		return (t, u) -> {
 			try {
 				return applyAsDouble(t, u);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code ToDoubleBiFunction} returning {@code 0} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(ToDoubleBiFunctionWithException)
-	 */
-	@Override
-	default ToDoubleBiFunction<T, U> ignore() {
-		return (t, u) -> {
-			try {
-				return applyAsDouble(t, u);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

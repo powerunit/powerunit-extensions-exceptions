@@ -52,39 +52,15 @@ public interface LongPredicateWithException<E extends Exception>
 	 */
 	boolean test(long t) throws E;
 
-	/**
-	 * Converts this {@code LongPredicateWithException} to a {@code LongPredicate}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(LongPredicateWithException)
-	 * @see #unchecked(LongPredicateWithException, Function)
-	 */
 	@Override
-	default LongPredicate uncheck() {
-		return t -> {
+	default LongPredicate uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return test(t);
+				return test(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code LongPredicateWithException} to a lifted
-	 * {@code LongPredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(LongPredicateWithException)
-	 */
-	@Override
-	default LongPredicate ignore() {
-		return t -> {
-			try {
-				return test(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return false;
 			}
 		};

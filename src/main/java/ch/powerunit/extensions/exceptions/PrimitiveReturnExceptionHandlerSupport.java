@@ -36,7 +36,9 @@ public interface PrimitiveReturnExceptionHandlerSupport<F> extends ExceptionHand
 	 * @return the unchecked operation
 	 */
 	@Override
-	F uncheck();
+	default F uncheck() {
+		return uncheckOrIgnore(true);
+	}
 
 	/**
 	 * Converts this function interface to a lifted one.
@@ -57,5 +59,18 @@ public interface PrimitiveReturnExceptionHandlerSupport<F> extends ExceptionHand
 	 * @return the operation that ignore error
 	 */
 	@Override
-	F ignore();
+	default F ignore() {
+		return uncheckOrIgnore(false);
+	}
+
+	/**
+	 * Uncheck or ignore, depending on the param.
+	 *
+	 * @param uncheck
+	 *            create unchecked version of the function when true, else ignored
+	 *            version.
+	 * @return the function
+	 */
+	F uncheckOrIgnore(boolean uncheck);
+
 }

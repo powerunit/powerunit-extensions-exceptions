@@ -50,39 +50,15 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 */
 	int applyAsInt(int t) throws E;
 
-	/**
-	 * Converts this {@code IntUnaryOperatorWithException} to a
-	 * {@code IntUnaryOperator} that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked function
-	 * @see #unchecked(IntUnaryOperatorWithException)
-	 * @see #unchecked(IntUnaryOperatorWithException, Function)
-	 */
 	@Override
-	default IntUnaryOperator uncheck() {
+	default IntUnaryOperator uncheckOrIgnore(boolean uncheck) {
 		return t -> {
 			try {
 				return applyAsInt(t);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code IntUnaryOperatorWithException} to a lifted
-	 * {@code IntUnaryOperator} returning zero in case of exception.
-	 *
-	 * @return the function that ignore error
-	 * @see #ignored(IntUnaryOperatorWithException)
-	 */
-	@Override
-	default IntUnaryOperator ignore() {
-		return t -> {
-			try {
-				return applyAsInt(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

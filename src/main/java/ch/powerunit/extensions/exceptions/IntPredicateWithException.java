@@ -52,39 +52,15 @@ public interface IntPredicateWithException<E extends Exception>
 	 */
 	boolean test(int t) throws E;
 
-	/**
-	 * Converts this {@code IntPredicateWithException} to a {@code IntPredicate}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(IntPredicateWithException)
-	 * @see #unchecked(IntPredicateWithException, Function)
-	 */
 	@Override
-	default IntPredicate uncheck() {
-		return t -> {
+	default IntPredicate uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return test(t);
+				return test(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code IntPredicateWithException} to a lifted
-	 * {@code IntPredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(IntPredicateWithException)
-	 */
-	@Override
-	default IntPredicate ignore() {
-		return t -> {
-			try {
-				return test(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return false;
 			}
 		};

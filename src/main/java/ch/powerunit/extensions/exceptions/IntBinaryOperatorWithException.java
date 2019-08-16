@@ -53,39 +53,15 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 */
 	int applyAsInt(int left, int right) throws E;
 
-	/**
-	 * Converts this {@code IntBinaryOperatorWithException} to a
-	 * {@code IntBinaryOperator} that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked function
-	 * @see #unchecked(IntBinaryOperatorWithException)
-	 * @see #unchecked(IntBinaryOperatorWithException, Function)
-	 */
 	@Override
-	default IntBinaryOperator uncheck() {
+	default IntBinaryOperator uncheckOrIgnore(boolean uncheck) {
 		return (left, right) -> {
 			try {
 				return applyAsInt(left, right);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code IntBinaryOperatorWithException} to a lifted
-	 * {@code IntBinaryOperatorOperator} returning zero in case of exception.
-	 *
-	 * @return the function that ignore error
-	 * @see #ignored(IntBinaryOperatorWithException)
-	 */
-	@Override
-	default IntBinaryOperator ignore() {
-		return (left, right) -> {
-			try {
-				return applyAsInt(left, right);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

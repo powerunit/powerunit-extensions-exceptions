@@ -51,6 +51,20 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	 */
 	int applyAsInt(long t) throws E;
 
+	@Override
+	default LongToIntFunction uncheckOrIgnore(boolean uncheck) {
+		return t -> {
+			try {
+				return applyAsInt(t);
+			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
+				return 0;
+			}
+		};
+	}
+
 	/**
 	 * Converts this {@code DoubleToIntFunctionWithException} to a
 	 * {@code LongToIntFunction} that convert exception to {@code RuntimeException}.
@@ -61,14 +75,7 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	 */
 	@Override
 	default LongToIntFunction uncheck() {
-		return t -> {
-			try {
-				return applyAsInt(t);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
+		return uncheckOrIgnore(true);
 	}
 
 	/**
@@ -80,13 +87,7 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	 */
 	@Override
 	default LongToIntFunction ignore() {
-		return t -> {
-			try {
-				return applyAsInt(t);
-			} catch (Exception e) {
-				return 0;
-			}
-		};
+		return uncheckOrIgnore(false);
 	}
 
 	/**

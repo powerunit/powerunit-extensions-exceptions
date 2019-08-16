@@ -52,39 +52,15 @@ public interface DoublePredicateWithException<E extends Exception>
 	 */
 	boolean test(double t) throws E;
 
-	/**
-	 * Converts this {@code DoublePredicateWithException} to a
-	 * {@code DoublePredicate} that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(DoublePredicateWithException)
-	 * @see #unchecked(DoublePredicateWithException, Function)
-	 */
 	@Override
-	default DoublePredicate uncheck() {
-		return t -> {
+	default DoublePredicate uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return test(t);
+				return test(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code DoublePredicateWithException} to a lifted
-	 * {@code DoublePredicate} returning {@code false} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(DoublePredicateWithException)
-	 */
-	@Override
-	default DoublePredicate ignore() {
-		return t -> {
-			try {
-				return test(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return false;
 			}
 		};

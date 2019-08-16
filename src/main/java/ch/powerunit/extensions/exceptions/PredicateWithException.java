@@ -54,39 +54,15 @@ public interface PredicateWithException<T, E extends Exception>
 	 */
 	boolean test(T t) throws E;
 
-	/**
-	 * Converts this {@code PredicateWithException} to a {@code Predicate} that
-	 * convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(PredicateWithException)
-	 * @see #unchecked(PredicateWithException, Function)
-	 */
 	@Override
-	default Predicate<T> uncheck() {
-		return t -> {
+	default Predicate<T> uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return test(t);
+				return test(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code PredicateWithException} to a lifted {@code Predicate}
-	 * returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(PredicateWithException)
-	 */
-	@Override
-	default Predicate<T> ignore() {
-		return t -> {
-			try {
-				return test(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return false;
 			}
 		};

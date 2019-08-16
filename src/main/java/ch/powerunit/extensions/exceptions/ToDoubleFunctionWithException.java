@@ -53,39 +53,15 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 */
 	double applyAsDouble(T t) throws E;
 
-	/**
-	 * Converts this {@code ToLongFunctionWithException} to a
-	 * {@code ToDoubleFunction} that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(ToDoubleFunctionWithException)
-	 * @see #unchecked(ToDoubleFunctionWithException, Function)
-	 */
 	@Override
-	default ToDoubleFunction<T> uncheck() {
-		return t -> {
+	default ToDoubleFunction<T> uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return applyAsDouble(t);
+				return applyAsDouble(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToDoubleFunction} returning zero in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(ToDoubleFunctionWithException)
-	 */
-	@Override
-	default ToDoubleFunction<T> ignore() {
-		return t -> {
-			try {
-				return applyAsDouble(t);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

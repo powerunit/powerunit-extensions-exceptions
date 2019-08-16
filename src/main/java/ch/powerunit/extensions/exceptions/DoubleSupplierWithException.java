@@ -50,38 +50,15 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 */
 	double getAsDouble() throws E;
 
-	/**
-	 * Converts this {@code DoubleSupplierWithException} to a {@code DoubleSupplier}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked supplier
-	 * @see #unchecked(DoubleSupplierWithException)
-	 * @see #unchecked(DoubleSupplierWithException, Function)
-	 */
 	@Override
-	default DoubleSupplier uncheck() {
+	default DoubleSupplier uncheckOrIgnore(boolean uncheck) {
 		return () -> {
 			try {
 				return getAsDouble();
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-	}
-
-	/**
-	 * Converts this {@code DoubleSupplierWithException} to a lifted
-	 * {@code DoubleSupplier} returning {@code 0} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #ignored(DoubleSupplierWithException)
-	 */
-	@Override
-	default DoubleSupplier ignore() {
-		return () -> {
-			try {
-				return getAsDouble();
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

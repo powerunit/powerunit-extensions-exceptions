@@ -59,39 +59,15 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 	 */
 	int applyAsInt(T t, U u) throws E;
 
-	/**
-	 * Converts this {@code BiPredicateWithException} to a {@code ToIntBiFunction}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(ToIntBiFunctionWithException)
-	 * @see #unchecked(ToIntBiFunctionWithException, Function)
-	 */
 	@Override
-	default ToIntBiFunction<T, U> uncheck() {
+	default ToIntBiFunction<T, U> uncheckOrIgnore(boolean uncheck) {
 		return (t, u) -> {
 			try {
 				return applyAsInt(t, u);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code ToIntBiFunction} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(ToIntBiFunctionWithException)
-	 */
-	@Override
-	default ToIntBiFunction<T, U> ignore() {
-		return (t, u) -> {
-			try {
-				return applyAsInt(t, u);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};

@@ -59,39 +59,15 @@ public interface ToLongBiFunctionWithException<T, U, E extends Exception>
 	 */
 	long applyAsLong(T t, U u) throws E;
 
-	/**
-	 * Converts this {@code BiPredicateWithException} to a {@code ToLongBiFunction}
-	 * that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(ToLongBiFunctionWithException)
-	 * @see #unchecked(ToLongBiFunctionWithException, Function)
-	 */
 	@Override
-	default ToLongBiFunction<T, U> uncheck() {
+	default ToLongBiFunction<T, U> uncheckOrIgnore(boolean uncheck) {
 		return (t, u) -> {
 			try {
 				return applyAsLong(t, u);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code ToLongBiFunction} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(ToLongBiFunctionWithException)
-	 */
-	@Override
-	default ToLongBiFunction<T, U> ignore() {
-		return (t, u) -> {
-			try {
-				return applyAsLong(t, u);
-			} catch (Exception e) {
+				if (uncheck) {
+					throw exceptionMapper().apply(e);
+				}
 				return 0;
 			}
 		};
