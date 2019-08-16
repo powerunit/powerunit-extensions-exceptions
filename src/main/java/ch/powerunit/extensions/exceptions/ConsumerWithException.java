@@ -21,14 +21,11 @@ package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-
 import static java.util.Objects.requireNonNull;
 
-import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * Represents an operation that accepts a single input argument, may thrown
@@ -127,16 +124,16 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * exception to {@code RuntimeException}.
 	 * <p>
 	 * For example :
-	 * 
+	 *
 	 * <pre>
 	 * ConsumerWithException&lt;String, IOException&gt; consumerThrowingException = ...;
-	 * 
-	 * Consumer&lt;String&gt; consumerThrowingRuntimeException = 
+	 *
+	 * Consumer&lt;String&gt; consumerThrowingRuntimeException =
 	 *   ConsumerWithException.unchecked(consumerThrowingException);
-	 * 
+	 *
 	 * Stream....forEach(consumerThrowingRuntimeException);
 	 * </pre>
-	 * 
+	 *
 	 * In case of exception inside {@code consumerThrowingRuntimeException} an
 	 * instance of {@code WrappedException} with the original exception as cause
 	 * will be thrown.
@@ -162,19 +159,19 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 * <p>
 	 * For example :
-	 * 
+	 *
 	 * <pre>
 	 * ConsumerWithException&lt;String, IOException&gt; consumerThrowingException = ...;
-	 * 
-	 * Consumer&lt;String&gt; consumerThrowingRuntimeException = 
+	 *
+	 * Consumer&lt;String&gt; consumerThrowingRuntimeException =
 	 *   ConsumerWithException.unchecked(
 	 *     consumerThrowingException,
 	 *     IllegalArgumentException::new
 	 *   );
-	 * 
+	 *
 	 * Stream....forEach(consumerThrowingRuntimeException);
 	 * </pre>
-	 * 
+	 *
 	 * In case of exception inside {@code consumerThrowingRuntimeException} an
 	 * instance of {@code IllegalArgumentException} with the original exception as
 	 * cause will be thrown.

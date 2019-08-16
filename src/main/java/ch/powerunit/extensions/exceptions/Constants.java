@@ -34,7 +34,7 @@ final class Constants {
 	public static final String PREDICATE_CANT_BE_NULL = "predicate can't be null";
 
 	public static final String CONSUMER_CANT_BE_NULL = "consumer can't be null";
-	
+
 	public static final String EXCEPTIONMAPPER_CANT_BE_NULL = "exceptionMapper can't be null";
 
 	private Constants() {

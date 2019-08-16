@@ -141,7 +141,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *
 	 * myMap.forEach(consumerThrowingRuntimeException);
 	 * </pre>
-	 * 
+	 *
 	 * In case of exception inside {@code consumerThrowingRuntimeException} an
 	 * instance of {@code WrappedException} with the original exception as cause
 	 * will be thrown.
@@ -167,7 +167,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	/**
 	 * Converts a {@code BiConsumerWithException} to a {@code BiConsumer} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
-	 * 
+	 *
 	 * <p>
 	 * For example :
 	 *
@@ -181,7 +181,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *
 	 * myMap.forEach(consumerThrowingRuntimeException)
 	 * </pre>
-	 * 
+	 *
 	 * In case of exception inside {@code consumerThrowingRuntimeException} an
 	 * instance of {@code IllegalArgumentException} with the original exception as
 	 * cause will be thrown.
@@ -235,7 +235,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *
 	 * myMap.forEach(consumerThrowingRuntimeException);
 	 * </pre>
-	 * 
+	 *
 	 * In case of exception inside {@code consumerThrowingRuntimeException} the
 	 * exception will be ignored.
 	 *
@@ -270,7 +270,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *
 	 * myMap.forEach(consumerThrowingRuntimeException);
 	 * </pre>
-	 * 
+	 *
 	 * In case of exception inside {@code consumerThrowingRuntimeException} the
 	 * exception will be ignored.
 	 *
