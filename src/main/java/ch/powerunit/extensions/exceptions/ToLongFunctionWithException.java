@@ -27,12 +27,14 @@ import java.util.function.Supplier;
 import java.util.function.ToLongFunction;
 
 /**
- * Represents a function of one argument and may throw an exception.
+ * Represents a function that produces a long-valued result and may thrown
+ * exception. This is the {@code long}-producing primitive specialization for
+ * {@link FunctionWithException}.
  *
  * @author borettim
  * @see ToLongFunction
  * @param <T>
- *            the type of the input to the predicate
+ *            the type of the input to the function
  * @param <E>
  *            the type of the potential exception of the function
  */
@@ -41,17 +43,16 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<ToLongFunction<T>> {
 
 	/**
-	 * Evaluates this function on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return {@code true} if the input argument matches the predicate, otherwise
-	 *         {@code false}
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see ToLongFunction#applyAsLong(Object)
 	 */
-	long applyAsLong(T t) throws E;
+	long applyAsLong(T value) throws E;
 
 	/**
 	 * Converts this {@code ToLongFunctionWithException} to a {@code ToLongFunction}
@@ -63,9 +64,9 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 */
 	@Override
 	default ToLongFunction<T> uncheck() {
-		return t -> {
+		return value -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(value);
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
 			}
@@ -82,9 +83,9 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 */
 	@Override
 	default ToLongFunction<T> ignore() {
-		return t -> {
+		return value -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(value);
 			} catch (Exception e) {
 				return 0;
 			}
@@ -103,7 +104,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 * @return a predicate that always throw exception
 	 */
 	static <T, E extends Exception> ToLongFunctionWithException<T, E> failing(Supplier<E> exceptionBuilder) {
-		return t -> {
+		return value -> {
 			throw exceptionBuilder.get();
 		};
 	}
@@ -150,8 +151,8 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 		return new ToLongFunctionWithException<T, E>() {
 
 			@Override
-			public long applyAsLong(T t) throws E {
-				return function.applyAsLong(t);
+			public long applyAsLong(T value) throws E {
+				return function.applyAsLong(value);
 			}
 
 			@Override

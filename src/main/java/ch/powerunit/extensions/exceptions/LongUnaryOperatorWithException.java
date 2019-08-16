@@ -27,9 +27,11 @@ import java.util.function.LongUnaryOperator;
 import java.util.function.Supplier;
 
 /**
- * Represents a long unary operator with exception.
+ * Represents an operation on a single {@code long}-valued operand, may thrown
+ * exception and that produces a {@code long}-valued result. This is the
+ * primitive type specialization of {@link UnaryOperatorWithException} for
+ * {@code long}.
  *
- * @author borettim
  * @see LongUnaryOperator
  * @param <E>
  *            the type of the potential exception of the function
@@ -39,16 +41,17 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator> {
 
 	/**
-	 * Applies this function to the given arguments.
+	 * Applies this operator to the given operand.
 	 *
-	 * @param t
-	 *            the first function argument
-	 * @return the function result
+	 * @param operand
+	 *            the operand
+	 * @return the operator result
+	 *
 	 * @throws E
 	 *             any exception
 	 * @see LongUnaryOperator#applyAsLong(long)
 	 */
-	long applyAsLong(long t) throws E;
+	long applyAsLong(long operand) throws E;
 
 	/**
 	 * Converts this {@code LongUnaryOperatorWithException} to a
@@ -60,9 +63,9 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default LongUnaryOperator uncheck() {
-		return t -> {
+		return operand -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(operand);
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
 			}
@@ -79,9 +82,9 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default LongUnaryOperator ignore() {
-		return t -> {
+		return operand -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(operand);
 			} catch (Exception e) {
 				return 0;
 			}
@@ -150,7 +153,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> LongUnaryOperatorWithException<E> failing(Supplier<E> exceptionBuilder) {
-		return t -> {
+		return operand -> {
 			throw exceptionBuilder.get();
 		};
 	}
@@ -193,8 +196,8 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 		return new LongUnaryOperatorWithException<E>() {
 
 			@Override
-			public long applyAsLong(long t) throws E {
-				return function.applyAsLong(t);
+			public long applyAsLong(long operand) throws E {
+				return function.applyAsLong(operand);
 			}
 
 			@Override
