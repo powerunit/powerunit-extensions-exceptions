@@ -252,7 +252,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * returning {@code null}.
 	 *
 	 * @param consumer
-	 *            to be lifted
+	 *            to be converted
 	 * @param <T>
 	 *            the type of the first input object to the operation
 	 * @param <R>
