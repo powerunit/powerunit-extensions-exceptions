@@ -3,7 +3,8 @@
 
 This library provides support to wraps _checked exception_, to be used as target functional interface (which by default only support `RuntimeException`).
 
-The library exposes several functional interface, similar to the one from `java.util.function`, but that may throw exception. Then several methods are provided to convert these exception to `RuntimeException` or _lift_ the function.
+The library exposes several functional interface, similar to the one from `java.util.function`, but that may throw exception. Then several methods are provided to convert these exception to `RuntimeException` or lift the function.
+
 
 For example :
 
