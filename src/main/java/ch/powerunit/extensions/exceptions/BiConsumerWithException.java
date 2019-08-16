@@ -156,6 +156,8 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(BiConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> consumer) {
 		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).uncheck();
@@ -196,6 +198,8 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(BiConsumerWithException)
+	 * @throws NullPointerException
+	 *             if consumer or exceptionMapper is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> consumer,
 			Function<Exception, RuntimeException> exceptionMapper) {
@@ -230,6 +234,8 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *            the type of the potential exception of the operation
 	 * @return the lifted operation
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> lifted(BiConsumerWithException<T, U, E> consumer) {
 		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).lift();
@@ -249,6 +255,8 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *            the type of the potential exception of the operation
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> ignored(BiConsumerWithException<T, U, E> consumer) {
 		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).ignore();
@@ -269,6 +277,8 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * @param <E>
 	 *            the type of the potential exception of the operation
 	 * @return the function
+	 * @throws NullPointerException
+	 *             if consumer is null
 	 */
 	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
 			BiConsumerWithException<T, U, E> consumer) {
