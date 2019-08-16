@@ -26,6 +26,7 @@ import java.util.function.BiConsumer;
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 import ch.powerunit.extensions.exceptions.BiConsumerWithException;
+import ch.powerunit.extensions.exceptions.BiFunctionWithException;
 import ch.powerunit.extensions.exceptions.WrappedException;
 
 @SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
@@ -100,6 +101,88 @@ public class BiConsumerSamplesTest implements TestSuite {
 		assertWhen((x) -> {
 			Collections.singletonMap("x", "y").forEach(consumerThrowingRuntimeException);
 		}).throwException(instanceOf(IllegalArgumentException.class));
+
+	}
+
+	@Test
+	public void sample5() {
+
+		Handler<String> handler = new Handler<>();
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
+			handler.object = "y" + x + y;
+		};
+
+		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
+				.lifted(consumerThrowingException);
+
+		Collections.singletonMap("x", "y").forEach(consumerThrowingRuntimeException);
+
+		assertThat(handler.object).is("yxy");
+
+	}
+
+	@Test
+	public void sample6() {
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
+			throw new IOException("test");
+		};
+
+		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
+				.lifted(consumerThrowingException);
+
+		Collections.singletonMap("x", "y").forEach(consumerThrowingRuntimeException);
+
+	}
+
+	@Test
+	public void sample7() {
+
+		Handler<String> handler = new Handler<>();
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
+			handler.object = "y" + x + y;
+		};
+
+		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
+				.ignored(consumerThrowingException);
+
+		Collections.singletonMap("x", "y").forEach(consumerThrowingRuntimeException);
+
+		assertThat(handler.object).is("yxy");
+
+	}
+
+	@Test
+	public void sample8() {
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
+			throw new IOException("test");
+		};
+
+		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
+				.ignored(consumerThrowingException);
+
+		Collections.singletonMap("x", "y").forEach(consumerThrowingRuntimeException);
+
+	}
+
+	@Test
+	public void sample9() {
+
+		Handler<String> handler = new Handler<>();
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
+			handler.object = "y" + x + y;
+		};
+
+		BiFunctionWithException<String, String, String, IOException> consumerThrowingRuntimeException = BiConsumerWithException
+				.asBiFunction(consumerThrowingException);
+
+		assertThatBiFunction(consumerThrowingRuntimeException.uncheck(), "x", "z").isNull();
+
+		assertThat(handler.object).is("yxz");
 
 	}
 }

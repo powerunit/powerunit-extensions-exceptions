@@ -223,6 +223,20 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	/**
 	 * Converts a {@code BiConsumerWithException} to a lifted {@code BiConsumer}
 	 * ignoring exception.
+	 * <p>
+	 * For example :
+	 *
+	 * <pre>
+	 * BiConsumerWithException&lt;String, String, IOException&gt; consumerThrowingException = ...;
+	 *
+	 * BiConsumer&lt;String, String&gt; consumerThrowingRuntimeException =
+	 *   ConsumerWithException.lifted(consumerThrowingException);
+	 *
+	 * myMap.forEach(consumerThrowingRuntimeException);
+	 * </pre>
+	 * 
+	 * In case of exception inside {@code consumerThrowingRuntimeException} the
+	 * exception will be ignored.
 	 *
 	 * @param consumer
 	 *            to be lifted
@@ -244,6 +258,20 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	/**
 	 * Converts a {@code BiConsumerWithException} to a lifted {@code BiConsumer}
 	 * ignoring exception.
+	 * <p>
+	 * For example :
+	 *
+	 * <pre>
+	 * BiConsumerWithException&lt;String, String, IOException&gt; consumerThrowingException = ...;
+	 *
+	 * BiConsumer&lt;String, String&gt; consumerThrowingRuntimeException =
+	 *   ConsumerWithException.ignored(consumerThrowingException);
+	 *
+	 * myMap.forEach(consumerThrowingRuntimeException);
+	 * </pre>
+	 * 
+	 * In case of exception inside {@code consumerThrowingRuntimeException} the
+	 * exception will be ignored.
 	 *
 	 * @param consumer
 	 *            to be lifted
@@ -267,7 +295,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * {@code BiFunctionWithException} returning {@code null}.
 	 *
 	 * @param consumer
-	 *            to be lifted
+	 *            to be converter
 	 * @param <T>
 	 *            the type of the first argument to the operation
 	 * @param <U>
