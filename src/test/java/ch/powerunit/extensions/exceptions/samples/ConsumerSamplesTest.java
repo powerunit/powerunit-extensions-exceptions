@@ -100,4 +100,26 @@ public class ConsumerSamplesTest implements TestSuite {
 		}).throwException(instanceOf(IllegalArgumentException.class));
 
 	}
+
+	@Test
+	public void sample5() {
+
+		Handler<String> handler = new Handler<>();
+
+		ConsumerWithException<String, IOException> consumerThrowingException1 = x -> {
+			handler.object = "y" + x;
+		};
+
+		ConsumerWithException<String, IOException> consumerThrowingException2 = x -> {
+			handler.object = handler.object + "y" + x;
+		};
+
+		Consumer<String> consumerThrowingRuntimeException = ConsumerWithException
+				.unchecked(consumerThrowingException1.andThen(consumerThrowingException2));
+
+		Stream.of("z").forEach(consumerThrowingRuntimeException);
+
+		assertThat(handler.object).is("yzyz");
+
+	}
 }

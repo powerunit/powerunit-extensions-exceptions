@@ -108,7 +108,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the input object to the operation
+	 *            the type of the input to the operation
 	 * @param <E>
 	 *            the type of the exception
 	 * @return an operation that always throw exception
@@ -141,7 +141,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param consumer
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the input object to the operation
+	 *            the type of the input to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
@@ -181,7 +181,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the input object to the operation
+	 *            the type of the input to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
@@ -216,7 +216,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param consumer
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the operation
+	 *            the type of the input to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted operation
@@ -235,7 +235,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param consumer
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the operation
+	 *            the type of the input to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted operation
@@ -254,7 +254,7 @@ public interface ConsumerWithException<T, E extends Exception> extends NoReturnE
 	 * @param consumer
 	 *            to be converted
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the input to the operation
 	 * @param <R>
 	 *            the type of the return value
 	 * @param <E>

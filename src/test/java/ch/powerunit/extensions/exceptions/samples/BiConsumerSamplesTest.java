@@ -185,4 +185,26 @@ public class BiConsumerSamplesTest implements TestSuite {
 		assertThat(handler.object).is("yxz");
 
 	}
+
+	@Test
+	public void sample10() {
+
+		Handler<String> handler = new Handler<>();
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException1 = (x, y) -> {
+			handler.object = "y" + x + y;
+		};
+
+		BiConsumerWithException<String, String, IOException> consumerThrowingException2 = (x, y) -> {
+			handler.object = "z" + y + x + handler.object;
+		};
+
+		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
+				.unchecked(consumerThrowingException1.andThen(consumerThrowingException2));
+
+		Collections.singletonMap("a", "b").forEach(consumerThrowingRuntimeException);
+
+		assertThat(handler.object).is("zbayab");
+
+	}
 }
