@@ -50,6 +50,18 @@ public interface LongSupplierWithException<E extends Exception>
 	 */
 	long getAsLong() throws E;
 
+	@Override
+	default LongSupplier uncheckOrIgnore(boolean uncheck) {
+		return () -> {
+			try {
+				return getAsLong();
+			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
+				return 0;
+			}
+		};
+	}
+
 	/**
 	 * Converts this {@code LongSupplierWithException} to a {@code LongSupplier}
 	 * that convert exception to {@code RuntimeException}.
@@ -60,13 +72,7 @@ public interface LongSupplierWithException<E extends Exception>
 	 */
 	@Override
 	default LongSupplier uncheck() {
-		return () -> {
-			try {
-				return getAsLong();
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
+		return uncheckOrIgnore(true);
 	}
 
 	/**
@@ -78,13 +84,7 @@ public interface LongSupplierWithException<E extends Exception>
 	 */
 	@Override
 	default LongSupplier ignore() {
-		return () -> {
-			try {
-				return getAsLong();
-			} catch (Exception e) {
-				return 0;
-			}
-		};
+		return uncheckOrIgnore(false);
 	}
 
 	/**

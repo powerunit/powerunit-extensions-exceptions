@@ -52,40 +52,13 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 */
 	long applyAsLong(long t, long u) throws E;
 
-	/**
-	 * Converts this {@code LongBinaryOperatorWithException} to a
-	 * {@code LongBinaryOperator} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked function
-	 * @see #unchecked(LongBinaryOperatorWithException)
-	 * @see #unchecked(LongBinaryOperatorWithException, Function)
-	 */
 	@Override
-	default LongBinaryOperator uncheck() {
+	default LongBinaryOperator uncheckOrIgnore(boolean uncheck) {
 		return (t, u) -> {
 			try {
 				return applyAsLong(t, u);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code LongBinaryOperatorWithException} to a lifted
-	 * {@code LongBinaryOperatorOperator} returning zero in case of exception.
-	 *
-	 * @return the function that ignore error
-	 * @see #ignored(LongBinaryOperatorWithException)
-	 */
-	@Override
-	default LongBinaryOperator ignore() {
-		return (t, u) -> {
-			try {
-				return applyAsLong(t, u);
-			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

@@ -23,41 +23,47 @@ import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
+import java.util.function.ToLongBiFunction;
 
 /**
- * Represents a function of one argument and may throw an exception.
+ * Represents a predicate (boolean-valued function) of one argument and may
+ * throw an exception.
  *
  * @author borettim
- * @see ToDoubleFunction
+ * @see Predicate
  * @param <T>
- *            the type of the input to the predicate
+ *            the type of the first input to the predicate
+ * @param <U>
+ *            the type of the second argument the predicate
  * @param <E>
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface ToDoubleFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleFunction<T>> {
+public interface ToLongBiFunctionWithException<T, U, E extends Exception>
+		extends PrimitiveReturnExceptionHandlerSupport<ToLongBiFunction<T, U>> {
 
 	/**
-	 * Evaluates this function on the given argument.
+	 * Evaluates this predicate on the given arguments.
 	 *
 	 * @param t
-	 *            the input argument
+	 *            the first input argument
+	 * @param u
+	 *            the first second argument
 	 * @return {@code true} if the input argument matches the predicate, otherwise
 	 *         {@code false}
 	 * @throws E
 	 *             any exception
-	 * @see ToDoubleFunction#applyAsDouble(Object)
+	 * @see ToLongBiFunction#applyAsLong(Object, Object)
 	 */
-	double applyAsDouble(T t) throws E;
+	long applyAsLong(T t, U u) throws E;
 
 	@Override
-	default ToDoubleFunction<T> uncheckOrIgnore(boolean uncheck) {
-		return value -> {
+	default ToLongBiFunction<T, U> uncheckOrIgnore(boolean uncheck) {
+		return (t, u) -> {
 			try {
-				return applyAsDouble(value);
+				return applyAsLong(t, u);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
@@ -71,37 +77,42 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a predicate that always throw exception
 	 */
-	static <T, E extends Exception> ToDoubleFunctionWithException<T, E> failing(Supplier<E> exceptionBuilder) {
-		return t -> {
+	static <T, U, E extends Exception> ToLongBiFunctionWithException<T, U, E> failing(Supplier<E> exceptionBuilder) {
+		return (t, u) -> {
 			throw exceptionBuilder.get();
 		};
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionException} to a {@code ToDoubleFunction} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts a {@code BiPredicateWithException} to a {@code ToLongBiFunction}
+	 * that convert exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(ToDoubleFunctionWithException, Function)
+	 * @see #unchecked(ToLongBiFunctionWithException, Function)
 	 */
-	static <T, E extends Exception> ToDoubleFunction<T> unchecked(ToDoubleFunctionWithException<T, E> function) {
+	static <T, U, E extends Exception> ToLongBiFunction<T, U> unchecked(
+			ToLongBiFunctionWithException<T, U, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionWithException} to a {@code ToDoubleFunction}
+	 * Converts a {@code BiPredicateWithException} to a {@code ToLongBiFunction}
 	 * that convert exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
@@ -110,22 +121,24 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
-	 * @see #unchecked(ToDoubleFunctionWithException)
+	 * @see #unchecked(ToLongBiFunctionWithException)
 	 */
-	static <T, E extends Exception> ToDoubleFunction<T> unchecked(ToDoubleFunctionWithException<T, E> function,
+	static <T, U, E extends Exception> ToLongBiFunction<T, U> unchecked(ToLongBiFunctionWithException<T, U, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
 		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
-		return new ToDoubleFunctionWithException<T, E>() {
+		return new ToLongBiFunctionWithException<T, U, E>() {
 
 			@Override
-			public double applyAsDouble(T t) throws E {
-				return function.applyAsDouble(t);
+			public long applyAsLong(T t, U u) throws E {
+				return function.applyAsLong(t, u);
 			}
 
 			@Override
@@ -137,36 +150,40 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToDoubleFunction} returning {@code null} in case of exception.
+	 * Converts a {@code BiPredicateWithException} to a lifted
+	 * {@code ToLongBiFunction} returning {@code null} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
 	 */
-	static <T, E extends Exception> ToDoubleFunction<T> lifted(ToDoubleFunctionWithException<T, E> function) {
+	static <T, U, E extends Exception> ToLongBiFunction<T, U> lifted(ToLongBiFunctionWithException<T, U, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToDoubleFunction} returning {@code null} in case of exception.
+	 * Converts a {@code BiPredicateWithException} to a lifted
+	 * {@code ToLongBiFunction} returning {@code null} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the first input object to the function
+	 * @param <U>
+	 *            the type of the second input object to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
 	 */
-	static <T, E extends Exception> ToDoubleFunction<T> ignored(ToDoubleFunctionWithException<T, E> function) {
+	static <T, U, E extends Exception> ToLongBiFunction<T, U> ignored(ToLongBiFunctionWithException<T, U, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 

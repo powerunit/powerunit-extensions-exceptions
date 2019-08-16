@@ -50,38 +50,13 @@ public interface IntSupplierWithException<E extends Exception>
 	 */
 	int getAsInt() throws E;
 
-	/**
-	 * Converts this {@code IntSupplierWithException} to a {@code IntSupplier} that
-	 * convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked supplier
-	 * @see #unchecked(IntSupplierWithException)
-	 * @see #unchecked(IntSupplierWithException, Function)
-	 */
 	@Override
-	default IntSupplier uncheck() {
+	default IntSupplier uncheckOrIgnore(boolean uncheck) {
 		return () -> {
 			try {
 				return getAsInt();
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-	}
-
-	/**
-	 * Converts this {@code IntSupplierWithException} to a lifted
-	 * {@code IntSupplier} returning {@code 0} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #ignored(IntSupplierWithException)
-	 */
-	@Override
-	default IntSupplier ignore() {
-		return () -> {
-			try {
-				return getAsInt();
-			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

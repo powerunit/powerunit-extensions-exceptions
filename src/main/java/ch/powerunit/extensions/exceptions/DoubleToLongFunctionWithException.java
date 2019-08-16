@@ -27,10 +27,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a function that accepts a double-valued argument, may thrown
+ * exception and produces a long-valued result. This is the
+ * {@code double}-to-{@code long} primitive specialization for
+ * {@link FunctionWithException}.
  *
- * @author borettim
  * @see DoubleToLongFunction
  * @param <E>
  *            the type of the potential exception of the function
@@ -40,36 +41,27 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<DoubleToLongFunction> {
 
 	/**
-	 * Evaluates this predicate on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return the result
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see DoubleToLongFunction#applyAsLong(double)
 	 */
-	long applyAsLong(double t) throws E;
+	long applyAsLong(double value) throws E;
 
-	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a
-	 * {@code DoubleToLongFunction} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(DoubleToLongFunctionWithException)
-	 * @see #unchecked(DoubleToLongFunctionWithException, Function)
-	 */
 	@Override
-	default DoubleToLongFunction uncheck() {
-		return t -> {
+	default DoubleToLongFunction uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
+				return 0;
 			}
 		};
-
 	}
 
 	/**
@@ -81,9 +73,9 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 */
 	@Override
 	default DoubleToLongFunction ignore() {
-		return t -> {
+		return value -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(value);
 			} catch (Exception e) {
 				return 0;
 			}
@@ -100,7 +92,7 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 * @return a predicate that always throw exception
 	 */
 	static <E extends Exception> DoubleToLongFunctionWithException<E> failing(Supplier<E> exceptionBuilder) {
-		return t -> {
+		return value -> {
 			throw exceptionBuilder.get();
 		};
 	}
@@ -144,8 +136,8 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 		return new DoubleToLongFunctionWithException<E>() {
 
 			@Override
-			public long applyAsLong(double t) throws E {
-				return function.applyAsLong(t);
+			public long applyAsLong(double value) throws E {
+				return function.applyAsLong(value);
 			}
 
 			@Override

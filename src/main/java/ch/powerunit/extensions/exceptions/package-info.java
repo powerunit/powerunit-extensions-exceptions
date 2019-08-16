@@ -21,43 +21,43 @@
  * Additionally, it is also possible to override the generated exception (for
  * the {@code uncheck...} methods) by specifying a {@code Function} to compute
  * the target {@code RuntimeException}.
- * 
+ *
  * <h2>Examples</h2>
- * 
+ *
  * It is possible to use the method {@code unchecked} to directly create a
  * functional interface with only runtime exception :
- * 
+ *
  * <pre>
  * FunctionWithException&lt;String, String, IOException&gt; fonctionThrowingException = ...;
- * 
- * Function&lt;String, String&gt; functionThrowingRuntimeException = 
+ *
+ * Function&lt;String, String&gt; functionThrowingRuntimeException =
  *   FunctionWithException.unchecked(fonctionThrowingException);
  * </pre>
- * 
+ *
  * When it is required to thrown a specific {@code RuntimeException}, it is also
  * possible to specify it :
- * 
+ *
  * <pre>
  * FunctionWithException&lt;String, String, IOException&gt; fonctionThrowingException = ...;
- * 
- * Function&lt;String, String&gt; functionThrowingRuntimeException = 
+ *
+ * Function&lt;String, String&gt; functionThrowingRuntimeException =
  *   FunctionWithException.unchecked(
  *                                   fonctionThrowingException,
  *                                   IllegalArgumentException::new
  *                                  );
  * </pre>
- * 
+ *
  * When the exception should not be thrown in case of error, it is possible to
  * create a {@code Function} with {@code Optional} result :
- * 
+ *
  * <pre>
  * FunctionWithException&lt;String, String, IOException&gt; fonctionThrowingException = ...;
- * 
- * Function&lt;String, Optional&lt;String&gt;&gt; functionWithOptionalResult = 
+ *
+ * Function&lt;String, Optional&lt;String&gt;&gt; functionWithOptionalResult =
  *   FunctionWithException.lifted(fonctionThrowingException);
  * </pre>
- * 
+ *
  * @see java.util.function
- * 
+ *
  */
 package ch.powerunit.extensions.exceptions;

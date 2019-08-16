@@ -27,7 +27,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a double unary operator with exception.
+ * Represents an operation on a single {@code double}-valued operand that may
+ * thrown exception and produces a {@code double}-valued result. This is the
+ * primitive type specialization of {@link UnaryOperatorWithException} for
+ * {@code double}.
  *
  * @author borettim
  * @see DoubleUnaryOperator
@@ -39,52 +42,25 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<DoubleUnaryOperator> {
 
 	/**
-	 * Applies this function to the given arguments.
+	 * AApplies this operator to the given operand.
 	 *
-	 * @param t
-	 *            the first function argument
-	 * @return the function result
+	 * @param operand
+	 *            the operand
+	 * @return the operator result
 	 * @throws E
 	 *             any exception
 	 * @see DoubleUnaryOperator#applyAsDouble(double)
 	 */
-	double applyAsDouble(double t) throws E;
+	double applyAsDouble(double operand) throws E;
 
-	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked function
-	 * @see #unchecked(DoubleUnaryOperatorWithException)
-	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
-	 */
 	@Override
-	default DoubleUnaryOperator uncheck() {
-		return t -> {
+	default DoubleUnaryOperator uncheckOrIgnore(boolean uncheck) {
+		return operand -> {
 			try {
-				return applyAsDouble(t);
+				return applyAsDouble(operand);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} returning uero in case of exception.
-	 *
-	 * @return the function that ignore error
-	 * @see #ignored(DoubleUnaryOperatorWithException)
-	 */
-	@Override
-	default DoubleUnaryOperator ignore() {
-		return t -> {
-			try {
-				return applyAsDouble(t);
-			} catch (Exception e) {
-				return 0d;
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
+				return 0;
 			}
 		};
 	}
@@ -151,7 +127,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> DoubleUnaryOperatorWithException<E> failing(Supplier<E> exceptionBuilder) {
-		return t -> {
+		return operand -> {
 			throw exceptionBuilder.get();
 		};
 	}
@@ -195,8 +171,8 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 		return new DoubleUnaryOperatorWithException<E>() {
 
 			@Override
-			public double applyAsDouble(double t) throws E {
-				return function.applyAsDouble(t);
+			public double applyAsDouble(double operand) throws E {
+				return function.applyAsDouble(operand);
 			}
 
 			@Override

@@ -51,6 +51,18 @@ public interface LongToDoubleFunctionWithException<E extends Exception>
 	 */
 	double applyAsDouble(long t) throws E;
 
+	@Override
+	default LongToDoubleFunction uncheckOrIgnore(boolean uncheck) {
+		return t -> {
+			try {
+				return applyAsDouble(t);
+			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
+				return 0;
+			}
+		};
+	}
+
 	/**
 	 * Converts this {@code DoubleToIntFunctionWithException} to a
 	 * {@code LongToDoubleFunction} that convert exception to
@@ -62,14 +74,7 @@ public interface LongToDoubleFunctionWithException<E extends Exception>
 	 */
 	@Override
 	default LongToDoubleFunction uncheck() {
-		return t -> {
-			try {
-				return applyAsDouble(t);
-			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
+		return uncheckOrIgnore(true);
 	}
 
 	/**
@@ -81,13 +86,7 @@ public interface LongToDoubleFunctionWithException<E extends Exception>
 	 */
 	@Override
 	default LongToDoubleFunction ignore() {
-		return t -> {
-			try {
-				return applyAsDouble(t);
-			} catch (Exception e) {
-				return 0;
-			}
-		};
+		return uncheckOrIgnore(false);
 	}
 
 	/**

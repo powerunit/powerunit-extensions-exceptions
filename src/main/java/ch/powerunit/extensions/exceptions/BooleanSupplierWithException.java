@@ -50,38 +50,13 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 */
 	boolean getAsBoolean() throws E;
 
-	/**
-	 * Converts this {@code BooleanSupplierWithException} to a
-	 * {@code BooleanSupplier} that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked supplier
-	 * @see #unchecked(BooleanSupplierWithException)
-	 * @see #unchecked(BooleanSupplierWithException, Function)
-	 */
 	@Override
-	default BooleanSupplier uncheck() {
+	default BooleanSupplier uncheckOrIgnore(boolean uncheck) {
 		return () -> {
 			try {
 				return getAsBoolean();
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-	}
-
-	/**
-	 * Converts this {@code BooleanSupplierWithException} to a lifted
-	 * {@code BooleanSupplier} returning {@code false} in case of exception.
-	 *
-	 * @return the supplier that ignore error
-	 * @see #ignored(BooleanSupplierWithException)
-	 */
-	@Override
-	default BooleanSupplier ignore() {
-		return () -> {
-			try {
-				return getAsBoolean();
-			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return false;
 			}
 		};

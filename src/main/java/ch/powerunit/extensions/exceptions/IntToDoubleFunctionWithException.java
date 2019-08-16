@@ -51,40 +51,13 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 */
 	double applyAsDouble(int t) throws E;
 
-	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a
-	 * {@code IntToDoubleFunction} that convert exception to
-	 * {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(IntToDoubleFunctionWithException)
-	 * @see #unchecked(IntToDoubleFunctionWithException, Function)
-	 */
 	@Override
-	default IntToDoubleFunction uncheck() {
-		return t -> {
+	default IntToDoubleFunction uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return applyAsDouble(t);
+				return applyAsDouble(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code IntToDoubleFunction} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(IntToDoubleFunctionWithException)
-	 */
-	@Override
-	default IntToDoubleFunction ignore() {
-		return t -> {
-			try {
-				return applyAsDouble(t);
-			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};

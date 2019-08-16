@@ -59,39 +59,13 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	boolean test(T t, U u) throws E;
 
-	/**
-	 * Converts this {@code BiPredicateWithException} to a {@code BiPredicate} that
-	 * convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(BiPredicateWithException)
-	 * @see #unchecked(BiPredicateWithException, Function)
-	 */
 	@Override
-	default BiPredicate<T, U> uncheck() {
+	default BiPredicate<T, U> uncheckOrIgnore(boolean uncheck) {
 		return (t, u) -> {
 			try {
 				return test(t, u);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code BiPredicate} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(BiPredicateWithException)
-	 */
-	@Override
-	default BiPredicate<T, U> ignore() {
-		return (t, u) -> {
-			try {
-				return test(t, u);
-			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return false;
 			}
 		};

@@ -27,8 +27,10 @@ import java.util.function.IntToLongFunction;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a function that accepts an int-valued argument, may thrown
+ * exception and produces a long-valued result. This is the
+ * {@code int}-to-{@code long} primitive specialization for
+ * {@link FunctionWithException}.
  *
  * @author borettim
  * @see IntToLongFunction
@@ -40,50 +42,24 @@ public interface IntToLongFunctionWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<IntToLongFunction> {
 
 	/**
-	 * Evaluates this predicate on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return the result
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see IntToLongFunction#applyAsLong(int)
 	 */
-	long applyAsLong(int t) throws E;
+	long applyAsLong(int value) throws E;
 
-	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a
-	 * {@code IntToLongFunction} that convert exception to {@code RuntimeException}.
-	 *
-	 * @return the unchecked predicate
-	 * @see #unchecked(IntToLongFunctionWithException)
-	 * @see #unchecked(IntToLongFunctionWithException, Function)
-	 */
 	@Override
-	default IntToLongFunction uncheck() {
-		return t -> {
+	default IntToLongFunction uncheckOrIgnore(boolean uncheck) {
+		return value -> {
 			try {
-				return applyAsLong(t);
+				return applyAsLong(value);
 			} catch (Exception e) {
-				throw exceptionMapper().apply(e);
-			}
-		};
-
-	}
-
-	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code IntToLongFunction} returning {@code null} in case of exception.
-	 *
-	 * @return the predicate that ignore error (return false in this case)
-	 * @see #ignored(IntToLongFunctionWithException)
-	 */
-	@Override
-	default IntToLongFunction ignore() {
-		return t -> {
-			try {
-				return applyAsLong(t);
-			} catch (Exception e) {
+				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
 			}
 		};
@@ -142,8 +118,8 @@ public interface IntToLongFunctionWithException<E extends Exception>
 		return new IntToLongFunctionWithException<E>() {
 
 			@Override
-			public long applyAsLong(int t) throws E {
-				return function.applyAsLong(t);
+			public long applyAsLong(int value) throws E {
+				return function.applyAsLong(value);
 			}
 
 			@Override
