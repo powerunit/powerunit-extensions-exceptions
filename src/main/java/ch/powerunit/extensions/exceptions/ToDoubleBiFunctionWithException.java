@@ -23,20 +23,19 @@ import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleBiFunction;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a function that accepts two arguments, may thrown exception and
+ * produces a double-valued result. This is the {@code double}-producing
+ * primitive specialization for {@link BiFunctionWithException}.
  *
- * @author borettim
- * @see Predicate
+ * @see ToDoubleBiFunction
  * @param <T>
- *            the type of the first input to the predicate
+ *            the type of the first argument to the function
  * @param <U>
- *            the type of the second argument the predicate
+ *            the type of the second argument the function
  * @param <E>
  *            the type of the potential exception of the function
  */
@@ -45,14 +44,13 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleBiFunction<T, U>> {
 
 	/**
-	 * Evaluates this predicate on the given arguments.
+	 * Applies this function to the given arguments.
 	 *
 	 * @param t
 	 *            the first input argument
 	 * @param u
 	 *            the first second argument
-	 * @return {@code true} if the input argument matches the predicate, otherwise
-	 *         {@code false}
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see ToDoubleBiFunction#applyAsDouble(Object, Object)
@@ -82,7 +80,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 
 	/**
 	 * Converts this {@code BiPredicateWithException} to a lifted
-	 * {@code ToDoubleBiFunction} returning {@code null} in case of exception.
+	 * {@code ToDoubleBiFunction} returning {@code 0} in case of exception.
 	 *
 	 * @return the predicate that ignore error (return false in this case)
 	 * @see #ignored(ToDoubleBiFunctionWithException)

@@ -27,9 +27,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a double binary operator with exception.
+ * Represents an operation upon two {@code double}-valued operands, may throw
+ * exception and producing a {@code double}-valued result. This is the primitive
+ * type specialization of {@link BinaryOperatorWithException} for
+ * {@code double}.
  *
- * @author borettim
  * @see DoubleBinaryOperator
  * @param <E>
  *            the type of the potential exception of the function
@@ -39,18 +41,18 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator> {
 
 	/**
-	 * Applies this function to the given arguments.
-	 *
-	 * @param t
-	 *            the first function argument
-	 * @param u
-	 *            the second function argument
-	 * @return the function result
+	 * Applies this operator to the given operands.
+	 * 
+	 * @param left
+	 *            the first operand
+	 * @param right
+	 *            the second operand
+	 * @return the operator result
 	 * @throws E
 	 *             any exception
 	 * @see DoubleBinaryOperator#applyAsDouble(double, double)
 	 */
-	double applyAsDouble(double t, double u) throws E;
+	double applyAsDouble(double left, double right) throws E;
 
 	/**
 	 * Converts this {@code DoubleBinaryOperatorWithException} to a
@@ -63,9 +65,9 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 */
 	@Override
 	default DoubleBinaryOperator uncheck() {
-		return (t, u) -> {
+		return (left, right) -> {
 			try {
-				return applyAsDouble(t, u);
+				return applyAsDouble(left, right);
 			} catch (Exception e) {
 				throw exceptionMapper().apply(e);
 			}
@@ -75,18 +77,18 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code DoubleBinaryOperatorWithException} to a lifted
-	 * {@code DoubleBinaryOperator} returning uero in case of exception.
+	 * {@code DoubleBinaryOperator} returning {@code 0} in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(DoubleBinaryOperatorWithException)
 	 */
 	@Override
 	default DoubleBinaryOperator ignore() {
-		return (t, u) -> {
+		return (left, right) -> {
 			try {
-				return applyAsDouble(t, u);
+				return applyAsDouble(left, right);
 			} catch (Exception e) {
-				return 0d;
+				return 0;
 			}
 		};
 	}
@@ -101,7 +103,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> DoubleBinaryOperatorWithException<E> failing(Supplier<E> exceptionBuilder) {
-		return (t, u) -> {
+		return (left, right) -> {
 			throw exceptionBuilder.get();
 		};
 	}
@@ -145,8 +147,8 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 		return new DoubleBinaryOperatorWithException<E>() {
 
 			@Override
-			public double applyAsDouble(double t, double u) throws E {
-				return function.applyAsDouble(t, u);
+			public double applyAsDouble(double left, double right) throws E {
+				return function.applyAsDouble(left, right);
 			}
 
 			@Override
