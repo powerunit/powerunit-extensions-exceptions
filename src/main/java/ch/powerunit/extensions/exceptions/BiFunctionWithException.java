@@ -135,7 +135,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 *         the {@code after} function
 	 * @throws NullPointerException
 	 *             if after is null
-	 * 
+	 *
 	 * @see BiFunction#andThen(Function)
 	 */
 	default <V> BiFunctionWithException<T, U, V, E> andThen(
