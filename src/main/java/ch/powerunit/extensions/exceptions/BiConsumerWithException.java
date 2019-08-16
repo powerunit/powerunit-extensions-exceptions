@@ -133,12 +133,12 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * For example :
 	 *
 	 * <pre>
-	 * ConsumerWithException&lt;String, IOException&gt; consumerThrowingException = ...;
+	 * BiConsumerWithException&lt;String, String, IOException&gt; consumerThrowingException = ...;
 	 *
-	 * Consumer&lt;String&gt; consumerThrowingRuntimeException =
+	 * BiConsumer&lt;String, String&gt; consumerThrowingRuntimeException =
 	 *   ConsumerWithException.unchecked(consumerThrowingException);
 	 *
-	 * Stream.of(...).forEach(consumerThrowingRuntimeException)
+	 * myMap.forEach(consumerThrowingRuntimeException);
 	 * </pre>
 	 * 
 	 * In case of exception inside {@code consumerThrowingRuntimeException} an
@@ -169,14 +169,14 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 * For example :
 	 *
 	 * <pre>
-	 * ConsumerWithException&lt;String, IOException&gt; consumerThrowingException = ...;
+	 * BiConsumerWithException&lt;String, String, IOException&gt; consumerThrowingException = ...;
 	 *
-	 * Consumer&lt;String&gt; consumerThrowingRuntimeException =
+	 * BiConsumer&lt;String, String&gt; consumerThrowingRuntimeException =
 	 *   ConsumerWithException.unchecked(
 	 *     consumerThrowingException,
 	 *     IllegalArgumentException::new);
 	 *
-	 * Stream.of(...).forEach(consumerThrowingRuntimeException)
+	 * myMap.forEach(consumerThrowingRuntimeException)
 	 * </pre>
 	 * 
 	 * In case of exception inside {@code consumerThrowingRuntimeException} an
