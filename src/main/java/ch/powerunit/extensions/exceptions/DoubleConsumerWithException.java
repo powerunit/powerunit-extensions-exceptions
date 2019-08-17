@@ -173,7 +173,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleConsumerWithException} to a lifted
-	 * {@code DoubleConsumer} returning {@code null} in case of exception.
+	 * {@code DoubleConsumer} ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -190,7 +190,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleConsumerWithException} to a lifted
-	 * {@code DoubleConsumer} returning {@code null} in case of exception.
+	 * {@code DoubleConsumer} ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -207,13 +207,13 @@ public interface DoubleConsumerWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleConsumerWithException} to a
-	 * {@code ConsumerWithException} returning {@code null}.
+	 * {@code ConsumerWithException}.
 	 *
 	 * @param operation
-	 *            to be lifted
+	 *            to be converted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the function
+	 * @return the consumer
 	 * @throws NullPointerException
 	 *             if operation is null
 	 */

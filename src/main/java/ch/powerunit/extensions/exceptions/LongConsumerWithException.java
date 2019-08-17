@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,11 +28,12 @@ import java.util.function.LongConsumer;
 import java.util.function.Supplier;
 
 /**
- * Represents an operation that accepts a single input argument and returns no
- * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * Represents an operation that accepts a single {@code long}-valued argument,
+ * may throw exception and returns no result. This is the primitive type
+ * specialization of {@link ConsumerWithException} for {@code long}. Unlike most
+ * other functional interfaces, {@code LongConsumerWithException} is expected to
+ * operate via side-effects.
  *
- * @author borettim
  * @see LongConsumer
  * @param <E>
  *            the type of the potential exception of the operation
@@ -42,13 +44,13 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	/**
 	 * Performs this operation on the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the input argument
 	 * @throws E
 	 *             any exception
 	 * @see LongConsumer#accept(long)
 	 */
-	void accept(long t) throws E;
+	void accept(long value) throws E;
 
 	/**
 	 * Converts this {@code LongConsumerWithException} to a {@code LongConsumer}
@@ -123,9 +125,11 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(LongConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> LongConsumer unchecked(LongConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
@@ -142,19 +146,21 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(LongConsumerWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
 	 */
 	static <E extends Exception> LongConsumer unchecked(LongConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new LongConsumerWithException<E>() {
 
 			@Override
-			public void accept(long t) throws E {
-				operation.accept(t);
+			public void accept(long value) throws E {
+				operation.accept(value);
 			}
 
 			@Override
@@ -167,7 +173,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 
 	/**
 	 * Converts a {@code LongConsumerWithException} to a lifted {@code LongConsumer}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -175,6 +181,8 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> LongConsumer lifted(LongConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
@@ -182,7 +190,7 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 
 	/**
 	 * Converts a {@code LongConsumerWithException} to a lifted {@code LongConsumer}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -190,6 +198,8 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> LongConsumer ignored(LongConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
@@ -197,13 +207,15 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 
 	/**
 	 * Converts a {@code LongConsumerWithException} to a
-	 * {@code ConsumerWithException} returning {@code null}.
+	 * {@code ConsumerWithException}.
 	 *
 	 * @param operation
-	 *            to be lifted
+	 *            to be converted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the function
+	 * @return the consumer
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> ConsumerWithException<Long, E> asConsumer(LongConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
