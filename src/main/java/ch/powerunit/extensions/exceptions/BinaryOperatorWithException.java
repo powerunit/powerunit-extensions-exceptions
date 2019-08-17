@@ -19,24 +19,29 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents an operation upon two operands of the same type, may throw
- * exception and producing a result of the same type as the operands. This is a
- * specialization of {@code FunctionWithException} for the case where the
- * operand and result are of the same type.
+ * Represents an operation upon two operands of the same type, that may throw
+ * exception, producing a result of the same type as the operands. This is a
+ * specialization of {@link BiFunctionWithException} for the case where the
+ * operands and the result are all of the same type.
+ * <p>
+ * As this interface must return the same type of the input, a lifted version
+ * which returns {@code Optional} is not possible.
  *
- * @author borettim
- * @see FunctionWithException
+ * @see BiFunctionWithException
  * @see BinaryOperator
  * @param <T>
- *            the type of the input and output to the function
+ *            the type of the operands and result of the operator
  * @param <E>
  *            the type of the potential exception of the function
  */
@@ -74,7 +79,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the input and output object to the function
+	 *            the type of the operands and result of the operator
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a function that always throw exception
@@ -92,12 +97,14 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the operands and result of the operator
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(BinaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> BinaryOperator<T> unchecked(BinaryOperatorWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -113,17 +120,19 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the input and output object to the function
+	 *            the type of the operands and result of the operator
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(BinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, E extends Exception> BinaryOperator<T> unchecked(BinaryOperatorWithException<T, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new BinaryOperatorWithException<T, E>() {
 
 			@Override
@@ -140,17 +149,38 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	}
 
 	/**
-	 * Converts a {@code BinaryOperatorWithException} to a lifted
-	 * {@code BinaryOperator} returning {@code null} in case of exception.
+	 * Converts a {@code BinaryOperatorWithException} to a lifted {@code Function}
+	 * returning an optional in case of exception.
 	 *
 	 * @param function
-	 *            to be lifted
+	 *            the be unchecked
 	 * @param <T>
-	 *            the type of the input and output object to the function
+	 *            the type of the operands and result of the operator
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static <T, E extends Exception> BiFunction<T, T, Optional<T>> lifted(BinaryOperatorWithException<T, E> function) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+	}
+
+	/**
+	 * Converts a {@code BinaryOperatorWithException} to a lifted
+	 * {@code BinaryOperator} returning {@code null} in case of exception.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param <T>
+	 *            the type of the operands and result of the operator
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> BinaryOperator<T> ignored(BinaryOperatorWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

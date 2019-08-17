@@ -62,4 +62,16 @@ public class BinaryOperatorWithExceptionTest implements TestSuite {
 		}).apply("x", "x")).isNull();
 	}
 
+	@Test
+	public void testLiftedNoException() {
+		assertThat(BinaryOperatorWithException.lifted((x, y) -> "" + x + y).apply("2", "1")).is(optionalIs("21"));
+	}
+
+	@Test
+	public void testLiftedException() {
+		assertThat(BinaryOperatorWithException.lifted((x, y) -> {
+			throw new Exception();
+		}).apply("x", "x")).is(optionalIsNotPresent());
+	}
+
 }
