@@ -57,9 +57,8 @@ public class BiConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample2() {
 
-		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
-			throw new IOException("test");
-		};
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = BiConsumerWithException
+				.failing(IOException::new);
 
 		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
 				.unchecked(consumerThrowingException);
@@ -91,9 +90,8 @@ public class BiConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample4() {
 
-		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
-			throw new IOException("test");
-		};
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = BiConsumerWithException
+				.failing(IOException::new);
 
 		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
 				.unchecked(consumerThrowingException, IllegalArgumentException::new);
@@ -125,9 +123,8 @@ public class BiConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample6() {
 
-		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
-			throw new IOException("test");
-		};
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = BiConsumerWithException
+				.failing(IOException::new);
 
 		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
 				.lifted(consumerThrowingException);
@@ -157,9 +154,8 @@ public class BiConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample8() {
 
-		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
-			throw new IOException("test");
-		};
+		BiConsumerWithException<String, String, IOException> consumerThrowingException = BiConsumerWithException
+				.failing(IOException::new);
 
 		BiConsumer<String, String> consumerThrowingRuntimeException = BiConsumerWithException
 				.ignored(consumerThrowingException);

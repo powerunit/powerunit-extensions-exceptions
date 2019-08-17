@@ -46,9 +46,8 @@ public class BiFunctionSamplesTest implements TestSuite {
 	@Test
 	public void sample2() {
 
-		BiFunctionWithException<String, String, String, IOException> fonctionThrowingException = (x, y) -> {
-			throw new IOException();
-		};
+		BiFunctionWithException<String, String, String, IOException> fonctionThrowingException = BiFunctionWithException
+				.failing(IOException::new);
 
 		BiFunction<String, String, String> functionThrowingRuntimeException = BiFunctionWithException
 				.unchecked(fonctionThrowingException, IllegalArgumentException::new);

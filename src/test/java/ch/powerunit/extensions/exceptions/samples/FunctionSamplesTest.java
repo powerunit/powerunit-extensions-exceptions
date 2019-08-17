@@ -45,9 +45,8 @@ public class FunctionSamplesTest implements TestSuite {
 	@Test
 	public void sample2() {
 
-		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> {
-			throw new IOException();
-		};
+		FunctionWithException<String, String, IOException> fonctionThrowingException = FunctionWithException
+				.failing(IOException::new);
 
 		Function<String, String> functionThrowingRuntimeException = FunctionWithException
 				.unchecked(fonctionThrowingException, IllegalArgumentException::new);

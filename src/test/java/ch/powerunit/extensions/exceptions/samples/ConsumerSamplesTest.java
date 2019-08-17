@@ -55,9 +55,8 @@ public class ConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample2() {
 
-		ConsumerWithException<String, IOException> consumerThrowingException = x -> {
-			throw new IOException("test");
-		};
+		ConsumerWithException<String, IOException> consumerThrowingException = ConsumerWithException
+				.failing(IOException::new);
 
 		Consumer<String> consumerThrowingRuntimeException = ConsumerWithException.unchecked(consumerThrowingException);
 
@@ -88,9 +87,8 @@ public class ConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample4() {
 
-		ConsumerWithException<String, IOException> consumerThrowingException = x -> {
-			throw new IOException("test");
-		};
+		ConsumerWithException<String, IOException> consumerThrowingException = ConsumerWithException
+				.failing(IOException::new);
 
 		Consumer<String> consumerThrowingRuntimeException = ConsumerWithException.unchecked(consumerThrowingException,
 				IllegalArgumentException::new);
