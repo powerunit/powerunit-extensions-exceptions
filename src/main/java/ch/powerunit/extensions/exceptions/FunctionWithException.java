@@ -214,7 +214,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code FunctionWithException} to a {@code Function} that convert
+	 * Converts a {@code FunctionWithException} to a {@code Function} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param function
