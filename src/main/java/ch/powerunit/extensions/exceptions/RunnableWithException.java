@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -26,11 +27,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents an operation that accepts a no input argument and returns no
- * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * Represents an operation that accepts no input argument and returns no result
+ * and may throw exception. Unlike most other functional interfaces,
+ * {@code RunnableWithException} is expected to operate via side-effects.
  *
- * @author borettim
  * @see Runnable
  * @param <E>
  *            the type of the potential exception of the operation
@@ -48,8 +48,8 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	void run() throws E;
 
 	/**
-	 * Converts this {@code RunnableWithException} to a {@code Runnable} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts this {@code RunnableWithException} to a {@code Runnable} that wraps
+	 * exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(RunnableWithException)
@@ -88,7 +88,7 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	}
 
 	/**
-	 * Converts a {@code RunnableWithException} to a {@code Runnable} that convert
+	 * Converts a {@code RunnableWithException} to a {@code Runnable} that wraps
 	 * exception to {@code RuntimeException}.
 	 *
 	 * @param operation
@@ -98,13 +98,15 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(RunnableWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code RunnableWithException} to a {@code Runnable} that convert
+	 * Converts a {@code RunnableWithException} to a {@code Runnable} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param operation
@@ -116,11 +118,13 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(RunnableWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new RunnableWithException<E>() {
 
 			@Override
@@ -138,7 +142,7 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 
 	/**
 	 * Converts a {@code RunnableWithException} to a lifted {@code Runnable}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -146,6 +150,8 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> Runnable lifted(RunnableWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
@@ -153,7 +159,7 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 
 	/**
 	 * Converts a {@code RunnableWithException} to a lifted {@code Runnable}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -161,6 +167,8 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> Runnable ignored(RunnableWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
