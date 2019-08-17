@@ -6,7 +6,7 @@ This library provides support to wraps _checked exception_, to be used as target
 
 The library exposes several functional interface, similar to the one from `java.util.function`, but that may throw exception. Then several methods are provided to convert these exception to `RuntimeException` or lift the function.
 
-For example :
+For example:
 
 ```java
 FunctionWithException<String, String, IOException> fonctionThrowingException = ...;
@@ -23,4 +23,48 @@ _TODO_
 
 ## Reference
 
-_TODO_
+The following classes are provided:
+- BiConsumerWithException
+- BiFunctionWithException
+- BinaryOperatorWithException
+- BiPredicateWithException
+- BooleanSupplierWithException
+- ConsumerWithException
+- DoubleBinaryOperatorWithException
+- DoubleConsumerWithException
+- DoubleFunctionWithException
+- DoublePredicateWithException
+- DoubleSupplierWithException
+- DoubleToIntFunctionWithException
+- DoubleToLongFunctionWithException
+- DoubleUnaryOperatorWithException
+- FunctionWithException
+- IntBinaryOperatorWithException
+- IntConsumerWithException
+- IntFunctionWithException
+- IntPredicateWithException
+- IntSupplierWithException
+- IntToDoubleFunctionWithException
+- IntToLongFunctionWithException
+- IntUnaryOperatorWithException
+- LongBinaryOperatorWithException
+- LongConsumerWithException
+- LongFunctionWithException
+- LongPredicateWithException
+- LongSupplierWithException
+- LongToDoubleFunctionWithException
+- LongToIntFunctionWithException
+- LongUnaryOperatorWithException
+- ObjDoubleConsumerWithException
+- ObjIntConsumerWithException
+- ObjLongConsumerWithException
+- PredicateWithException
+- RunnableWithException
+- SupplierWithException
+- ToDoubleBiFunctionWithException
+- ToDoubleFunctionWithException
+- ToIntBiFunctionWithException
+- ToIntFunctionWithException
+- ToLongBiFunctionWithException
+- ToLongFunctionWithException
+- UnaryOperatorWithException
