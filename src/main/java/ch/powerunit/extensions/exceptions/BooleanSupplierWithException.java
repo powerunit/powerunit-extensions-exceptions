@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,12 +28,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a supplier of {@code boolean}-valued results that may throw
+ * Represents a supplier of {@code boolean}-valued results which may throw
  * exception. This is the {@code boolean}-producing primitive specialization of
- * {@link Supplier}.
+ * {@link SupplierWithException}.
  *
- * @author borettim
- * @see Supplier
+ * @see BooleanSupplier
  * @param <E>
  *            the type of the potential exception of the operation
  */
@@ -79,15 +79,17 @@ public interface BooleanSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code BooleanSupplierWithException} to a {@code BooleanSupplier}
-	 * that convert exception to {@code RuntimeException}. o
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param supplier
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(BooleanSupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
@@ -95,7 +97,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code BooleanSupplierWithException} to a {@code BooleanSupplier}
-	 * that convert exception to {@code RuntimeException} by using the provided
+	 * that wraps exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
 	 * @param supplier
@@ -104,14 +106,16 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(BooleanSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier and exceptionMapper is null
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new BooleanSupplierWithException<E>() {
 
 			@Override
@@ -137,6 +141,8 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> BooleanSupplier lifted(BooleanSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
@@ -152,6 +158,8 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> BooleanSupplier ignored(BooleanSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
