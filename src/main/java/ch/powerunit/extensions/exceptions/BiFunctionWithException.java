@@ -168,6 +168,16 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	/**
 	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException}.
+	 * <p>
+	 * For example :
+	 * 
+	 * <pre>
+	 * BiFunction&lt;String, String, String&gt; biFunctionThrowingRuntimeException = BiFunctionWithException
+	 * 		.unchecked(biFouctionThrowingException);
+	 * </pre>
+	 * 
+	 * Will generate a {@code BiFunction} throwing {@code RuntimeException} in case
+	 * of error.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -193,6 +203,16 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException} by using the provided mapping
 	 * function.
+	 * <p>
+	 * For example :
+	 * 
+	 * <pre>
+	 * BiFunction&lt;String, String, String&gt; functionThrowingRuntimeException = BiFunctionWithException
+	 * 		.unchecked(fonctionThrowingException, IllegalArgumentException::new);
+	 * </pre>
+	 * 
+	 * Will generate a {@code BiFunction} throwing {@code IllegalArgumentException}
+	 * in case of error.
 	 *
 	 * @param function
 	 *            the be unchecked
