@@ -19,31 +19,35 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 /**
- * Represents an operation on a single operand, may throw exception and that
- * produces a result of the same type as its operand. This is a specialization
- * of {@code FunctionWithException} for the case where the operand and result
- * are of the same type.
+ * Represents an operation on a single operand that produces a result of the
+ * same type as its operand. This is a specialization of
+ * {@code FunctionWithException} for the case where the operand and result are
+ * of the same type.
+ * <p>
+ * As this interface must return the same type of the input, a lifted version
+ * which returns {@code Optional} is not possible.
  *
- * @author borettim
  * @see FunctionWithException
  * @see UnaryOperator
  * @param <T>
- *            the type of the input and output to the function
+ *            the type of the operand and result of the operator
  */
 @FunctionalInterface
 public interface UnaryOperatorWithException<T, E extends Exception> extends FunctionWithException<T, T, E> {
 
 	/**
 	 * Converts this {@code UnaryOperatorWithException} to a {@code UnaryOperator}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked function
 	 * @see #unchecked(FunctionWithException)
@@ -70,10 +74,10 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * Returns a unary operator that always returns its input argument.
 	 *
 	 * @param <T>
-	 *            the type of the input and output objects to the function
+	 *            the type of the input and output of the operator
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return a function that always returns its input argument
+	 * @return a unary operator that always returns its input argument
 	 * @see Function#identity()
 	 */
 	static <T, E extends Exception> UnaryOperatorWithException<T, E> identity() {
@@ -86,7 +90,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the input and output object to the function
+	 *            the type of the input and output of the operator
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a function that always throw exception
@@ -99,17 +103,19 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 
 	/**
 	 * Converts a {@code UnaryOperatorWithException} to a {@code UnaryOperator} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input and output of the operator
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(UnaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> UnaryOperator<T> unchecked(UnaryOperatorWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -117,7 +123,7 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 
 	/**
 	 * Converts a {@code UnaryOperatorWithException} to a {@code UnaryOperator} that
-	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
 	 * function.
 	 *
 	 * @param function
@@ -125,17 +131,19 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the input and output object to the function
+	 *            the type of the input and output of the operator
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(UnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, E extends Exception> UnaryOperator<T> unchecked(UnaryOperatorWithException<T, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new UnaryOperatorWithException<T, E>() {
 
 			@Override
@@ -152,17 +160,38 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 	}
 
 	/**
+	 * Converts a {@code UnaryOperatorWithException} to a lifted {@code Function}
+	 * returning {@code Optional}.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param <T>
+	 *            the type of the input and output of the operator
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static <T, E extends Exception> Function<T, Optional<T>> lifted(UnaryOperatorWithException<T, E> function) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+	}
+
+	/**
 	 * Converts a {@code UnaryOperatorWithException} to a lifted
 	 * {@code UnaryOperator} returning {@code null} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input and output object to the function
+	 *            the type of the input and output of the operator
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> UnaryOperator<T> ignored(UnaryOperatorWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
