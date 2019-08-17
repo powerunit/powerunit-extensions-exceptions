@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,11 +28,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents an operation that accepts a single input argument and returns no
- * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * Represents an operation that accepts a single {@code double}-valued argument,
+ * may throw exception and returns no result. This is the primitive type
+ * specialization of {@link ConsumerWithException} for {@code double}. Unlike
+ * most other functional interfaces, {@code DoubleConsumerWithException} is
+ * expected to operate via side-effects.
  *
- * @author borettim
  * @see DoubleConsumer
  * @param <E>
  *            the type of the potential exception of the operation
@@ -43,17 +45,17 @@ public interface DoubleConsumerWithException<E extends Exception>
 	/**
 	 * Performs this operation on the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the input argument
 	 * @throws E
 	 *             any exception
 	 * @see DoubleConsumer#accept(double)
 	 */
-	void accept(double t) throws E;
+	void accept(double value) throws E;
 
 	/**
 	 * Converts this {@code DoubleConsumerWithException} to a {@code DoubleConsumer}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(DoubleConsumerWithException)
@@ -90,7 +92,6 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @throws NullPointerException
 	 *             if {@code after} is null
 	 *
-	 *
 	 * @see DoubleConsumer#andThen(DoubleConsumer)
 	 */
 	default DoubleConsumerWithException<E> andThen(DoubleConsumerWithException<? extends E> after) {
@@ -118,15 +119,17 @@ public interface DoubleConsumerWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleConsumerWithException} to a {@code DoubleConsumer}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param operation
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
@@ -134,7 +137,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleConsumerWithException} to a {@code DoubleConsumer}
-	 * that convert exception to {@code RuntimeException} by using the provided
+	 * that wraps exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
 	 * @param operation
@@ -143,19 +146,21 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleConsumerWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
 	 */
 	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new DoubleConsumerWithException<E>() {
 
 			@Override
-			public void accept(double t) throws E {
-				operation.accept(t);
+			public void accept(double value) throws E {
+				operation.accept(value);
 			}
 
 			@Override
@@ -176,6 +181,8 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> DoubleConsumer lifted(DoubleConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
@@ -191,6 +198,8 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> DoubleConsumer ignored(DoubleConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
@@ -205,6 +214,8 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> ConsumerWithException<Double, E> asConsumer(DoubleConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
