@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a function that accepts a double-valued argument, may thrown
+ * Represents a function that accepts a double-valued argument, may throw
  * exception and produces a long-valued result. This is the
  * {@code double}-to-{@code long} primitive specialization for
  * {@link FunctionWithException}.
@@ -65,10 +66,10 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a lifted
+	 * Converts this {@code DoubleToLongFunctionWithException} to a lifted
 	 * {@code DoubleToLongFunction} returning {@code null} in case of exception.
 	 *
-	 * @return the predicate that ignore error (return false in this case)
+	 * @return the function that ignore error (return 0 in this case)
 	 * @see #ignored(DoubleToLongFunctionWithException)
 	 */
 	@Override
@@ -83,13 +84,13 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> DoubleToLongFunctionWithException<E> failing(Supplier<E> exceptionBuilder) {
 		return value -> {
@@ -98,7 +99,7 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a
+	 * Converts a {@code DoubleToLongFunctionWithException} to a
 	 * {@code DoubleToLongFunction} that convert exception to
 	 * {@code RuntimeException}.
 	 *
@@ -106,16 +107,18 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleToLongFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleToLongFunction unchecked(DoubleToLongFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a
+	 * Converts a {@code DoubleToLongFunctionWithException} to a
 	 * {@code DoubleToLongFunction} that convert exception to
 	 * {@code RuntimeException} by using the provided mapping function.
 	 *
@@ -125,14 +128,16 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleToLongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> DoubleToLongFunction unchecked(DoubleToLongFunctionWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new DoubleToLongFunctionWithException<E>() {
 
 			@Override
@@ -149,8 +154,8 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code DoubleToLongFunction} returning {@code null} in case of exception.
+	 * Converts a {@code DoubleToLongFunctionWithException} to a lifted
+	 * {@code DoubleToLongFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -158,14 +163,16 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleToLongFunction lifted(DoubleToLongFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code DoubleToLongFunction} returning {@code null} in case of exception.
+	 * Converts a {@code DoubleToLongFunctionWithException} to a lifted
+	 * {@code DoubleToLongFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -173,6 +180,8 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleToLongFunction ignored(DoubleToLongFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

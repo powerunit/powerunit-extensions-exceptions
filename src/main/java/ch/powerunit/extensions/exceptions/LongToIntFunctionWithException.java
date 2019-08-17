@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,10 +28,11 @@ import java.util.function.LongToIntFunction;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a function that accepts a long-valued argument, may throw
+ * exception and produces an int-valued result. This is the
+ * {@code long}-to-{@code int} primitive specialization for
+ * {@link FunctionWithException}.
  *
- * @author borettim
  * @see LongToIntFunction
  * @param <E>
  *            the type of the potential exception of the function
@@ -40,22 +42,22 @@ public interface LongToIntFunctionWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<LongToIntFunction> {
 
 	/**
-	 * Evaluates this predicate on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return the result
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see LongToIntFunction#applyAsInt(long)
 	 */
-	int applyAsInt(long t) throws E;
+	int applyAsInt(long value) throws E;
 
 	@Override
 	default LongToIntFunction uncheckOrIgnore(boolean uncheck) {
-		return t -> {
+		return value -> {
 			try {
-				return applyAsInt(t);
+				return applyAsInt(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
@@ -64,10 +66,10 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a
-	 * {@code LongToIntFunction} that convert exception to {@code RuntimeException}.
+	 * Converts this {@code LongToIntFunctionWithException} to a
+	 * {@code LongToIntFunction} that wraps exception to {@code RuntimeException}.
 	 *
-	 * @return the unchecked predicate
+	 * @return the unchecked function
 	 * @see #unchecked(LongToIntFunctionWithException)
 	 * @see #unchecked(LongToIntFunctionWithException, Function)
 	 */
@@ -77,10 +79,10 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code LongToIntFunction} returning {@code null} in case of exception.
+	 * Converts this {@code LongToIntFunctionWithException} to a lifted
+	 * {@code LongToIntFunction} returning {@code 0} in case of exception.
 	 *
-	 * @return the predicate that ignore error (return false in this case)
+	 * @return the ignoring function
 	 * @see #ignored(LongToIntFunctionWithException)
 	 */
 	@Override
@@ -89,13 +91,13 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> LongToIntFunctionWithException<E> failing(Supplier<E> exceptionBuilder) {
 		return t -> {
@@ -104,25 +106,27 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a
-	 * {@code LongToIntFunction} that convert exception to {@code RuntimeException}.
+	 * Converts a {@code LongToIntFunctionWithException} to a
+	 * {@code LongToIntFunction} that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(LongToIntFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongToIntFunction unchecked(LongToIntFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a
-	 * {@code LongToIntFunction} that convert exception to {@code RuntimeException}
-	 * by using the provided mapping function.
+	 * Converts a {@code LongToIntFunctionWithException} to a
+	 * {@code LongToIntFunction} that wraps exception to {@code RuntimeException} by
+	 * using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -130,19 +134,21 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(LongToIntFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or ExceptionMapper is null
 	 */
 	static <E extends Exception> LongToIntFunction unchecked(LongToIntFunctionWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new LongToIntFunctionWithException<E>() {
 
 			@Override
-			public int applyAsInt(long t) throws E {
-				return function.applyAsInt(t);
+			public int applyAsInt(long value) throws E {
+				return function.applyAsInt(value);
 			}
 
 			@Override
@@ -154,8 +160,8 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code LongToIntFunction} returning {@code null} in case of exception.
+	 * Converts a {@code LongToIntFunctionWithException} to a lifted
+	 * {@code LongToIntFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -163,14 +169,16 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongToIntFunction lifted(LongToIntFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code LongToIntFunction} returning {@code null} in case of exception.
+	 * Converts a {@code LongToIntFunctionWithException} to a lifted
+	 * {@code LongToIntFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -178,6 +186,8 @@ public interface LongToIntFunctionWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongToIntFunction ignored(LongToIntFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

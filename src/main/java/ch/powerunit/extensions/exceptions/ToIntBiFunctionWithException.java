@@ -81,7 +81,7 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 	 *            the type of the second argument to the function
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <T, U, E extends Exception> ToIntBiFunctionWithException<T, U, E> failing(Supplier<E> exceptionBuilder) {
 		return (t, u) -> {

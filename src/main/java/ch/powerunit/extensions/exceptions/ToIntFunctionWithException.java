@@ -75,7 +75,7 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	 *            the type of the input object to the function
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <T, E extends Exception> ToIntFunctionWithException<T, E> failing(Supplier<E> exceptionBuilder) {
 		return t -> {

@@ -71,7 +71,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
@@ -81,7 +81,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	 *            the type of the second argument the function
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <T, U, E extends Exception> ToDoubleBiFunctionWithException<T, U, E> failing(Supplier<E> exceptionBuilder) {
 		return (t, u) -> {

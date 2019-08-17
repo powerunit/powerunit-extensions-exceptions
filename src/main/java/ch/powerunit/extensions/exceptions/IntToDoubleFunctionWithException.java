@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,10 +28,11 @@ import java.util.function.IntToDoubleFunction;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a function that accepts an int-valued argument, may throw an
+ * exception and produces a double-valued result. This is the
+ * {@code int}-to-{@code double} primitive specialization for
+ * {@link FunctionWithException}.
  *
- * @author borettim
  * @see IntToDoubleFunction
  * @param <E>
  *            the type of the potential exception of the function
@@ -40,16 +42,16 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<IntToDoubleFunction> {
 
 	/**
-	 * Evaluates this predicate on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return the result
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see IntToDoubleFunction#applyAsDouble(int)
 	 */
-	double applyAsDouble(int t) throws E;
+	double applyAsDouble(int value) throws E;
 
 	@Override
 	default IntToDoubleFunction uncheckOrIgnore(boolean uncheck) {
@@ -64,13 +66,13 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <E extends Exception> IntToDoubleFunctionWithException<E> failing(Supplier<E> exceptionBuilder) {
 		return t -> {
@@ -79,9 +81,8 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a
-	 * {@code IntToDoubleFunction} that convert exception to
-	 * {@code RuntimeException}.
+	 * Converts a {@code IntToDoubleFunctionWithException} to a
+	 * {@code IntToDoubleFunction} that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -90,15 +91,17 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(IntToDoubleFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntToDoubleFunction unchecked(IntToDoubleFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a
-	 * {@code IntToDoubleFunction} that convert exception to
-	 * {@code RuntimeException} by using the provided mapping function.
+	 * Converts a {@code IntToDoubleFunctionWithException} to a
+	 * {@code IntToDoubleFunction} that wraps exception to {@code RuntimeException}
+	 * by using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -106,19 +109,21 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(IntToDoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> IntToDoubleFunction unchecked(IntToDoubleFunctionWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntToDoubleFunctionWithException<E>() {
 
 			@Override
-			public double applyAsDouble(int t) throws E {
-				return function.applyAsDouble(t);
+			public double applyAsDouble(int value) throws E {
+				return function.applyAsDouble(value);
 			}
 
 			@Override
@@ -130,8 +135,8 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code IntToDoubleFunction} returning {@code null} in case of exception.
+	 * Converts a {@code IntToDoubleFunctionWithException} to a lifted
+	 * {@code IntToDoubleFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -139,14 +144,16 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntToDoubleFunction lifted(IntToDoubleFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
-	 * Converts a {@code DoubleToIntFunctionWithException} to a lifted
-	 * {@code IntToDoubleFunction} returning {@code null} in case of exception.
+	 * Converts a {@code IntToDoubleFunctionWithException} to a lifted
+	 * {@code IntToDoubleFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -154,6 +161,8 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntToDoubleFunction ignored(IntToDoubleFunctionWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

@@ -34,7 +34,7 @@ import java.util.function.ToDoubleFunction;
  *
  * @see ToDoubleFunction
  * @param <T>
- *            the type of the input to the predicate
+ *            the type of the input to the function
  * @param <E>
  *            the type of the potential exception of the function
  */
@@ -72,10 +72,10 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <T, E extends Exception> ToDoubleFunctionWithException<T, E> failing(Supplier<E> exceptionBuilder) {
 		return t -> {
@@ -90,7 +90,7 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
@@ -113,7 +113,7 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked function
@@ -148,7 +148,7 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
@@ -167,7 +167,7 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
