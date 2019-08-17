@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,12 +28,14 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a supplier of {@code double}-valued results that may throw
+ * Represents a supplier of {@code double}-valued results and may throw
  * exception. This is the {@code double}-producing primitive specialization of
- * {@link Supplier}.
+ * {@link SupplierWithException}.
+ * <p>
+ * There is no requirement that a distinct result be returned each time the
+ * supplier is invoked.
  *
- * @author borettim
- * @see Supplier
+ * @see DoubleSupplier
  * @param <E>
  *            the type of the potential exception of the operation
  */
@@ -45,7 +48,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *
 	 * @throws E
 	 *             any exception
-	 * @return a boolean
+	 * @return a result
 	 * @see DoubleSupplier#getAsDouble()
 	 */
 	double getAsDouble() throws E;
@@ -79,15 +82,17 @@ public interface DoubleSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleSupplierWithException} to a {@code DoubleSupplier}
-	 * that convert exception to {@code RuntimeException}. o
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param supplier
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleSupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> DoubleSupplier unchecked(DoubleSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
@@ -95,7 +100,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleSupplierWithException} to a {@code DoubleSupplier}
-	 * that convert exception to {@code RuntimeException} by using the provided
+	 * that wraps exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
 	 * @param supplier
@@ -104,14 +109,16 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier or exceptionMapper is null
 	 */
 	static <E extends Exception> DoubleSupplier unchecked(DoubleSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new DoubleSupplierWithException<E>() {
 
 			@Override
@@ -129,7 +136,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleSupplierWithException} to a lifted
-	 * {@code DoubleSupplier} returning {@code null} in case of exception.
+	 * {@code DoubleSupplier} returning {@code 0} in case of exception.
 	 *
 	 * @param supplier
 	 *            to be lifted
@@ -137,6 +144,8 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> DoubleSupplier lifted(DoubleSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
@@ -144,7 +153,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleSupplierWithException} to a lifted
-	 * {@code DoubleSupplier} returning {@code null} in case of exception.
+	 * {@code DoubleSupplier} returning {@code 0} in case of exception.
 	 *
 	 * @param supplier
 	 *            to be lifted
@@ -152,6 +161,8 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> DoubleSupplier ignored(DoubleSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();

@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,12 +28,15 @@ import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
 /**
- * Represents a supplier of {@code long}-valued results that may throw
- * exception. This is the {@code long}-producing primitive specialization of
- * {@link Supplier}.
+ * Represents a supplier of {@code long}-valued results and may throw exception.
+ * This is the {@code long}-producing primitive specialization of
+ * {@link SupplierWithException}.
  *
- * @author borettim
- * @see Supplier
+ * <p>
+ * There is no requirement that a distinct result be returned each time the
+ * supplier is invoked.
+ *
+ * @see SupplierWithException
  * @param <E>
  *            the type of the potential exception of the operation
  */
@@ -45,7 +49,7 @@ public interface LongSupplierWithException<E extends Exception>
 	 *
 	 * @throws E
 	 *             any exception
-	 * @return a boolean
+	 * @return a result
 	 * @see LongSupplier#getAsLong()
 	 */
 	long getAsLong() throws E;
@@ -64,7 +68,7 @@ public interface LongSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts this {@code LongSupplierWithException} to a {@code LongSupplier}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked supplier
 	 * @see #unchecked(LongSupplierWithException)
@@ -104,15 +108,17 @@ public interface LongSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongSupplierWithException} to a {@code LongSupplier} that
-	 * convert exception to {@code RuntimeException}. o
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param supplier
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(LongSupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> LongSupplier unchecked(LongSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
@@ -120,7 +126,7 @@ public interface LongSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongSupplierWithException} to a {@code LongSupplier} that
-	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
 	 * function.
 	 *
 	 * @param supplier
@@ -129,14 +135,16 @@ public interface LongSupplierWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(LongSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier or exceptionMapper is null
 	 */
 	static <E extends Exception> LongSupplier unchecked(LongSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new LongSupplierWithException<E>() {
 
 			@Override
@@ -154,7 +162,7 @@ public interface LongSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongSupplierWithException} to a lifted {@code LongSupplier}
-	 * returning {@code null} in case of exception.
+	 * returning {@code 0} in case of exception.
 	 *
 	 * @param supplier
 	 *            to be lifted
@@ -162,6 +170,8 @@ public interface LongSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> LongSupplier lifted(LongSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
@@ -169,7 +179,7 @@ public interface LongSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongSupplierWithException} to a lifted {@code LongSupplier}
-	 * returning {@code null} in case of exception.
+	 * returning {@code 0} in case of exception.
 	 *
 	 * @param supplier
 	 *            to be lifted
@@ -177,6 +187,8 @@ public interface LongSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> LongSupplier ignored(LongSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();

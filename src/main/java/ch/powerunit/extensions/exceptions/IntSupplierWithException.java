@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,12 +28,15 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 /**
- * Represents a supplier of {@code int}-valued results that may throw exception.
+ * Represents a supplier of {@code int}-valued results and may throw exception.
  * This is the {@code int}-producing primitive specialization of
- * {@link Supplier}.
+ * {@link SupplierWithException}.
  *
- * @author borettim
- * @see Supplier
+ * <p>
+ * There is no requirement that a distinct result be returned each time the
+ * supplier is invoked.
+ *
+ * @see IntSupplier
  * @param <E>
  *            the type of the potential exception of the operation
  */
@@ -45,7 +49,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 *
 	 * @throws E
 	 *             any exception
-	 * @return a boolean
+	 * @return a result
 	 * @see IntSupplier#getAsInt()
 	 */
 	int getAsInt() throws E;
@@ -79,15 +83,17 @@ public interface IntSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntSupplierWithException} to a {@code IntSupplier} that
-	 * convert exception to {@code RuntimeException}. o
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param supplier
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(IntSupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> IntSupplier unchecked(IntSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
@@ -95,7 +101,7 @@ public interface IntSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntSupplierWithException} to a {@code IntSupplier} that
-	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
 	 * function.
 	 *
 	 * @param supplier
@@ -104,14 +110,16 @@ public interface IntSupplierWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked supplier
 	 * @see #uncheck()
 	 * @see #unchecked(IntSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier or exceptionMapper is null
 	 */
 	static <E extends Exception> IntSupplier unchecked(IntSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntSupplierWithException<E>() {
 
 			@Override
@@ -129,7 +137,7 @@ public interface IntSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntSupplierWithException} to a lifted {@code IntSupplier}
-	 * returning {@code null} in case of exception.
+	 * returning {@code 0} in case of exception.
 	 *
 	 * @param supplier
 	 *            to be lifted
@@ -137,6 +145,8 @@ public interface IntSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> IntSupplier lifted(IntSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
@@ -144,7 +154,7 @@ public interface IntSupplierWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntSupplierWithException} to a lifted {@code IntSupplier}
-	 * returning {@code null} in case of exception.
+	 * returning {@code 0} in case of exception.
 	 *
 	 * @param supplier
 	 *            to be lifted
@@ -152,6 +162,8 @@ public interface IntSupplierWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <E extends Exception> IntSupplier ignored(IntSupplierWithException<E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
