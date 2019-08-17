@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,9 +28,10 @@ import java.util.function.LongBinaryOperator;
 import java.util.function.Supplier;
 
 /**
- * Represents a long binary operator with exception.
+ * Represents an operation upon two {@code long}-valued operands and producing a
+ * {@code long}-valued result which may throw exception. This is the primitive
+ * type specialization of {@link BinaryOperatorWithException} for {@code long}.
  *
- * @author borettim
  * @see LongBinaryOperator
  * @param <E>
  *            the type of the potential exception of the function
@@ -39,24 +41,24 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator> {
 
 	/**
-	 * Applies this function to the given arguments.
+	 * Applies this operator to the given operands.
 	 *
-	 * @param t
-	 *            the first function argument
-	 * @param u
-	 *            the second function argument
-	 * @return the function result
+	 * @param left
+	 *            the first operand
+	 * @param right
+	 *            the second operand
+	 * @return the operator result
 	 * @throws E
 	 *             any exception
 	 * @see LongBinaryOperator#applyAsLong(long, long)
 	 */
-	long applyAsLong(long t, long u) throws E;
+	long applyAsLong(long left, long right) throws E;
 
 	@Override
 	default LongBinaryOperator uncheckOrIgnore(boolean uncheck) {
-		return (t, u) -> {
+		return (left, right) -> {
 			try {
-				return applyAsLong(t, u);
+				return applyAsLong(left, right);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
 				return 0;
@@ -88,9 +90,11 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(LongBinaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongBinaryOperator unchecked(LongBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -107,19 +111,21 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(LongBinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> LongBinaryOperator unchecked(LongBinaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new LongBinaryOperatorWithException<E>() {
 
 			@Override
-			public long applyAsLong(long t, long u) throws E {
-				return function.applyAsLong(t, u);
+			public long applyAsLong(long left, long right) throws E {
+				return function.applyAsLong(left, right);
 			}
 
 			@Override
@@ -132,7 +138,8 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongBinaryOperatorWithException} to a lifted
-	 * {@code LongBinaryOperator} using {@code Optional} as return value.
+	 * {@code LongBinaryOperator} with {@code 0} as return value in case of
+	 * exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -140,6 +147,8 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongBinaryOperator lifted(LongBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -147,7 +156,8 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongBinaryOperatorWithException} to a lifted
-	 * {@code LongBinaryOperator} returning {@code null} in case of exception.
+	 * {@code LongBinaryOperator} with {@code 0} as return value in case of
+	 * exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -155,6 +165,8 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongBinaryOperator ignored(LongBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

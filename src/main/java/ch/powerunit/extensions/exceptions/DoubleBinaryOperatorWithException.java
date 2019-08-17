@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -83,16 +84,18 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleBinaryOperatorException} to a
-	 * {@code DoubleBinaryOperator} that convert exception to
+	 * {@code DoubleBinaryOperator} that wraps exception to
 	 * {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleBinaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleBinaryOperator unchecked(DoubleBinaryOperatorWithException<E> function) {
 		return function.uncheck();
@@ -100,8 +103,8 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleBinaryOperatorWithException} to a
-	 * {@code DoubleBinaryOperator} that convert exception to
-	 * {@code RuntimeException} by using the provided mapping function.
+	 * {@code DoubleBinaryOperator} that wraps exception to {@code RuntimeException}
+	 * by using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -109,14 +112,16 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleBinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> DoubleBinaryOperator unchecked(DoubleBinaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new DoubleBinaryOperatorWithException<E>() {
 
 			@Override
@@ -134,7 +139,8 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleBinaryOperatorWithException} to a lifted
-	 * {@code DoubleBinaryOperator} using {@code Optional} as return value.
+	 * {@code DoubleBinaryOperator} with {@code 0} as return value in case of
+	 * exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -142,6 +148,8 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleBinaryOperator lifted(DoubleBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -149,7 +157,8 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleBinaryOperatorWithException} to a lifted
-	 * {@code DoubleBinaryOperator} returning {@code null} in case of exception.
+	 * {@code DoubleBinaryOperator} with {@code 0} as return value in case of
+	 * exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -157,6 +166,8 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleBinaryOperator ignored(DoubleBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
