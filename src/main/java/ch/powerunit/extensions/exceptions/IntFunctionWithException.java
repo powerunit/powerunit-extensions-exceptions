@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -29,10 +30,10 @@ import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
- * Represents a function that accepts one argument, may throw exception and
- * produces a result.
+ * Represents a function that accepts an int-valued argument, may throw
+ * exception and produces a result. This is the {@code int}-consuming primitive
+ * specialization for {@link FunctionWithException}.
  *
- * @author borettim
  * @see IntFunction
  * @param <R>
  *            the type of the result of the function
@@ -41,23 +42,23 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntFunctionWithException<R, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<IntFunction<R>, Function<Integer, Optional<R>>, R> {
+		extends ObjectReturnExceptionHandlerSupport<IntFunction<R>, IntFunction<Optional<R>>, R> {
 
 	/**
 	 * Applies this function to the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the function argument
 	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see IntFunction#apply(int)
 	 */
-	R apply(int t) throws E;
+	R apply(int value) throws E;
 
 	/**
-	 * Converts this {@code DoubleFunctionWithException} to a {@code IntFunction}
-	 * that convert exception to {@code RuntimeException}.
+	 * Converts this {@code IntFunctionWithException} to a {@code IntFunction} that
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked function
 	 * @see #unchecked(IntFunctionWithException)
@@ -69,20 +70,20 @@ public interface IntFunctionWithException<R, E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleFunctionWithException} to a lifted
-	 * {@code Function} using {@code Optional} as return value.
+	 * Converts this {@code IntFunctionWithException} to a lifted
+	 * {@code IntFunction} using {@code Optional} as return value.
 	 *
 	 * @return the lifted function
 	 * @see #lifted(IntFunctionWithException)
 	 */
 	@Override
-	default Function<Integer, Optional<R>> lift() {
+	default IntFunction<Optional<R>> lift() {
 		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> Optional.ofNullable(apply(t)),
 				notThrowingHandler());
 	}
 
 	/**
-	 * Converts this {@code DoubleFunctionWithException} to a lifted
+	 * Converts this {@code IntFunctionWithException} to a lifted
 	 * {@code IntFunction} returning {@code null} in case of exception.
 	 *
 	 * @return the function that ignore error
@@ -94,8 +95,8 @@ public interface IntFunctionWithException<R, E extends Exception>
 	}
 
 	/**
-	 * Convert this {@code DoubleFunctionWithException} to a lifted
-	 * {@code IntFunction} return {@code CompletionStage} as return value.
+	 * Convert this {@code IntFunctionWithException} to a lifted {@code IntFunction}
+	 * returning {@code CompletionStage} as return value.
 	 *
 	 * @return the lifted function
 	 * @see #staged(IntFunctionWithException)
@@ -110,7 +111,7 @@ public interface IntFunctionWithException<R, E extends Exception>
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a function that always throw exception
@@ -122,26 +123,28 @@ public interface IntFunctionWithException<R, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code FunctionWithException} to a {@code IntFunction} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts a {@code IntFunctionWithException} to a {@code IntFunction} that
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(IntFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <R, E extends Exception> IntFunction<R> unchecked(IntFunctionWithException<R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code DoubleFunctionWithException} to a {@code IntFunction} that
-	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * Converts a {@code IntFunctionWithException} to a {@code IntFunction} that
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
 	 * function.
 	 *
 	 * @param function
@@ -149,22 +152,24 @@ public interface IntFunctionWithException<R, E extends Exception>
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(IntFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <R, E extends Exception> IntFunction<R> unchecked(IntFunctionWithException<R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntFunctionWithException<R, E>() {
 
 			@Override
-			public R apply(int t) throws E {
-				return function.apply(t);
+			public R apply(int value) throws E {
+				return function.apply(value);
 			}
 
 			@Override
@@ -176,51 +181,57 @@ public interface IntFunctionWithException<R, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleFunctionWithException} to a lifted {@code Function}
+	 * Converts a {@code IntFunctionWithException} to a lifted {@code IntFunction}
 	 * using {@code Optional} as return value.
 	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
-	static <R, E extends Exception> Function<Integer, Optional<R>> lifted(IntFunctionWithException<R, E> function) {
+	static <R, E extends Exception> IntFunction<Optional<R>> lifted(IntFunctionWithException<R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
-	 * Converts a {@code DoubleFunctionWithException} to a lifted
-	 * {@code IntFunction} returning {@code null} in case of exception.
+	 * Converts a {@code IntFunctionWithException} to a lifted {@code IntFunction}
+	 * returning {@code null} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <R, E extends Exception> IntFunction<R> ignored(IntFunctionWithException<R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
 	}
 
 	/**
-	 * Convert this {@code DoubleFunctionWithException} to a lifted
-	 * {@code IntFunction} return {@code CompletionStage} as return value.
+	 * Convert this {@code IntFunctionWithException} to a lifted {@code IntFunction}
+	 * returning {@code CompletionStage} as return value.
 	 *
 	 * @param function
 	 *            to be lifted
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <R, E extends Exception> IntFunction<CompletionStage<R>> staged(IntFunctionWithException<R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();

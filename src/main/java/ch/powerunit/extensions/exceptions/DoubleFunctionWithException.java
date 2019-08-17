@@ -30,9 +30,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a function that accepts a double-valued argument and produces a
- * result. This is the {@code double}-consuming primitive specialization for
- * {@link FunctionWithException}.
+ * Represents a function that accepts a double-valued argument, may throw
+ * exception and produces a result. This is the {@code double}-consuming
+ * primitive specialization for {@link FunctionWithException}.
  *
  * @see DoubleFunction
  * @param <R>
@@ -71,7 +71,7 @@ public interface DoubleFunctionWithException<R, E extends Exception>
 
 	/**
 	 * Converts this {@code DoubleFunctionWithException} to a lifted
-	 * {@code Function} using {@code Optional} as return value.
+	 * {@code DoubleFunction} using {@code Optional} as return value.
 	 *
 	 * @return the lifted function
 	 * @see #lifted(DoubleFunctionWithException)
@@ -123,8 +123,8 @@ public interface DoubleFunctionWithException<R, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code FunctionWithException} to a {@code DoubleFunction} that
-	 * wraps to {@code RuntimeException}.
+	 * Converts a {@code DoubleFunctionWithException} to a {@code DoubleFunction}
+	 * that wraps to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -181,8 +181,8 @@ public interface DoubleFunctionWithException<R, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code DoubleFunctionWithException} to a lifted {@code Function}
-	 * using {@code Optional} as return value.
+	 * Converts a {@code DoubleFunctionWithException} to a lifted
+	 * {@code DoubleFunction} using {@code Optional} as return value.
 	 *
 	 * @param function
 	 *            to be lifted
