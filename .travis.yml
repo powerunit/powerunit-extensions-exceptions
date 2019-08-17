@@ -24,13 +24,18 @@ before_install:
 install:
 - "mvn dependency:resolve dependency:resolve-plugins dependency:go-offline"
 script:
-- "mvn -e clean install"
+- "mvn --log-file maven.log -e clean install"
+after_failure:
+- "curl -s https://report.ci/annotate.py | python - --name annotate$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION --tool java --input maven.log"
+- "curl -s https://report.ci/upload.py | python - --name upload$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION --include='*.xml' --framework=junit"
 after_success:
 - "mvn jacoco:report coveralls:report -DrepoToken=${repoToken}"
 - "bash <(curl -s https://codecov.io/bash) -c -Funit$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION"
 - "mvn org.apache.maven.plugins:maven-dependency-plugin:copy -Dartifact=com.codacy:codacy-coverage-reporter:6.0.0:jar:assembly -Dtransitive"
 - "mvn jacoco:merge -Djacoco.destFile=target/jacoco-aggregate.exe"
 - "mvn jacoco:report -Djacoco.dataFile=target/jacoco-aggregate.exe"
+- "curl -s https://report.ci/annotate.py | python - --name annotate$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION --tool java --input maven.log"
+- "curl -s https://report.ci/upload.py | python - --name upload$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION --include='*.xml' --framework=junit"
 - "(cd target/dependency && java -jar codacy-coverage-reporter-6.0.0-assembly.jar report -l Java -r ../site/jacoco/jacoco.xml)"
 - if [[ "$TRAVIS_JDK_VERSION" = oraclejdk9 ]]; then mvn site ; fi
 - if [[ "$TRAVIS_JDK_VERSION" = oraclejdk9 ]]; then mvn sonar:sonar -Dsonar.projectKey=powerunit_powerunit-extensions-exceptions ; fi
