@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,12 +28,13 @@ import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
 /**
- * Represents a function of one argument and may throw an exception.
+ * Represents a function that produces an int-valued result and may throw
+ * exception. This is the {@code int}-producing primitive specialization for
+ * {@link FunctionWithException}.
  *
- * @author borettim
  * @see ToIntFunction
  * @param <T>
- *            the type of the input to the predicate
+ *            the type of the input to the function
  * @param <E>
  *            the type of the potential exception of the function
  */
@@ -41,17 +43,16 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<ToIntFunction<T>> {
 
 	/**
-	 * Evaluates this function on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return {@code true} if the input argument matches the predicate, otherwise
-	 *         {@code false}
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see ToIntFunction#applyAsInt(Object)
 	 */
-	int applyAsInt(T t) throws E;
+	int applyAsInt(T value) throws E;
 
 	@Override
 	default ToIntFunction<T> uncheckOrIgnore(boolean uncheck) {
@@ -66,7 +67,7 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
@@ -83,8 +84,8 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionException} to a {@code ToIntFunction} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts a {@code ToIntFunctionException} to a {@code ToIntFunction} that
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -95,6 +96,8 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(ToIntFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToIntFunction<T> unchecked(ToIntFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -102,7 +105,7 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionWithException} to a {@code ToIntFunction}
-	 * that convert exception to {@code RuntimeException} by using the provided
+	 * that wraps exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
 	 * @param function
@@ -116,16 +119,18 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(ToIntFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, E extends Exception> ToIntFunction<T> unchecked(ToIntFunctionWithException<T, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new ToIntFunctionWithException<T, E>() {
 
 			@Override
-			public int applyAsInt(T t) throws E {
-				return function.applyAsInt(t);
+			public int applyAsInt(T value) throws E {
+				return function.applyAsInt(value);
 			}
 
 			@Override
@@ -138,7 +143,7 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToIntFunction} returning {@code null} in case of exception.
+	 * {@code ToIntFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -148,6 +153,8 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToIntFunction<T> lifted(ToIntFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -155,7 +162,7 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToIntFunction} returning {@code null} in case of exception.
+	 * {@code ToIntFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -165,6 +172,8 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToIntFunction<T> ignored(ToIntFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

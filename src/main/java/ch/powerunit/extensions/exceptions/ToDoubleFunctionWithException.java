@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,9 +28,10 @@ import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 
 /**
- * Represents a function of one argument and may throw an exception.
+ * Represents a function that produces a double-valued result, may throw
+ * exception. This is the {@code double}-producing primitive specialization for
+ * {@link FunctionWithException}.
  *
- * @author borettim
  * @see ToDoubleFunction
  * @param <T>
  *            the type of the input to the predicate
@@ -41,17 +43,16 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleFunction<T>> {
 
 	/**
-	 * Evaluates this function on the given argument.
+	 * Applies this function to the given argument.
 	 *
-	 * @param t
-	 *            the input argument
-	 * @return {@code true} if the input argument matches the predicate, otherwise
-	 *         {@code false}
+	 * @param value
+	 *            the function argument
+	 * @return the function result
 	 * @throws E
 	 *             any exception
 	 * @see ToDoubleFunction#applyAsDouble(Object)
 	 */
-	double applyAsDouble(T t) throws E;
+	double applyAsDouble(T value) throws E;
 
 	@Override
 	default ToDoubleFunction<T> uncheckOrIgnore(boolean uncheck) {
@@ -66,7 +67,7 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
@@ -83,8 +84,8 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionException} to a {@code ToDoubleFunction} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts a {@code ToDoubleFunctionException} to a {@code ToDoubleFunction}
+	 * that convert exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -95,15 +96,17 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(ToDoubleFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToDoubleFunction<T> unchecked(ToDoubleFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionWithException} to a {@code ToDoubleFunction}
-	 * that convert exception to {@code RuntimeException} by using the provided
-	 * mapping function.
+	 * Converts a {@code ToDoubleFunctionWithException} to a
+	 * {@code ToDoubleFunction} that convert exception to {@code RuntimeException}
+	 * by using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -113,19 +116,21 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 *            the type of the input object to the function
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(ToDoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, E extends Exception> ToDoubleFunction<T> unchecked(ToDoubleFunctionWithException<T, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new ToDoubleFunctionWithException<T, E>() {
 
 			@Override
-			public double applyAsDouble(T t) throws E {
-				return function.applyAsDouble(t);
+			public double applyAsDouble(T value) throws E {
+				return function.applyAsDouble(value);
 			}
 
 			@Override
@@ -137,8 +142,8 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToDoubleFunction} returning {@code null} in case of exception.
+	 * Converts a {@code ToDoubleFunctionWithException} to a lifted
+	 * {@code ToDoubleFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -148,14 +153,16 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToDoubleFunction<T> lifted(ToDoubleFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
 	}
 
 	/**
-	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToDoubleFunction} returning {@code null} in case of exception.
+	 * Converts a {@code ToDoubleFunctionWithException} to a lifted
+	 * {@code ToDoubleFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -165,6 +172,8 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToDoubleFunction<T> ignored(ToDoubleFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

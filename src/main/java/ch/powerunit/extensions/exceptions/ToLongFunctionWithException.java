@@ -67,7 +67,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
