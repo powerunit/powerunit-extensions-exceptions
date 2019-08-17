@@ -69,4 +69,16 @@ public class FunctionSamplesTest implements TestSuite {
 
 	}
 
+	@Test
+	public void sample4() {
+
+		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> x;
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, IllegalArgumentException::new);
+
+		assertThatFunction(functionThrowingRuntimeException, "x").is("x");
+
+	}
+
 }
