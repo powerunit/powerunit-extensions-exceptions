@@ -15,7 +15,7 @@ Function<String, String> functionThrowingRuntimeException = FunctionWithExceptio
   .unchecked(fonctionThrowingException);
 ```
 
-wraps the exception from `functionThrowingException` into a `RuntimeException` (which cause is the original one).
+wraps the exception from `IOException` into a `RuntimeException` (which cause is the original one).
 
 ## Usage
 
