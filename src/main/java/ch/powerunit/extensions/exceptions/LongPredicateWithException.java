@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,10 +28,10 @@ import java.util.function.LongPredicate;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a predicate (boolean-valued function) of one {@code long}-valued
+ * argument that may throw exception. This is the {@code long}-consuming
+ * primitive type specialization of {@link PredicateWithException}.
  *
- * @author borettim
  * @see LongPredicate
  * @param <E>
  *            the type of the potential exception of the function
@@ -42,7 +43,7 @@ public interface LongPredicateWithException<E extends Exception>
 	/**
 	 * Evaluates this predicate on the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the input argument
 	 * @return {@code true} if the input argument matches the predicate, otherwise
 	 *         {@code false}
@@ -50,7 +51,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 *             any exception
 	 * @see LongPredicate#test(long)
 	 */
-	boolean test(long t) throws E;
+	boolean test(long value) throws E;
 
 	@Override
 	default LongPredicate uncheckOrIgnore(boolean uncheck) {
@@ -165,13 +166,15 @@ public interface LongPredicateWithException<E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(LongPredicateWithException, Function)
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> LongPredicate unchecked(LongPredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code PredicateWithException} to a {@code Predicate} that convert
+	 * Converts a {@code PredicateWithException} to a {@code Predicate} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param predicate
@@ -180,19 +183,21 @@ public interface LongPredicateWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(LongPredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate or exceptionMapper is null
 	 */
 	static <E extends Exception> LongPredicate unchecked(LongPredicateWithException<E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new LongPredicateWithException<E>() {
 
 			@Override
-			public boolean test(long t) throws E {
-				return predicate.test(t);
+			public boolean test(long value) throws E {
+				return predicate.test(value);
 			}
 
 			@Override
@@ -205,14 +210,16 @@ public interface LongPredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongPredicateWithException} to a lifted
-	 * {@code LongPredicate} returning {@code null} in case of exception.
+	 * {@code LongPredicate} returning {@code 0} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> LongPredicate lifted(LongPredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
@@ -220,14 +227,16 @@ public interface LongPredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongPredicateWithException} to a lifted
-	 * {@code LongPredicate} returning {@code null} in case of exception.
+	 * {@code LongPredicate} returning {@code 0} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> LongPredicate ignored(LongPredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();

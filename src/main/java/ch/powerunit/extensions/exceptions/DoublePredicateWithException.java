@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,10 +28,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a predicate (boolean-valued function) of one {@code double}-valued
+ * argument that may throw exception. This is the {@code double}-consuming
+ * primitive type specialization of {@link PredicateWithException}.
  *
- * @author borettim
  * @see DoublePredicate
  * @param <E>
  *            the type of the potential exception of the function
@@ -42,7 +43,7 @@ public interface DoublePredicateWithException<E extends Exception>
 	/**
 	 * Evaluates this predicate on the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the input argument
 	 * @return {@code true} if the input argument matches the predicate, otherwise
 	 *         {@code false}
@@ -50,7 +51,7 @@ public interface DoublePredicateWithException<E extends Exception>
 	 *             any exception
 	 * @see DoublePredicate#test(double)
 	 */
-	boolean test(double t) throws E;
+	boolean test(double value) throws E;
 
 	@Override
 	default DoublePredicate uncheckOrIgnore(boolean uncheck) {
@@ -156,22 +157,24 @@ public interface DoublePredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoublePredicateWithException} to a {@code DoublePredicate}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param predicate
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(DoublePredicateWithException, Function)
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> DoublePredicate unchecked(DoublePredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code PredicateWithException} to a {@code Predicate} that convert
+	 * Converts a {@code PredicateWithException} to a {@code Predicate} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param predicate
@@ -180,19 +183,21 @@ public interface DoublePredicateWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(DoublePredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate or exceptionMapper is null
 	 */
 	static <E extends Exception> DoublePredicate unchecked(DoublePredicateWithException<E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new DoublePredicateWithException<E>() {
 
 			@Override
-			public boolean test(double t) throws E {
-				return predicate.test(t);
+			public boolean test(double value) throws E {
+				return predicate.test(value);
 			}
 
 			@Override
@@ -205,14 +210,16 @@ public interface DoublePredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoublePredicateWithException} to a lifted
-	 * {@code DoublePredicate} returning {@code null} in case of exception.
+	 * {@code DoublePredicate} returning {@code false} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> DoublePredicate lifted(DoublePredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
@@ -220,14 +227,16 @@ public interface DoublePredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoublePredicateWithException} to a lifted
-	 * {@code DoublePredicate} returning {@code null} in case of exception.
+	 * {@code DoublePredicate} returning {@code false} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> DoublePredicate ignored(DoublePredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
