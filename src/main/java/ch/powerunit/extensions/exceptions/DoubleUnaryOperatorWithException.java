@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -32,7 +33,6 @@ import java.util.function.Supplier;
  * primitive type specialization of {@link UnaryOperatorWithException} for
  * {@code double}.
  *
- * @author borettim
  * @see DoubleUnaryOperator
  * @param <E>
  *            the type of the potential exception of the function
@@ -134,16 +134,17 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleUnaryOperatorException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException}.
+	 * {@code DoubleUnaryOperator} that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -151,8 +152,8 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleUnaryOperatorWithException} to a
-	 * {@code DoubleUnaryOperator} that convert exception to
-	 * {@code RuntimeException} by using the provided mapping function.
+	 * {@code DoubleUnaryOperator} that wraps exception to {@code RuntimeException}
+	 * by using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -160,14 +161,16 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(DoubleUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new DoubleUnaryOperatorWithException<E>() {
 
 			@Override
@@ -185,7 +188,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} using {@code Optional} as return value.
+	 * {@code DoubleUnaryOperator} using {@code 0} as return value in case of error.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -193,6 +196,8 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleUnaryOperator lifted(DoubleUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -200,7 +205,7 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
-	 * {@code DoubleUnaryOperator} returning {@code null} in case of exception.
+	 * {@code DoubleUnaryOperator} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -208,6 +213,8 @@ public interface DoubleUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
