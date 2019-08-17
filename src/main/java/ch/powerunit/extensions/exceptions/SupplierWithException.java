@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -28,9 +29,12 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a supplier of results that may throw exception
+ * Represents a supplier of results that may thrown exception.
  *
- * @author borettim
+ * <p>
+ * There is no requirement that a new or distinct result be returned each time
+ * the supplier is invoked.
+ *
  * @see Supplier
  * @param <T>
  *            the type of results supplied by this supplier
@@ -52,8 +56,8 @@ public interface SupplierWithException<T, E extends Exception>
 	T get() throws E;
 
 	/**
-	 * Converts this {@code SupplierWithException} to a {@code Supplier} that
-	 * convert exception to {@code RuntimeException}.
+	 * Converts this {@code SupplierWithException} to a {@code Supplier} that wraps
+	 * exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked supplier
 	 * @see #unchecked(SupplierWithException)
@@ -118,7 +122,7 @@ public interface SupplierWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code SupplierWithException} to a {@code Supplier} that convert
+	 * Converts a {@code SupplierWithException} to a {@code Supplier} that wraps
 	 * exception to {@code RuntimeException}.
 	 *
 	 * @param supplier
@@ -130,13 +134,15 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(SupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code SupplierWithException} to a {@code Supplier} that convert
+	 * Converts a {@code SupplierWithException} to a {@code Supplier} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param supplier
@@ -150,11 +156,13 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(SupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier or exceptionMapper is null
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new SupplierWithException<T, E>() {
 
 			@Override
@@ -182,6 +190,8 @@ public interface SupplierWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<Optional<T>> lifted(SupplierWithException<T, E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
@@ -199,6 +209,8 @@ public interface SupplierWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<T> ignored(SupplierWithException<T, E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
@@ -216,6 +228,8 @@ public interface SupplierWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted supplier
 	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<CompletionStage<T>> staged(SupplierWithException<T, E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).stage();
