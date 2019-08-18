@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,11 +28,18 @@ import java.util.function.Supplier;
 import java.util.function.ToLongFunction;
 
 /**
- * Represents a function that produces a long-valued result and may thrown
+ * Represents a function that produces a long-valued result and may throw
  * exception. This is the {@code long}-producing primitive specialization for
  * {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsLong(Object) long applyAsLong(T value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code ToLongFunction<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code ToLongFunction<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code ToLongFunction<T>}</li>
+ * </ul>
  *
- * @author borettim
  * @see ToLongFunction
  * @param <T>
  *            the type of the input to the function
@@ -67,7 +75,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Returns a predicate that always throw exception.
+	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
@@ -75,7 +83,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 *            the type of the input object to the function
 	 * @param <E>
 	 *            the type of the exception
-	 * @return a predicate that always throw exception
+	 * @return a function that always throw exception
 	 */
 	static <T, E extends Exception> ToLongFunctionWithException<T, E> failing(Supplier<E> exceptionBuilder) {
 		return value -> {
@@ -85,7 +93,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionException} to a {@code ToLongFunction} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
@@ -96,6 +104,8 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(ToLongFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToLongFunction<T> unchecked(ToLongFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -103,7 +113,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionWithException} to a {@code ToLongFunction}
-	 * that convert exception to {@code RuntimeException} by using the provided
+	 * that wraps exception to {@code RuntimeException} by using the provided
 	 * mapping function.
 	 *
 	 * @param function
@@ -114,14 +124,16 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 *            the type of the input object to the function
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(ToLongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, E extends Exception> ToLongFunction<T> unchecked(ToLongFunctionWithException<T, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new ToLongFunctionWithException<T, E>() {
 
 			@Override
@@ -139,7 +151,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToLongFunction} returning {@code null} in case of exception.
+	 * {@code ToLongFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -149,6 +161,8 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToLongFunction<T> lifted(ToLongFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -156,7 +170,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ToLongFunctionWithException} to a lifted
-	 * {@code ToLongFunction} returning {@code null} in case of exception.
+	 * {@code ToLongFunction} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -166,6 +180,8 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, E extends Exception> ToLongFunction<T> ignored(ToLongFunctionWithException<T, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,11 +28,20 @@ import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
 /**
- * Represents an operation that accepts a single input argument and returns no
- * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * Represents an operation that accepts a single {@code int}-valued argument,
+ * may throw exception and returns no result. This is the primitive type
+ * specialization of {@link ConsumerWithException} for {@code int}. Unlike most
+ * other functional interfaces, {@code IntConsumerWithException} is expected to
+ * operate via side-effects.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #accept(int) void accept(int value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntConsumer}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntConsumer}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntConsumer}</li>
+ * </ul>
  *
- * @author borettim
  * @see IntConsumer
  * @param <E>
  *            the type of the potential exception of the operation
@@ -42,17 +52,17 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	/**
 	 * Performs this operation on the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the input argument
 	 * @throws E
 	 *             any exception
 	 * @see IntConsumer#accept(int)
 	 */
-	void accept(int t) throws E;
+	void accept(int value) throws E;
 
 	/**
 	 * Converts this {@code IntConsumerWithException} to a {@code IntConsumer} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(IntConsumerWithException)
@@ -117,15 +127,17 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts a {@code IntConsumerWithException} to a {@code IntConsumer} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param operation
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(IntConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> IntConsumer unchecked(IntConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
@@ -133,7 +145,7 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts a {@code IntConsumerWithException} to a {@code IntConsumer} that
-	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
 	 * function.
 	 *
 	 * @param operation
@@ -142,19 +154,21 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(IntConsumerWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
 	 */
 	static <E extends Exception> IntConsumer unchecked(IntConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntConsumerWithException<E>() {
 
 			@Override
-			public void accept(int t) throws E {
-				operation.accept(t);
+			public void accept(int value) throws E {
+				operation.accept(value);
 			}
 
 			@Override
@@ -167,7 +181,7 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts a {@code IntConsumerWithException} to a lifted {@code IntConsumer}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -182,7 +196,7 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts a {@code IntConsumerWithException} to a lifted {@code IntConsumer}
-	 * returning {@code null} in case of exception.
+	 * ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
@@ -190,6 +204,8 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> IntConsumer ignored(IntConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
@@ -197,13 +213,15 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 
 	/**
 	 * Converts a {@code IntConsumerWithException} to a
-	 * {@code ConsumerWithException} returning {@code null}.
+	 * {@code ConsumerWithException}.
 	 *
 	 * @param operation
-	 *            to be lifted
+	 *            to be converted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the function
+	 * @return the consumer
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <E extends Exception> ConsumerWithException<Integer, E> asConsumer(IntConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;

@@ -29,42 +29,84 @@ import java.util.function.Function;
 
 /**
  * Root interface to support global operations related to exception handling for
- * function interface without return value.
+ * functional interface returning Object result.
  *
- * @author borettim
  * @param <F>
- *            the type of the java standard function interface
+ *            the type of the java standard functional interface. For example,
+ *            {@code Function<T,R>}.
  * @param <L>
- *            the type of the lifted function interface
+ *            the type of the lifted functional interface. For example,
+ *            {@code Function<T,Optional<R>>}.
  * @param <T>
- *            the type of the return type
+ *            the type of the return type of the Functional interface.
  */
 public interface ObjectReturnExceptionHandlerSupport<F, L, T> extends ExceptionHandlerSupport<F, L> {
 
 	/**
-	 * Converts this function interface to the corresponding one in java and wrap
-	 * exception.
+	 * Converts this functional interface to the corresponding one in java and wrap
+	 * exception using {@link #exceptionMapper()}.
+	 * <p>
+	 * Conceptually, the exception encapsulation is done in the following way :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		throw new exceptionMapper().apply(e);
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the unchecked operation
+	 * @see #lift()
+	 * @see #ignore()
 	 */
 	@Override
 	F uncheck();
 
 	/**
-	 * Converts this function interface to a lifted one.
+	 * Converts this functional interface to a lifted one. The lifted version return
+	 * an Optional of the original return type.
 	 * <p>
-	 * This method is identical to {@link #ignore()}
+	 * Conceptually, this is done by :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return Optional.ofNullable(realaction(xxx));
+	 * 	} catch (Exception e) {
+	 * 		return Optional.empty();
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
 	 */
 	@Override
 	L lift();
 
 	/**
-	 * Converts this function interface to the corresponding <i>lifted</i> java
-	 * standard interface ignoring exception.
+	 * Converts this functional interface to the corresponding java standard
+	 * functional interface returning a null in case of error.
+	 * <p>
+	 * The principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		return null;
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the operation that ignore error
+	 * @see #uncheck()
+	 * @see #lift()
 	 */
 	@Override
 	F ignore();

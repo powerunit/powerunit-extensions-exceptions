@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,10 +28,18 @@ import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a predicate (boolean-valued function) of one {@code int}-valued
+ * argument that may throw exception. This is the {@code int}-consuming
+ * primitive type specialization of {@link PredicateWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #test(int) boolean test(int value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntPredicate}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntPredicate}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntPredicate}</li>
+ * </ul>
  *
- * @author borettim
  * @see IntPredicate
  * @param <E>
  *            the type of the potential exception of the function
@@ -42,7 +51,7 @@ public interface IntPredicateWithException<E extends Exception>
 	/**
 	 * Evaluates this predicate on the given argument.
 	 *
-	 * @param t
+	 * @param value
 	 *            the input argument
 	 * @return {@code true} if the input argument matches the predicate, otherwise
 	 *         {@code false}
@@ -50,7 +59,7 @@ public interface IntPredicateWithException<E extends Exception>
 	 *             any exception
 	 * @see IntPredicate#test(int)
 	 */
-	boolean test(int t) throws E;
+	boolean test(int value) throws E;
 
 	@Override
 	default IntPredicate uncheckOrIgnore(boolean uncheck) {
@@ -156,22 +165,24 @@ public interface IntPredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntPredicateWithException} to a {@code IntPredicate} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @param predicate
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(IntPredicateWithException, Function)
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> IntPredicate unchecked(IntPredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code PredicateWithException} to a {@code Predicate} that convert
+	 * Converts a {@code PredicateWithException} to a {@code Predicate} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param predicate
@@ -180,19 +191,21 @@ public interface IntPredicateWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(IntPredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate or exceptionMapper is null
 	 */
 	static <E extends Exception> IntPredicate unchecked(IntPredicateWithException<E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntPredicateWithException<E>() {
 
 			@Override
-			public boolean test(int t) throws E {
-				return predicate.test(t);
+			public boolean test(int value) throws E {
+				return predicate.test(value);
 			}
 
 			@Override
@@ -205,14 +218,16 @@ public interface IntPredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntPredicateWithException} to a lifted {@code IntPredicate}
-	 * returning {@code null} in case of exception.
+	 * returning {@code false} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> IntPredicate lifted(IntPredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
@@ -220,14 +235,16 @@ public interface IntPredicateWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntPredicateWithException} to a lifted {@code IntPredicate}
-	 * returning {@code null} in case of exception.
+	 * returning {@code false} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <E extends Exception> IntPredicate ignored(IntPredicateWithException<E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();

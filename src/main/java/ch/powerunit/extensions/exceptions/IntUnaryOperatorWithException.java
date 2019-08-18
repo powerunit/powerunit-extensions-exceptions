@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,9 +28,18 @@ import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 
 /**
- * Represents a int unary operator with exception.
+ * Represents an operation on a single {@code int}-valued operand that produces
+ * an {@code int}-valued result and may throws exception. This is the primitive
+ * type specialization of {@link UnaryOperatorWithException} for {@code int}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsInt(int) int applyAsInt(int operand) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntUnaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntUnaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntUnaryOperator}</li>
+ * </ul>
  *
- * @author borettim
  * @see IntUnaryOperator
  * @param <E>
  *            the type of the potential exception of the function
@@ -39,16 +49,16 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator> {
 
 	/**
-	 * Applies this function to the given arguments.
+	 * Applies this operator to the given operand.
 	 *
-	 * @param t
-	 *            the first function argument
-	 * @return the function result
+	 * @param operand
+	 *            the operand
+	 * @return the operator result
 	 * @throws E
 	 *             any exception
 	 * @see IntUnaryOperator#applyAsInt(int)
 	 */
-	int applyAsInt(int t) throws E;
+	int applyAsInt(int operand) throws E;
 
 	@Override
 	default IntUnaryOperator uncheckOrIgnore(boolean uncheck) {
@@ -131,15 +141,17 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntUnaryOperatorException} to a {@code IntUnaryOperator}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(IntUnaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntUnaryOperator unchecked(IntUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -147,8 +159,8 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntUnaryOperatorWithException} to a
-	 * {@code IntUnaryOperator} that convert exception to {@code RuntimeException}
-	 * by using the provided mapping function.
+	 * {@code IntUnaryOperator} that wraps exception to {@code RuntimeException} by
+	 * using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -156,19 +168,21 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(IntUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> IntUnaryOperator unchecked(IntUnaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntUnaryOperatorWithException<E>() {
 
 			@Override
-			public int applyAsInt(int t) throws E {
-				return function.applyAsInt(t);
+			public int applyAsInt(int operand) throws E {
+				return function.applyAsInt(operand);
 			}
 
 			@Override
@@ -181,7 +195,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntUnaryOperatorWithException} to a lifted
-	 * {@code IntUnaryOperator} using {@code Optional} as return value.
+	 * {@code IntUnaryOperator} using {@code 0} as return value in case of error.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -189,6 +203,8 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntUnaryOperator lifted(IntUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -196,7 +212,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntUnaryOperatorWithException} to a lifted
-	 * {@code IntUnaryOperator} returning {@code null} in case of exception.
+	 * {@code IntUnaryOperator} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -204,6 +220,8 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntUnaryOperator ignored(IntUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

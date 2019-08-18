@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -30,8 +31,15 @@ import java.util.function.Supplier;
 /**
  * Represents a function that accepts one argument, may throw exception and
  * produces a result.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(Object) R apply(T t) throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code Function<T, R>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code Function<T, Optional<R>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code Function<T, R>}</li>
+ * </ul>
  *
- * @author borettim
  * @see Function
  * @param <T>
  *            the type of the input to the function
@@ -63,6 +71,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @return the unchecked function
 	 * @see #unchecked(FunctionWithException)
 	 * @see #unchecked(FunctionWithException, Function)
+	 * @see Function
 	 */
 	@Override
 	default Function<T, R> uncheck() {
@@ -75,6 +84,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 *
 	 * @return the lifted function
 	 * @see #lifted(FunctionWithException)
+	 * @see Function
 	 */
 	@Override
 	default Function<T, Optional<R>> lift() {
@@ -88,6 +98,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
+	 * @see Function
 	 */
 	@Override
 	default Function<T, R> ignore() {
@@ -100,6 +111,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 *
 	 * @return the lifted function
 	 * @see #staged(FunctionWithException)
+	 * @see CompletionStage
 	 */
 	default Function<T, CompletionStage<R>> stage() {
 		return t -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t));
@@ -122,7 +134,7 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 *             if before is null
 	 *
 	 * @see #andThen(FunctionWithException)
-	 * @see Function#andThen(Function)
+	 * @see Function#compose(Function)
 	 */
 	default <V> FunctionWithException<V, R, E> compose(
 			FunctionWithException<? super V, ? extends T, ? extends E> before) {
@@ -144,10 +156,9 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @return a composed function that first applies this function and then applies
 	 *         the {@code after} function
 	 * @throws NullPointerException
-	 *             if after is null
-	 *
+	 *             if after is null *
 	 * @see #compose(FunctionWithException)
-	 * @see Function#compose(Function)
+	 * @see Function#andThen(Function)
 	 */
 	default <V> FunctionWithException<T, V, E> andThen(
 			FunctionWithException<? super R, ? extends V, ? extends E> after) {
@@ -175,9 +186,9 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a function that always throw exception
@@ -195,21 +206,23 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(FunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
 	}
 
 	/**
-	 * Converts a {@code FunctionWithException} to a {@code Function} that convert
+	 * Converts a {@code FunctionWithException} to a {@code Function} that wraps
 	 * exception to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param function
@@ -217,19 +230,21 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(FunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new FunctionWithException<T, R, E>() {
 
 			@Override
@@ -252,13 +267,15 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, Optional<R>> lifted(FunctionWithException<T, R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -271,13 +288,15 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
@@ -290,13 +309,15 @@ public interface FunctionWithException<T, R, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the input object to the function
+	 *            the type of the input to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, CompletionStage<R>> staged(FunctionWithException<T, R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();

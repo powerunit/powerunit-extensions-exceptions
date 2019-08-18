@@ -24,7 +24,6 @@ import java.util.function.Function;
 /**
  * Root interface to support global operations related to exception handling.
  *
- * @author borettim
  * @param <F>
  *            the type of the java standard functional interface. For example,
  *            {@code Function<T,R>}.
@@ -49,8 +48,23 @@ public interface ExceptionHandlerSupport<F, L> {
 	/**
 	 * Converts this functional interface to the corresponding one in java and wrap
 	 * exception using {@link #exceptionMapper()}.
+	 * <p>
+	 * Conceptually, the exception encapsulation is done in the following way :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		// do the underlying functional interface action and return result if
+	 * 		// applicable
+	 * 	} catch (Exception e) {
+	 * 		throw new exceptionMapper().apply(e);
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the unchecked operation
+	 * @see #lift()
+	 * @see #ignore()
 	 */
 	F uncheck();
 
@@ -58,9 +72,47 @@ public interface ExceptionHandlerSupport<F, L> {
 	 * Converts this functional interface to a lifted one. A lifted version may or
 	 * may not have the same return type of the original one. When possible a
 	 * version returning an {@code Optional} is provided. For functional interface
-	 * without return value, this method will be identical to {@link #ignore()}
+	 * without return value, this method will be identical to {@link #ignore()}.
+	 * <p>
+	 * For functional interface with Object result, the principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return Optional.ofNullable(realaction(xxx));
+	 * 	} catch (Exception e) {
+	 * 		return Optional.empty();
+	 * 	}
+	 * }
+	 * </pre>
+	 *
+	 * For functional interface with primitive result, the principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		return defaultValue;
+	 * 	}
+	 * }
+	 * </pre>
+	 *
+	 * For functional interface without result, the principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		// do nothing
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
 	 */
 	L lift();
 
@@ -69,7 +121,46 @@ public interface ExceptionHandlerSupport<F, L> {
 	 * functional interface returning a default value in case of error. For function
 	 * interface without return value, error will be silently ignored.
 	 *
+	 * <p>
+	 * For functional interface with Object result, the principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		return null;
+	 * 	}
+	 * }
+	 * </pre>
+	 *
+	 * For functional interface with primitive result, the principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		return defaultValue;
+	 * 	}
+	 * }
+	 * </pre>
+	 *
+	 * For functional interface without result, the principle is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		// do nothing
+	 * 	}
+	 * }
+	 * </pre>
+	 *
 	 * @return the operation that ignore error
+	 * @see #uncheck()
+	 * @see #lift()
 	 */
 	F ignore();
 }

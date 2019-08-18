@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -28,13 +29,22 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Represents a predicate (boolean-valued function) of one argument and may
- * throw an exception.
+ * Represents a predicate (boolean-valued function) of two arguments that may
+ * throw exception. This is the two-arity specialization of
+ * {@link PredicateWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #test(Object, Object) boolean test(T t, U u) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code BiPredicate<T, U>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code BiPredicate<T, U>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code BiPredicate<T, U>}</li>
+ * </ul>
  *
- * @author borettim
- * @see Predicate
+ *
+ * @see BiPredicate
  * @param <T>
- *            the type of the first input to the predicate
+ *            the type of the first argument to the predicate
  * @param <U>
  *            the type of the second argument the predicate
  * @param <E>
@@ -50,8 +60,8 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @param t
 	 *            the first input argument
 	 * @param u
-	 *            the first second argument
-	 * @return {@code true} if the input argument matches the predicate, otherwise
+	 *            the second input argument
+	 * @return {@code true} if the input arguments match the predicate, otherwise
 	 *         {@code false}
 	 * @throws E
 	 *             any exception
@@ -113,9 +123,9 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @param predicate
 	 *            to be negate
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the predicate
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument the predicate
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the negated predicate
@@ -156,9 +166,9 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the predicate
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument the predicate
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a predicate that always throw exception
@@ -171,19 +181,21 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 
 	/**
 	 * Converts a {@code BiPredicateWithException} to a {@code BiPredicate} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps to {@code RuntimeException}.
 	 *
 	 * @param predicate
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the predicate
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument the predicate
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(BiPredicateWithException, Function)
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
@@ -191,27 +203,28 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 
 	/**
 	 * Converts a {@code BiPredicateWithException} to a {@code BiPredicate} that
-	 * convert exception to {@code RuntimeException} by using the provided mapping
-	 * function.
+	 * wraps to {@code RuntimeException} by using the provided mapping function.
 	 *
 	 * @param predicate
 	 *            the be unchecked
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the predicate
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument the predicate
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked predicate
 	 * @see #uncheck()
 	 * @see #unchecked(BiPredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate or exceptionMapper is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new BiPredicateWithException<T, U, E>() {
 
 			@Override
@@ -229,18 +242,20 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 
 	/**
 	 * Converts a {@code BiPredicateWithException} to a lifted {@code BiPredicate}
-	 * returning {@code null} in case of exception.
+	 * returning {@code false} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the predicate
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument the predicate
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> lifted(BiPredicateWithException<T, U, E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
@@ -248,18 +263,20 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 
 	/**
 	 * Converts a {@code BiPredicateWithException} to a lifted {@code BiPredicate}
-	 * returning {@code null} in case of exception.
+	 * returning {@code false} in case of exception.
 	 *
 	 * @param predicate
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the predicate
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument the predicate
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the lifted function
+	 * @return the lifted predicate
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if predicate is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
 		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();

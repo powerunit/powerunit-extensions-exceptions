@@ -22,8 +22,6 @@ package ch.powerunit.extensions.exceptions;
 /**
  * RuntimeException to wrap the Exception.
  *
- * @author borettim
- *
  */
 public final class WrappedException extends RuntimeException {
 
