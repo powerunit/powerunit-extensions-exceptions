@@ -36,6 +36,14 @@ import java.util.function.UnaryOperator;
  * <p>
  * As this interface must return the same type of the input, a lifted version
  * which returns {@code Optional} is not possible.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(Object) T apply(T t) throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code UnaryOperator<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code Function<T,Optional<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code UnaryOperator<T>}</li>
+ * </ul>
  *
  * @see FunctionWithException
  * @see UnaryOperator
