@@ -33,6 +33,14 @@ import java.util.function.Supplier;
  * {@code (reference, int)} specialization of {@link BiConsumerWithException}.
  * Unlike most other functional interfaces, {@code ObjIntConsumer} is expected
  * to operate via side-effects.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #accept(Object, int) void accept(T t, int value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code ObjIntConsumer<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code ObjIntConsumer<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code ObjIntConsumer<T>}</li>
+ * </ul>
  *
  * @see ObjIntConsumer
  * @param <T>
