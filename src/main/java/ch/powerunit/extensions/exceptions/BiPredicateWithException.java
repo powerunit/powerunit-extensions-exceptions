@@ -32,6 +32,14 @@ import java.util.function.Supplier;
  * Represents a predicate (boolean-valued function) of two arguments that may
  * throw exception. This is the two-arity specialization of
  * {@link PredicateWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #test(Object, Object) boolean test(T t, U u) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code BiPredicate<T, U>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code BiPredicate<T, U>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code BiPredicate<T, U>}</li>
+ * </ul>
  *
  *
  * @see BiPredicate

@@ -37,6 +37,15 @@ import java.util.function.Supplier;
  * <p>
  * As this interface must return the same type of the input, a lifted version
  * which returns {@code Optional} is not possible.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(Object, Object) T apply(T t, T u) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code BinaryOperator<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a
+ * {@code BiFunction<T,T,<Optional<T>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code BinaryOperator<T>}</li>
+ * </ul>
  *
  * @see BiFunctionWithException
  * @see BinaryOperator

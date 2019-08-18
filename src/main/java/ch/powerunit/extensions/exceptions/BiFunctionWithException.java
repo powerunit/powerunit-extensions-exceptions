@@ -34,6 +34,16 @@ import java.util.function.Supplier;
  * produces a result. This is the two-arity specialization of
  * {@link FunctionWithException}.
  *
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(Object, Object) R apply(T t, U u) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code BiFunction<T,U,R>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a
+ * {@code BiFunction<T,U,<Optional<R>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code BiFunction<T,U,R>}</li>
+ * </ul>
+ * 
  * @see BiFunction
  * @param <T>
  *            the type of the first argument to the function
