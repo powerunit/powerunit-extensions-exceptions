@@ -44,47 +44,50 @@ The method `unchecked` also support an additional parameter to define how to wra
 ## Reference
 
 The following classes are provided:
-- BiConsumerWithException
-- BiFunctionWithException
-- BinaryOperatorWithException
-- BiPredicateWithException
-- BooleanSupplierWithException
-- ConsumerWithException
-- DoubleBinaryOperatorWithException
-- DoubleConsumerWithException
-- DoubleFunctionWithException
-- DoublePredicateWithException
-- DoubleSupplierWithException
-- DoubleToIntFunctionWithException
-- DoubleToLongFunctionWithException
-- DoubleUnaryOperatorWithException
-- FunctionWithException
-- IntBinaryOperatorWithException
-- IntConsumerWithException
-- IntFunctionWithException
-- IntPredicateWithException
-- IntSupplierWithException
-- IntToDoubleFunctionWithException
-- IntToLongFunctionWithException
-- IntUnaryOperatorWithException
-- LongBinaryOperatorWithException
-- LongConsumerWithException
-- LongFunctionWithException
-- LongPredicateWithException
-- LongSupplierWithException
-- LongToDoubleFunctionWithException
-- LongToIntFunctionWithException
-- LongUnaryOperatorWithException
-- ObjDoubleConsumerWithException
-- ObjIntConsumerWithException
-- ObjLongConsumerWithException
-- PredicateWithException
-- RunnableWithException
-- SupplierWithException
-- ToDoubleBiFunctionWithException
-- ToDoubleFunctionWithException
-- ToIntBiFunctionWithException
-- ToIntFunctionWithException
-- ToLongBiFunctionWithException
-- ToLongFunctionWithException
-- UnaryOperatorWithException
+
+| Standard functional interface | Exception functional interface         | Unchecked version       | Lifted version                 | Ignore version                |
+| ----------------------------- | -------------------------------------- | ----------------------- | ------------------------------ | -------------- |
+| BiFunction<T,U,R>             | BiFUnctionWithException<T,U,R,E>       | BiFunction<T,U,R>       | BiFunction<T,U,Optional<R>>    | BiFunction<T,U,R>      |
+| BiConsumer<T,U>               | BiConsumerWithException<T,U,E>         | BiConsumer<T,U>         | BiConsumer<T,U>                | BiConsumer<T,U>        |
+| BiPredicate<T,U>              | BiPredicateWithException<T,U,E>        | BiPredicate<T,U>        | BiPredicate<T,U>               | BiPredicate<T,U>       |
+| BinaryOperator<T>             | BinaryOperatorWithException<T,E>       | BinaryOperator<T,U>     | BinaryFunction<T,T,Optional<T> | BinaryOperator<T>      |
+| BooleanSupplier               | BooleanSupplierWithException<E>        | BooleanSupplier         | BooleanSupplier                | BooleanSupplier        |
+| Consumer<T>                   | ConsumerWithException<T,E>             | Consumer<T>             | Consumer<T>                    | Consumer<T>            |
+| DoubleBinaryOperator          | DoubleBinaryOperatorWithException<E>   | DoubleBinaryOperator    | DoubleBinaryOperator           | DoubleBinaryOperator   |
+| DoubleConsumer                | DoubleConsumerWithException<E>         | DoubleConsumer          | DoubleConsumer                 | DoubleConsumer         |
+| DoubleFunction<R>             | DoubleFunctionWithException<R,E>       | DoubleFunction<R>       | DoubleFunction<Optional<R>>    | DoubleFunction<R>      |
+| DoublePredicate               | DoublePredicateWithException<E>        | DoublePredicate         | DoublePredicate                | DoublePredicate        |
+| DoubleSupplier                | DoubleSupplierWithException<E>         | DoubleSupplier          | DoubleSupplier                 | DoubleSupplier         |
+| DoubleToIntFunction           | DoubleToIntFunctionWithException<E>    | DoubleToIntFunction     | DoubleToIntFunction            | DoubleToIntFunction    |
+| DoubleToLongFunction          | DoubleToLongFunctionWithException<E>   | DoubleToLongFunction    | DoubleToLongFunction           | DoubleToLongFunction   |
+| DoubleUnaryOperator           | DoubleUnaryOperatorWithException<E>    | DoubleUnaryOperator     | DoubleUnaryOperator            | DoubleUnaryOperator    |
+| Function<T,R>                 | FunctionWithException<T,R,E>           | Function<T,R>           | Function<T,Optional<R>>        | Function<T,R>          |
+| IntBinaryOperator             | IntBinaryOperatorWithException<E>      | IntBinaryOperator       | IntBinaryOperator              | IntBinaryOperator      |
+| IntConsumer                   | IntConsumerWithException<E>            | IntConsumer             | IntConsumer                    | IntConsumer            |
+| IntFunction<R>                | IntFunctionWithException<R,E>          | IntFunction<R>          | IntFunction<Optional<R>>       | IntFunction<R>         |
+| IntPredicate                  | IntPredicateWithException<E>           | IntPredicate            | IntPredicate                   | IntPredicate           |
+| IntSupplier                   | IntSupplierWithException<E>            | IntSupplier             | IntSupplier                    | IntSupplier            |
+| IntToDoubleFunction           | IntToDoubleFunctionWithException<E>    | IntToDoubleFunction     | IntToDoubleFunction            | IntToDoubleFunction    |
+| IntToLongFunction             | IntToLongFunctionWithException<E>      | IntToLongFunction       | IntToLongFunction              | IntToLongFunction      |
+| IntUnaryOperator              | IntUnaryOperatorWithException<E>       | IntUnaryOperator        | IntUnaryOperator               | IntUnaryOperator       |
+| LongBinaryOperator            | LongBinaryOperatorWithException<E>     | LongBinaryOperator      | LongBinaryOperator             | LongBinaryOperator     |
+| LongConsumer                  | LongConsumerWithException<E>           | LongConsumer            | LongConsumer                   | LongConsumer           |
+| LongFunction<R>               | LongFunctionWithException<R,E>         | LongFunction<R>         | LongFunction<Optional<R>>      | LongFunction<R>        |
+| LongPredicate                 | LongPredicateWithException<E>          | LongPredicate           | LongPredicate                  | LongPredicate          |
+| LongSupplier                  | LongSupplierWithException<E>           | LongSupplier            | LongSupplier                   | LongSupplier           |
+| LongToDoubleFunction          | LongToDoubleFunctionWithException<E>   | LongToDoubleFunction    | LongToDoubleFunction           | LongToDoubleFunction   |
+| LongToIntFunction             | LongToIntFunctionWithException         | LongToIntFunction       | LongToIntFunction              | LongToIntFunction      |
+| LongUnaryOperator             | LongUnaryOperatorWithException         | LongUnaryOperator       | LongUnaryOperator              | LongUnaryOperator      |
+| ObjDoubleConsumer<T>          | ObjDoubleConsumerWithException<T,E>    | ObjDoubleConsumer<T>    | ObjDoubleConsumer<T>           | ObjDoubleConsumer<T>   |
+| ObjIntConsumer<T>             | ObjIntConsumerWithException<T,E>       | ObjIntConsumer<T>       | ObjIntConsumer<T>              | ObjIntConsumer<T>      |
+| ObjLongConsumer<T>            | ObjLongConsumerWithException<T,E>      | ObjLongConsumer<T>      | ObjLongConsumer<T>             | ObjLongConsumer<T>     |
+| Predicate<T>                  | PredicateWithException<T,E>            | Predicate<T>            | Predicate<T>                   | Predicate<T>           |
+| Runnable                      | RunnableWithException<E>               | Runnable                | Runnable                       | Runnable               |
+| Supplier<T>                   | SupplierWithException<T,E>             | Supplier<T>             | Supplier<Optional<T>>          | Supplier<T>            |
+| ToDoubleBiFunction<T,U>       | ToDoubleBiFunctionWithException<T,U,E> | ToDoubleBiFunction<T,U> | ToDoubleBiFunction<T,U>        | ToDoubleBiFunction<T,U>|
+| ToDoubleFunction<T>           | ToDoubleFunctionWithException<T,E>     | ToDoubleFunction<T>     | ToDoubleFunction<T>            |  ToDoubleFunction<T>    |
+| ToIntBiFunction<T,U>          | ToIntBiFunctionWithException<T,U,E>    | ToIntBiFunction<T,U>    | ToIntBiFunction<T,U>           | ToIntBiFunction<T,U>   |
+| ToIntFunction<T>              | ToIntFunctionWithException<T,E>        | ToIntFunction<T>        | ToIntFunction<T>               | ToIntFunction<T>       |
+| ToLongBiFunction<T,U>         | ToLongBiFunctionWithException<T,U,E>   | ToLongBiFunction<T,U>   | ToLongBiFunction<T,U>          | ToLongBiFunction<T,U>  |
+| ToLongFunction<T>             | ToLongFunctionWithException<T,E>       | ToLongFunction<T>       | ToLongFunction<T>              | ToLongFunction<T>      |
+| UnaryOperator<T>              | UnaryOperatorWithException<T,E>        | UnaryOperator<T>        | Function<T,Optional<T>>        | UnaryOperator<T>       |
