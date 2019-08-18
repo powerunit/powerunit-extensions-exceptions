@@ -31,6 +31,14 @@ import java.util.function.ToLongFunction;
  * Represents a function that produces a long-valued result and may throw
  * exception. This is the {@code long}-producing primitive specialization for
  * {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsLong(Object) long applyAsLong(T value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code ToLongFunction<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code ToLongFunction<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code ToLongFunction<T>}</li>
+ * </ul>
  *
  * @see ToLongFunction
  * @param <T>

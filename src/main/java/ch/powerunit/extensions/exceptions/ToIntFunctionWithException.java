@@ -31,6 +31,14 @@ import java.util.function.ToIntFunction;
  * Represents a function that produces an int-valued result and may throw
  * exception. This is the {@code int}-producing primitive specialization for
  * {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsInt(Object) int applyAsInt(T value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code ToIntFunction<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code ToIntFunction<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code ToIntFunction<T>}</li>
+ * </ul>
  *
  * @see ToIntFunction
  * @param <T>

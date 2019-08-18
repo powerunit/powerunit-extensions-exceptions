@@ -31,6 +31,14 @@ import java.util.function.ToDoubleBiFunction;
  * Represents a function that accepts two arguments, may thrown exception and
  * produces a double-valued result. This is the {@code double}-producing
  * primitive specialization for {@link BiFunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsDouble(Object, Object) double applyAsDouble(T t, U u)
+ * throws E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code ToDoubleBiFunction<T, U>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code ToDoubleBiFunction<T, U>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code ToDoubleBiFunction<T, U>}</li>
+ * </ul>
  *
  * @see ToDoubleBiFunction
  * @param <T>
