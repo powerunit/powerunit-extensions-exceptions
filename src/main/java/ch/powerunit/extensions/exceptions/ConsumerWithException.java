@@ -31,6 +31,14 @@ import java.util.function.Supplier;
  * Represents an operation that accepts a single input argument, may thrown
  * exception and returns no result. Unlike most other functional interfaces,
  * {@code ConsumerWithException} is expected to operate via side-effects.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #accept(Object) void accept(T t) throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code Consumer<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code Consumer<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code Consumer<T>}</li>
+ * </ul>
  *
  * @see Consumer
  * @param <T>

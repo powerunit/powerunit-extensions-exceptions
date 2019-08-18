@@ -43,7 +43,7 @@ import java.util.function.Supplier;
  * {@code BiFunction<T,U,<Optional<R>>}</li>
  * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code BiFunction<T,U,R>}</li>
  * </ul>
- * 
+ *
  * @see BiFunction
  * @param <T>
  *            the type of the first argument to the function

@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * Represents an operation that accepts two input arguments and returns no
  * result and may throw exception. Unlike most other functional interfaces,
  * {@code BiConsumerWithException} is expected to operate via side-effects.
- * 
+ *
  * <h3>General contract</h3>
  * <ul>
  * <li><b>{@link #accept(Object, Object) void accept(T t,U u) throws
