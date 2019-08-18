@@ -19,7 +19,29 @@ wraps the exception from `IOException` into a `RuntimeException` (which cause is
 
 ## Usage
 
-_TODO_
+_Not yet released on maven central_
+
+Add the following dependency to your maven project :
+
+```xml
+<dependency>
+  <groupId>ch.powerunit.extensions</groupId>
+  <artifactId>powerunit-extensions-exceptions</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
+And then just use the interface from the package `ch.powerunit.extensions.exceptions`. Each available interface have a name similar with the one from the `java.util.function` package, but ending with `WithException`. Three essential static entry methods are available :
+
+| Method      | Description                                                                                                                                                                                | Example                                                       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| `unchecked` | Converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`                                                                          | `FunctionWithException<T,U,R>` to `Function<T,U,R>`           |
+| `lifted`    | Converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception (or ignore exception for interface without return value) | `FunctionWithException<T,U,R>` to `Function<T,U,Optional<R>>` |
+| `ignored`   | Converts the functional interface to the one without exception, by returning a default value in case of exception (or ignore exception for interface without return value)               | `FunctionWithException<T,U,R>` to `Function<T,U,R>`           |
+
+Also, non static version (`uncheck`, `lift`, `ignore`) of the methods are available.
+
+The method `unchecked` also support an additional parameter to define how to wrap the exception by passing a `Function<Exception,RuntimeException>` to do it.
 
 ## Reference
 
