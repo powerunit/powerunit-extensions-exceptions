@@ -30,6 +30,14 @@ import java.util.function.Supplier;
 /**
  * Represents a predicate (boolean-valued function) of one argument and may
  * throw an exception.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #test(Object) boolean test(T t) throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code Predicate<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code Predicate<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code Predicate<T>}</li>
+ * </ul>
  *
  * @see Predicate
  * @param <T>
