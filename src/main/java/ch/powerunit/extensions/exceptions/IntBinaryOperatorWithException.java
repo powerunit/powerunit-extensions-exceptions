@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -30,6 +31,14 @@ import java.util.function.Supplier;
  * Represents an operation upon two {@code int}-valued operands, may thrown
  * exception and producing an {@code int}-valued result. This is the primitive
  * type specialization of {@link BinaryOperatorWithException} for {@code int}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsInt(int, int) int applyAsInt(int left, int right)
+ * throws E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntBinaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntBinaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntBinaryOperator}</li>
+ * </ul>
  *
  * @see IntBinaryOperator
  * @param <E>
@@ -88,9 +97,11 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(IntBinaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntBinaryOperator unchecked(IntBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -107,14 +118,16 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(IntBinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> IntBinaryOperator unchecked(IntBinaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new IntBinaryOperatorWithException<E>() {
 
 			@Override
@@ -132,7 +145,8 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntBinaryOperatorWithException} to a lifted
-	 * {@code IntBinaryOperator} using {@code Optional} as return value.
+	 * {@code IntBinaryOperator} with {@code 0} as return value in case of
+	 * exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -140,6 +154,8 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntBinaryOperator lifted(IntBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -147,7 +163,8 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code IntBinaryOperatorWithException} to a lifted
-	 * {@code IntBinaryOperator} returning {@code null} in case of exception.
+	 * {@code IntBinaryOperator} with {@code 0} as return value in case of
+	 * exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -155,6 +172,8 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> IntBinaryOperator ignored(IntBinaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();

@@ -80,4 +80,16 @@ public class UnaryOperatorWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).apply("x")).isNull();
 	}
+
+	@Test
+	public void testLiftedNoException() {
+		assertThat(UnaryOperatorWithException.lifted(x -> x + "1").apply("2")).is(optionalIs("21"));
+	}
+
+	@Test
+	public void testLiftedException() {
+		assertThat(UnaryOperatorWithException.lifted(y -> {
+			throw new Exception();
+		}).apply("x")).is(optionalIsNotPresent());
+	}
 }

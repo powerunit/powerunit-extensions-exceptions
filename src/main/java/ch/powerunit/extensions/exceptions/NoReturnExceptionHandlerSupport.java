@@ -27,29 +27,57 @@ import java.util.function.Consumer;
 
 /**
  * Root interface to support global operations related to exception handling for
- * function interface without return value.
+ * functional interface without return value.
  *
- * @author borettim
  * @param <F>
- *            the type of the java standard function interface
+ *            the type of the java standard functional interface. For example,
+ *            {@code Consumer<T>}. The same functional interface is also used
+ *            for the lifted and ignored version.
  */
 public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupport<F, F> {
 
 	/**
-	 * Converts this function interface to the corresponding one in java and wrap
-	 * exception.
+	 * Converts this functional interface to the corresponding one in java and wrap
+	 * exception using {@link #exceptionMapper()}.
+	 * <p>
+	 * Conceptually, the exception encapsulation is done in the following way :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		// do the underlying functional interface action and return result if
+	 * 		// applicable
+	 * 	} catch (Exception e) {
+	 * 		throw new exceptionMapper().apply(e);
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the unchecked operation
+	 * @see #lift()
+	 * @see #ignore()
 	 */
 	@Override
 	F uncheck();
 
 	/**
-	 * Converts this function interface to a lifted one.
+	 * Converts this functional interface to a lifted one.
 	 * <p>
-	 * This method is identical to {@link #ignore()}
+	 * The concept is :
+	 *
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		// do nothing
+	 * 	}
+	 * }
+	 * </pre>
 	 *
 	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
 	 */
 	@Override
 	default F lift() {
@@ -57,10 +85,23 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 	}
 
 	/**
-	 * Converts this function interface to the corresponding <i>lifted</i> java
-	 * standard interface ignoring exception.
+	 * Converts this functional interface to a lifted one.
+	 * <p>
+	 * The concept is :
 	 *
-	 * @return the operation that ignore error
+	 * <pre>
+	 * (xxx) -&gt; {
+	 * 	try {
+	 * 		realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		// do nothing
+	 * 	}
+	 * }
+	 * </pre>
+	 *
+	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
 	 */
 	@Override
 	F ignore();

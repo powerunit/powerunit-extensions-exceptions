@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -29,15 +30,25 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Represents a function that accepts two arguments, may throw exception and
- * produces a result.
+ * Represents a function that accepts two arguments, may thrown exception and
+ * produces a result. This is the two-arity specialization of
+ * {@link FunctionWithException}.
  *
- * @author borettim
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(Object, Object) R apply(T t, U u) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code BiFunction<T,U,R>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a
+ * {@code BiFunction<T,U,<Optional<R>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code BiFunction<T,U,R>}</li>
+ * </ul>
+ *
  * @see BiFunction
  * @param <T>
- *            the type of the first input to the function
+ *            the type of the first argument to the function
  * @param <U>
- *            the type of the second input to the function
+ *            the type of the second argument to the function
  * @param <R>
  *            the type of the result of the function
  * @param <E>
@@ -63,11 +74,12 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 
 	/**
 	 * Converts this {@code BiFunctionWithException} to a {@code BiFunction} that
-	 * convert exception to {@code RuntimeException}.
+	 * wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked function
 	 * @see #unchecked(BiFunctionWithException)
 	 * @see #unchecked(BiFunctionWithException, Function)
+	 * @see BiFunction
 	 */
 	@Override
 	default BiFunction<T, U, R> uncheck() {
@@ -81,6 +93,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 *
 	 * @return the lifted function
 	 * @see #lifted(BiFunctionWithException)
+	 * @see BiFunction
 	 */
 	@Override
 	default BiFunction<T, U, Optional<R>> lift() {
@@ -94,6 +107,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(BiFunctionWithException)
+	 * @see BiFunction
 	 */
 	@Override
 	default BiFunction<T, U, R> ignore() {
@@ -102,30 +116,36 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 
 	/**
 	 * Convert this {@code BiFunctionWithException} to a lifted {@code BiFunction}
-	 * return {@code CompletionStage} as return value.
+	 * that uses {@code CompletionStage} as return value.
 	 *
 	 * @return the lifted function
 	 * @see #staged(BiFunctionWithException)
+	 * @see BiFunction
+	 * @see CompletionStage
 	 */
 	default BiFunction<T, U, CompletionStage<R>> stage() {
 		return (t, u) -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t, u));
 	}
 
 	/**
-	 * Returns a composed function that first applies this function to its input,
-	 * and then applies the {@code after} function to the result. If evaluation of
-	 * either function throws an exception, it is relayed to the caller of the
-	 * composed function.
+	 * Returns a composed {@code FunctionWithException} that first applies this
+	 * {@code FunctionWithException} to its input, and then applies the
+	 * {@code after} {@code FunctionWithException} to the result. If evaluation of
+	 * either {@code FunctionWithException} throws an exception, it is relayed to
+	 * the caller of the composed function.
 	 *
 	 * @param <V>
-	 *            the type of output of the {@code after} function, and of the
-	 *            composed function
+	 *            the type of output of the {@code after}
+	 *            {@code FunctionWithException}, and of the composed
+	 *            {@code FunctionWithException}
 	 * @param after
-	 *            the function to apply after this function is applied
+	 *            the function to apply after this {@code FunctionWithException} is
+	 *            applied
 	 * @return a composed function that first applies this function and then applies
 	 *         the {@code after} function
 	 * @throws NullPointerException
 	 *             if after is null
+	 *
 	 * @see BiFunction#andThen(Function)
 	 */
 	default <V> BiFunctionWithException<T, U, V, E> andThen(
@@ -135,16 +155,16 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	}
 
 	/**
-	 * Returns a function that always throw exception.
+	 * Returns a {@code FunctionWithException} that always throw exception.
 	 *
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the function
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the exception
 	 * @return a function that always throw exception
@@ -158,20 +178,32 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	/**
 	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException}.
+	 * <p>
+	 * For example :
+	 *
+	 * <pre>
+	 * BiFunction&lt;String, String, String&gt; biFunctionThrowingRuntimeException = BiFunctionWithException
+	 * 		.unchecked(biFouctionThrowingException);
+	 * </pre>
+	 *
+	 * Will generate a {@code BiFunction} throwing {@code RuntimeException} in case
+	 * of error.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the function
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(BiFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -181,27 +213,39 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
 	 * convert exception to {@code RuntimeException} by using the provided mapping
 	 * function.
+	 * <p>
+	 * For example :
+	 *
+	 * <pre>
+	 * BiFunction&lt;String, String, String&gt; functionThrowingRuntimeException = BiFunctionWithException
+	 * 		.unchecked(fonctionThrowingException, IllegalArgumentException::new);
+	 * </pre>
+	 *
+	 * Will generate a {@code BiFunction} throwing {@code IllegalArgumentException}
+	 * in case of error.
 	 *
 	 * @param function
 	 *            the be unchecked
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the function
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the unchecked exception
 	 * @see #uncheck()
 	 * @see #unchecked(BiFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new BiFunctionWithException<T, U, R, E>() {
 
 			@Override
@@ -224,15 +268,17 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the function
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, Optional<R>> lifted(
 			BiFunctionWithException<T, U, R, E> function) {
@@ -246,15 +292,17 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the function
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
@@ -267,15 +315,17 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @param function
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the function
+	 *            the type of the first argument to the function
 	 * @param <U>
-	 *            the type of the second input object to the function
+	 *            the type of the second argument to the function
 	 * @param <R>
-	 *            the type of the output object to the function
+	 *            the type of the result of the function
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, CompletionStage<R>> staged(
 			BiFunctionWithException<T, U, R, E> function) {

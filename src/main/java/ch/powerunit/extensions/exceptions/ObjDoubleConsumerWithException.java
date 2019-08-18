@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -27,14 +28,24 @@ import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
 
 /**
- * Represents an operation that accepts two input arguments and returns no
- * result and may throw exception. Unlike most other functional interfaces,
- * {@code Consumer} is expected to operate via side-effects.
+ * Represents an operation that accepts an object-valued and a
+ * {@code double}-valued argument, and returns no result. This is the
+ * {@code (reference, double)} specialization of
+ * {@link BiConsumerWithException}. Unlike most other functional interfaces,
+ * {@code ObjDoubleConsumerWithException} is expected to operate via
+ * side-effects.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #accept(Object, double) void accept(T t, double value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code ObjDoubleConsumer<T>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code ObjDoubleConsumer<T>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code ObjDoubleConsumer<T>}</li>
+ * </ul>
  *
- * @author borettim
  * @see ObjDoubleConsumer
  * @param <T>
- *            the type of the input to the operation
+ *            the type of the object argument to the operation
  * @param <E>
  *            the type of the potential exception of the operation
  */
@@ -47,17 +58,17 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 *
 	 * @param t
 	 *            the first input argument
-	 * @param u
+	 * @param value
 	 *            the second input argument
 	 * @throws E
 	 *             any exception
 	 * @see ObjDoubleConsumer#accept(Object,double)
 	 */
-	void accept(T t, double u) throws E;
+	void accept(T t, double value) throws E;
 
 	/**
 	 * Converts this {@code ObjLongConsumerWithException} to a
-	 * {@code ObjDoubleConsumer} that convert exception to {@code RuntimeException}.
+	 * {@code ObjDoubleConsumer} that wraps exception to {@code RuntimeException}.
 	 *
 	 * @return the unchecked operation
 	 * @see #unchecked(ObjDoubleConsumerWithException)
@@ -65,7 +76,7 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjDoubleConsumer<T> uncheck() {
-		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), throwingHandler());
+		return (t, value) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, value), throwingHandler());
 	}
 
 	/**
@@ -77,7 +88,7 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 */
 	@Override
 	default ObjDoubleConsumer<T> ignore() {
-		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), notThrowingHandler());
+		return (t, value) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, value), notThrowingHandler());
 	}
 
 	/**
@@ -86,7 +97,7 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 * @param exceptionBuilder
 	 *            the supplier to create the exception
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the object argument to the operation
 	 * @param <E>
 	 *            the type of the exception
 	 * @return an operation that always throw exception
@@ -98,18 +109,20 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	}
 
 	/**
-	 * Converts a {@code BiConsumerWithException} to a {@code Consumer} that convert
-	 * exception to {@code RuntimeException}.
+	 * Converts a {@code ObjDoubleConsumerWithException} to a
+	 * {@code ObjDoubleConsumer} that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param operation
 	 *            to be unchecked
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the object argument to the operation
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(ObjDoubleConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <T, E extends Exception> ObjDoubleConsumer<T> unchecked(ObjDoubleConsumerWithException<T, E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
@@ -117,30 +130,32 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ObjLongConsumerWithException} to a
-	 * {@code ObjDoubleConsumer} that convert exception to {@code RuntimeException}
-	 * by using the provided mapping function.
+	 * {@code ObjDoubleConsumer} that wraps exception to {@code RuntimeException} by
+	 * using the provided mapping function.
 	 *
 	 * @param operation
 	 *            the be unchecked
 	 * @param exceptionMapper
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the object argument to the operation
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked operation
 	 * @see #uncheck()
 	 * @see #unchecked(ObjDoubleConsumerWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
 	 */
 	static <T, E extends Exception> ObjDoubleConsumer<T> unchecked(ObjDoubleConsumerWithException<T, E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new ObjDoubleConsumerWithException<T, E>() {
 
 			@Override
-			public void accept(T t, double u) throws E {
-				operation.accept(t, u);
+			public void accept(T t, double value) throws E {
+				operation.accept(t, value);
 			}
 
 			@Override
@@ -153,16 +168,18 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ObjLongConsumerWithException} to a lifted
-	 * {@code ObjDoubleConsumer} returning {@code null} in case of exception.
+	 * {@code ObjDoubleConsumer} ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the object argument to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <T, E extends Exception> ObjDoubleConsumer<T> lifted(ObjDoubleConsumerWithException<T, E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
@@ -170,16 +187,18 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 
 	/**
 	 * Converts a {@code ObjLongConsumerWithException} to a lifted
-	 * {@code ObjDoubleConsumer} returning {@code null} in case of exception.
+	 * {@code ObjDoubleConsumer} ignoring exception.
 	 *
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the object argument to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the lifted operation
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <T, E extends Exception> ObjDoubleConsumer<T> ignored(ObjDoubleConsumerWithException<T, E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
@@ -192,10 +211,12 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 * @param operation
 	 *            to be lifted
 	 * @param <T>
-	 *            the type of the first input object to the operation
+	 *            the type of the object argument to the operation
 	 * @param <E>
 	 *            the type of the potential exception
 	 * @return the function
+	 * @throws NullPointerException
+	 *             if operation is null
 	 */
 	static <T, E extends Exception> BiConsumerWithException<T, Double, E> asBiConsumer(
 			ObjDoubleConsumerWithException<T, E> operation) {

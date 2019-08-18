@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
@@ -31,6 +32,14 @@ import java.util.function.Supplier;
  * exception and that produces a {@code long}-valued result. This is the
  * primitive type specialization of {@link UnaryOperatorWithException} for
  * {@code long}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsLong(long) long applyAsLong(long operand) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code LongUnaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code LongUnaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code LongUnaryOperator}</li>
+ * </ul>
  *
  * @see LongUnaryOperator
  * @param <E>
@@ -160,15 +169,17 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongUnaryOperatorException} to a {@code LongUnaryOperator}
-	 * that convert exception to {@code RuntimeException}.
+	 * that wraps exception to {@code RuntimeException}.
 	 *
 	 * @param function
 	 *            to be unchecked
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(LongUnaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongUnaryOperator unchecked(LongUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
@@ -176,8 +187,8 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongUnaryOperatorWithException} to a
-	 * {@code LongUnaryOperator} that convert exception to {@code RuntimeException}
-	 * by using the provided mapping function.
+	 * {@code LongUnaryOperator} that wraps exception to {@code RuntimeException} by
+	 * using the provided mapping function.
 	 *
 	 * @param function
 	 *            the be unchecked
@@ -185,14 +196,16 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 *            a function to convert the exception to the runtime exception.
 	 * @param <E>
 	 *            the type of the potential exception
-	 * @return the unchecked exception
+	 * @return the unchecked function
 	 * @see #uncheck()
 	 * @see #unchecked(LongUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
 	 */
 	static <E extends Exception> LongUnaryOperator unchecked(LongUnaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
 		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, "exceptionMapper can't be null");
+		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
 		return new LongUnaryOperatorWithException<E>() {
 
 			@Override
@@ -210,7 +223,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongUnaryOperatorWithException} to a lifted
-	 * {@code LongUnaryOperator} using {@code Optional} as return value.
+	 * {@code LongUnaryOperator} using {@code 0} as return value in case of error.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -218,6 +231,8 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongUnaryOperator lifted(LongUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
@@ -225,7 +240,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 
 	/**
 	 * Converts a {@code LongUnaryOperatorWithException} to a lifted
-	 * {@code LongUnaryOperator} returning {@code null} in case of exception.
+	 * {@code LongUnaryOperator} returning {@code 0} in case of exception.
 	 *
 	 * @param function
 	 *            to be lifted
@@ -233,6 +248,8 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 *            the type of the potential exception
 	 * @return the lifted function
 	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
 	 */
 	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function) {
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
