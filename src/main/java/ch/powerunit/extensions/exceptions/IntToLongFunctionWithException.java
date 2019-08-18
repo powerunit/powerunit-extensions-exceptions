@@ -32,6 +32,14 @@ import java.util.function.Supplier;
  * exception and produces a long-valued result. This is the
  * {@code int}-to-{@code long} primitive specialization for
  * {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsLong(int) long applyAsLong(int value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntToLongFunction}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntToLongFunction}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntToLongFunction}</li>
+ * </ul>
  *
  * @see IntToLongFunction
  * @param <E>

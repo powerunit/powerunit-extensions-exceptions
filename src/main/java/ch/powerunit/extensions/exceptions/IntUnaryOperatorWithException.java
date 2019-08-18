@@ -31,6 +31,14 @@ import java.util.function.Supplier;
  * Represents an operation on a single {@code int}-valued operand that produces
  * an {@code int}-valued result and may throws exception. This is the primitive
  * type specialization of {@link UnaryOperatorWithException} for {@code int}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsInt(int) int applyAsInt(int operand) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntUnaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntUnaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntUnaryOperator}</li>
+ * </ul>
  *
  * @see IntUnaryOperator
  * @param <E>

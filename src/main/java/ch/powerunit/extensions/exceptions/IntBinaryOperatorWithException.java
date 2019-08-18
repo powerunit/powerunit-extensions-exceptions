@@ -31,6 +31,14 @@ import java.util.function.Supplier;
  * Represents an operation upon two {@code int}-valued operands, may thrown
  * exception and producing an {@code int}-valued result. This is the primitive
  * type specialization of {@link BinaryOperatorWithException} for {@code int}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsInt(int, int) int applyAsInt(int left, int right)
+ * throws E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntBinaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntBinaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntBinaryOperator}</li>
+ * </ul>
  *
  * @see IntBinaryOperator
  * @param <E>

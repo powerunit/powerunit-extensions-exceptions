@@ -33,6 +33,14 @@ import java.util.function.Supplier;
  * specialization of {@link ConsumerWithException} for {@code int}. Unlike most
  * other functional interfaces, {@code IntConsumerWithException} is expected to
  * operate via side-effects.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #accept(int) void accept(int value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code IntConsumer}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code IntConsumer}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code IntConsumer}</li>
+ * </ul>
  *
  * @see IntConsumer
  * @param <E>
