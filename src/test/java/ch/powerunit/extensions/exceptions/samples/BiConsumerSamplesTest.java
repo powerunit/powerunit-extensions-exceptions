@@ -39,8 +39,6 @@ public class BiConsumerSamplesTest implements TestSuite {
 	@Test
 	public void sample1() {
 		
-		fail("test for link with code");
-
 		Handler<String> handler = new Handler<>();
 
 		BiConsumerWithException<String, String, IOException> consumerThrowingException = (x, y) -> {
