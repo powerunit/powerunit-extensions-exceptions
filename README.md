@@ -33,11 +33,11 @@ Add the following dependency to your maven project :
 
 And then just use the interface from the package `ch.powerunit.extensions.exceptions`. Each available interface have a name similar with the one from the `java.util.function` package, but ending with `WithException`. Three essential static entry methods are available :
 
-| Method      | Description                                                                                                                                                                                | Example                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
-| `unchecked` | Converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`                                                                          | `FunctionWithException<T,U,R>` to `Function<T,U,R>`           |
-| `lifted`    | Converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception (or ignore exception for interface without return value) | `FunctionWithException<T,U,R>` to `Function<T,U,Optional<R>>` |
-| `ignored`   | Converts the functional interface to the one without exception, by returning a default value in case of exception (or ignore exception for interface without return value)               | `FunctionWithException<T,U,R>` to `Function<T,U,R>`           |
+| Method      | Description                                                                                                                                                                                | Example                                                         |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `unchecked` | Converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`                                                                          | `FunctionWithException<T,U,R,E>` to `Function<T,U,R>`           |
+| `lifted`    | Converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception (or ignore exception for interface without return value) | `FunctionWithException<T,U,R,E>` to `Function<T,U,Optional<R>>` |
+| `ignored`   | Converts the functional interface to the one without exception, by returning a default value in case of exception (or ignore exception for interface without return value)               | `FunctionWithException<T,U,R,E>` to `Function<T,U,R>`           |
 
 Also, non static version (`uncheck`, `lift`, `ignore`) of the methods are available.
 
