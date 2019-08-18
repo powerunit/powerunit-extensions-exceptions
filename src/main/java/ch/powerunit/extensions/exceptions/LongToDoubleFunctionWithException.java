@@ -32,6 +32,14 @@ import java.util.function.Supplier;
  * exception and produces a double-valued result. This is the
  * {@code long}-to-{@code double} primitive specialization for
  * {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsDouble(long) double applyAsDouble(long value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code LongToDoubleFunction}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code LongToDoubleFunction}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code LongToDoubleFunction}</li>
+ * </ul>
  *
  * @see LongToDoubleFunction
  * @param <E>

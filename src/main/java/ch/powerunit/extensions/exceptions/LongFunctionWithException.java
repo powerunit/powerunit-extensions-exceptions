@@ -33,6 +33,14 @@ import java.util.function.Supplier;
  * Represents a function that accepts a long-valued argument, may throw
  * exception and produces a result. This is the {@code long}-consuming primitive
  * specialization for {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(long) R apply(long value) throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code LongFunction<R>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code LongFunction<Optional<R>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code LongFunction<R>}</li>
+ * </ul>
  *
  * @see LongFunction
  * @param <R>

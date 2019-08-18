@@ -31,6 +31,14 @@ import java.util.function.Supplier;
  * Represents a supplier of {@code long}-valued results and may throw exception.
  * This is the {@code long}-producing primitive specialization of
  * {@link SupplierWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #getAsLong() long getAsLong() throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code LongSupplier}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code LongSupplier}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code LongSupplier}</li>
+ * </ul>
  *
  * <p>
  * There is no requirement that a distinct result be returned each time the

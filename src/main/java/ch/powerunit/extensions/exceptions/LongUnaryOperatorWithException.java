@@ -32,6 +32,14 @@ import java.util.function.Supplier;
  * exception and that produces a {@code long}-valued result. This is the
  * primitive type specialization of {@link UnaryOperatorWithException} for
  * {@code long}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsLong(long) long applyAsLong(long operand) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code LongUnaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code LongUnaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code LongUnaryOperator}</li>
+ * </ul>
  *
  * @see LongUnaryOperator
  * @param <E>
