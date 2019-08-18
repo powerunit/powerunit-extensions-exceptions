@@ -32,6 +32,14 @@ import java.util.function.Supplier;
  * thrown exception and produces a {@code double}-valued result. This is the
  * primitive type specialization of {@link UnaryOperatorWithException} for
  * {@code double}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsDouble(double) double applyAsDouble(double operand)
+ * throws E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code DoubleUnaryOperator}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code DoubleUnaryOperator}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code DoubleUnaryOperator}</li>
+ * </ul>
  *
  * @see DoubleUnaryOperator
  * @param <E>

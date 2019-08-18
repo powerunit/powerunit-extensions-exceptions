@@ -33,6 +33,14 @@ import java.util.function.Supplier;
  * Represents a function that accepts a double-valued argument, may throw
  * exception and produces a result. This is the {@code double}-consuming
  * primitive specialization for {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(double) R apply(double value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code DoubleFunction<R>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code DoubleFunction<Optional<R>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code DoubleFunction<R>}</li>
+ * </ul>
  *
  * @see DoubleFunction
  * @param <R>

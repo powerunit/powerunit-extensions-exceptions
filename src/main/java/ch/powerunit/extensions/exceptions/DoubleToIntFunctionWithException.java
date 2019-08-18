@@ -32,6 +32,14 @@ import java.util.function.Supplier;
  * exception and produces an int-valued result. This is the
  * {@code double}-to-{@code int} primitive specialization for
  * {@link FunctionWithException}.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #applyAsInt(double) int applyAsInt(double value) throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code DoubleToIntFunction}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code DoubleToIntFunction}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code DoubleToIntFunction}</li>
+ * </ul>
  *
  * @see DoubleToIntFunction
  * @param <E>

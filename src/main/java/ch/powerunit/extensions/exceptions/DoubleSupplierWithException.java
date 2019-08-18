@@ -34,6 +34,14 @@ import java.util.function.Supplier;
  * <p>
  * There is no requirement that a distinct result be returned each time the
  * supplier is invoked.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #getAsDouble() double getAsDouble() throws
+ * E}</b>&nbsp;-&nbsp;The functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code DoubleSupplier}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code DoubleSupplier}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code DoubleSupplier}</li>
+ * </ul>
  *
  * @see DoubleSupplier
  * @param <E>
