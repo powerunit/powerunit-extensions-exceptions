@@ -31,6 +31,14 @@ import java.util.function.Supplier;
 /**
  * Represents a function that accepts one argument, may throw exception and
  * produces a result.
+ * <h3>General contract</h3>
+ * <ul>
+ * <li><b>{@link #apply(Object) R apply(T t) throws E}</b>&nbsp;-&nbsp;The
+ * functional method.</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code Function<T, R>}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code Function<T, Optional<R>>}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code Function<T, R>}</li>
+ * </ul>
  *
  * @see Function
  * @param <T>
