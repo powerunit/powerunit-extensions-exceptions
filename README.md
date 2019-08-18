@@ -33,9 +33,9 @@ And then just use the interface from the package `ch.powerunit.extensions.except
 
 | Method      | Description                                                                                                                                                                                | Example                                                         |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `unchecked` | Converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`                                                                          | `FunctionWithException<T,U,R,E>` to `Function<T,U,R>`           |
-| `lifted`    | Converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception (or ignore exception for interface without return value) | `FunctionWithException<T,U,R,E>` to `Function<T,U,Optional<R>>` |
-| `ignored`   | Converts the functional interface to the one without exception, by returning a default value in case of exception (or ignore exception for interface without return value)               | `FunctionWithException<T,U,R,E>` to `Function<T,U,R>`           |
+| `unchecked` | Converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`                                                                          | `FunctionWithException<T,R,E>` to `Function<T,R>`           |
+| `lifted`    | Converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception (or ignore exception for interface without return value) | `FunctionWithException<T,R,E>` to `Function<T,Optional<R>>` |
+| `ignored`   | Converts the functional interface to the one without exception, by returning a default value in case of exception (or ignore exception for interface without return value)               | `FunctionWithException<T,R,E>` to `Function<T,R>`           |
 
 Also, non static version (`uncheck`, `lift`, `ignore`) of the methods are available.
 
