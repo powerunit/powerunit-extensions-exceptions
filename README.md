@@ -150,6 +150,7 @@ The following classes are provided:
 | `DoubleToLongFunction`          | `DoubleToLongFunctionWithException<E>`   | `DoubleToLongFunction`    | `DoubleToLongFunction`           | `DoubleToLongFunction`   | N/A |
 | `DoubleUnaryOperator`           | `DoubleUnaryOperatorWithException<E>`    | `DoubleUnaryOperator`     | `DoubleUnaryOperator`            | `DoubleUnaryOperator`    | N/A |
 | `FileFilter`                 | `FileFilterWithException<E>`           | `FileFilter`           | `FileFilter`        | `FileFilter`          | N/A |
+| `FilenameFilter`                 | `FilenameFilterWithException<E>`           | `FilenameFilter`           | `FilenameFilter`        | `FilenameFilter`          | N/A |
 | `Function<T,R>`                 | `FunctionWithException<T,R,E>`           | `Function<T,R>`           | `Function<T,Optional<R>>`        | `Function<T,R>`          | `Function<T,CompletionStage<R>>` |
 | `IntBinaryOperator`             | `IntBinaryOperatorWithException<E>`      | `IntBinaryOperator`       | `IntBinaryOperator`              | `IntBinaryOperator`      | N/A |
 | `IntConsumer`                   | `IntConsumerWithException<E>`            | `IntConsumer`             | `IntConsumer`                   | `IntConsumer`            | `IntFunction<CompletionStage<Void>>` |
