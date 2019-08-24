@@ -43,6 +43,79 @@ The method `unchecked` also support an additional parameter to define how to wra
 
 An additional method `stage(d)` is also available on several interface.
 
+### `uncheck(ed)`
+
+This method converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`.
+
+Three versions of this methods exists :
+
+* `uncheck()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,String> myUncheckedFunction = myFunction.uncheck();
+  ```
+* `unchecked(myInterface)` converting the received parameter.
+  ```java
+  Function<String,String> myUncheckedFunction = FunctionWithException.unchecked(x->x);
+  ```
+* `unchecked(myInterface,myExceptionMapper)` converting the received parameter, and using the received exception mapper to wrap the exception.
+  ```java
+  Function<String,String> myUncheckedFunction = FunctionWithException.unchecked(x->x,IllegalArgumentException::new);
+  ```
+
+### `lift(ed)`
+
+This method converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception or ignore the exception for interface without return value.
+
+Two version of this methods exists :
+
+* `lift()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,Optional<String>> myLiftedFunction = myFunction.lift();
+  ```
+* `lifted(myInterface)` converting the received parameter.
+  ```java
+  Function<String,Optional<String>> myLiftedFunction = FunctionWithException.lifted(x->x);
+  ```
+
+### `ignore(d)`
+
+This method converts the functional interface to the one without exception, by returning a default value in case of exception or ignore the exception for interface without return value.
+
+Two version of this methods exists :
+
+* `ignore()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,String> myLiftedFunction = myFunction.ignore();
+  ```
+* `ignored(myInterface)` converting the received parameter.
+  ```java
+  Function<String,String> myLiftedFunction = FunctionWithException.ignored(x->x);
+  ```
+
+
+### `stage(d)`
+
+This method converts the functional interface to the one without exception, by returning an `CompletionStage`. _This is not available on interface returning primitive type_.
+
+Two version of this methods exists :
+
+* `stage()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,CompletionStage<String>> myStagedFunction = myFunction.stage();
+  ```
+* `staged(myInterface)` converting the received parameter.
+  ```java
+  Function<String,CompletionStage<String>> myStagedFunction = FunctionWithException.staged(x->x);
+  ```
+
 ## Reference
 
 The following classes are provided:
