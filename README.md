@@ -63,7 +63,11 @@ Three versions of this methods exists :
   ```
 * `unchecked(myInterface,myExceptionMapper)` converting the received parameter, and using the received exception mapper to wrap the exception.
   ```java
-  Function<String,String> myUncheckedFunction = FunctionWithException.unchecked(x->x,IllegalArgumentException::new);
+  Function<String,String> myUncheckedFunction = 
+    FunctionWithException.unchecked(
+      x->x,
+      IllegalArgumentException::new
+    );
   ```
   
 The resulting exceptions are :
