@@ -19,6 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.util.concurrent.CompletionException;
+
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
@@ -98,5 +100,18 @@ public class IntConsumerWithExceptionTest implements TestSuite {
 		assertWhen((x) -> IntConsumerWithException.asConsumer(y -> {
 			throw new Exception();
 		}).accept(3)).throwException(instanceOf(Exception.class));
+	}
+
+	@Test
+	public void testStagedNoException() {
+		IntConsumerWithException.staged(x -> {
+		}).apply(1).toCompletableFuture().join();
+	}
+
+	@Test
+	public void testStagedException() {
+		assertWhen((x) -> IntConsumerWithException.staged(y -> {
+			throw new Exception();
+		}).apply(1).toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 }
