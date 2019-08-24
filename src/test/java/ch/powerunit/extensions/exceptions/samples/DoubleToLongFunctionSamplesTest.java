@@ -54,6 +54,19 @@ public class DoubleToLongFunctionSamplesTest implements TestSuite {
 				.throwException(instanceOf(IllegalArgumentException.class));
 
 	}
+	
+	@Test
+	public void sample3() {
+
+		DoubleToLongFunctionWithException<IOException> fonctionThrowingException = DoubleToLongFunctionWithException
+				.failing(IOException::new);
+
+		DoubleToLongFunction functionThrowingRuntimeException = DoubleToLongFunctionWithException
+				.ignored(fonctionThrowingException);
+
+		assertThat(functionThrowingRuntimeException.applyAsLong(2)).is(0L);
+
+	}
 
 	@Test
 	public void sample4() {

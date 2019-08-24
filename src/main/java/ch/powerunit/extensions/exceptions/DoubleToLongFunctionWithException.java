@@ -74,24 +74,6 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 	}
 
 	/**
-	 * Converts this {@code DoubleToLongFunctionWithException} to a lifted
-	 * {@code DoubleToLongFunction} returning {@code null} in case of exception.
-	 *
-	 * @return the function that ignore error (return 0 in this case)
-	 * @see #ignored(DoubleToLongFunctionWithException)
-	 */
-	@Override
-	default DoubleToLongFunction ignore() {
-		return value -> {
-			try {
-				return applyAsLong(value);
-			} catch (Exception e) {
-				return 0;
-			}
-		};
-	}
-
-	/**
 	 * Returns a function that always throw exception.
 	 *
 	 * @param exceptionBuilder
