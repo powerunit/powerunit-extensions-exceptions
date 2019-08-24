@@ -169,6 +169,7 @@ The following classes are provided:
 | `ObjDoubleConsumer<T>`          | `ObjDoubleConsumerWithException<T,E>`    | `ObjDoubleConsumer<T>`    | `ObjDoubleConsumer<T>`           | `ObjDoubleConsumer<T>`   | `Function<T,Double,CompletionStage<Void>>` |
 | `ObjIntConsumer<T>`             | `ObjIntConsumerWithException<T,E>`       | `ObjIntConsumer<T>`       | `ObjIntConsumer<T>`              | `ObjIntConsumer<T>`      | `Function<T,Integer,CompletionStage<Void>>` |
 | `ObjLongConsumer<T>`            | `ObjLongConsumerWithException<T,E>`      | `ObjLongConsumer<T>`      | `ObjLongConsumer<T>`             | `ObjLongConsumer<T>`     | `Function<T,Long,CompletionStage<Void>>` |
+| `PathMatcher`                  | `PathMatcherWithException<E>`            | `PathMatcher`            | `PathMatcher`                   | `PathMatcher`           | N/A
 | `Predicate<T>`                  | `PredicateWithException<T,E>`            | `Predicate<T>`            | `Predicate<T>`                   | `Predicate<T>`           | N/A
 | `Runnable`                      | `RunnableWithException<E>`               | `Runnable`                | `Runnable`                       | `Runnable`               | `Supplier<CompletionStage<Void>>`|
 | `Supplier<T>`                   | `SupplierWithException<T,E>`             | `Supplier<T>`             | `Supplier<Optional<T>>`          | `Supplier<T>`            | `Supplier<CompletionStage<T>>` |
