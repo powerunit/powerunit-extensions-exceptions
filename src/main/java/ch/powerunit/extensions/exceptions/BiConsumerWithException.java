@@ -98,7 +98,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	/**
 	 * Converts this {@code BiConsumerWithException} to a <i>staged</i>
 	 * {@code BiFunction} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

@@ -91,7 +91,7 @@ public interface LongConsumerWithException<E extends Exception>
 	/**
 	 * Converts this {@code LongConsumerWithException} to a <i>staged</i>
 	 * {@code LongFunction} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

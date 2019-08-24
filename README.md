@@ -41,6 +41,8 @@ Also, non static version (`uncheck`, `lift`, `ignore`) of the methods are availa
 
 The method `unchecked` also support an additional parameter to define how to wrap the exception by passing a `Function<Exception,RuntimeException>` to do it.
 
+An additional method `stage(d)` is also available on several interface.
+
 ## Reference
 
 The following classes are provided:

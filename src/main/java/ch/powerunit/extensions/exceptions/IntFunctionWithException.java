@@ -49,8 +49,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface IntFunctionWithException<R, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<IntFunction<R>, IntFunction<Optional<R>>, R> {
+public interface IntFunctionWithException<R, E extends Exception> extends
+		ObjectReturnExceptionHandlerSupport<IntFunction<R>, IntFunction<Optional<R>>, IntFunction<CompletionStage<R>>, R> {
 
 	/**
 	 * Applies this function to the given argument.
@@ -109,6 +109,7 @@ public interface IntFunctionWithException<R, E extends Exception>
 	 * @return the lifted function
 	 * @see #staged(IntFunctionWithException)
 	 */
+	@Override
 	default IntFunction<CompletionStage<R>> stage() {
 		return t -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t));
 	}

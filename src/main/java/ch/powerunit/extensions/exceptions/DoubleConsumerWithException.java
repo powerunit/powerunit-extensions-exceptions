@@ -91,7 +91,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	/**
 	 * Converts this {@code DoubleConsumerWithException} to a <i>staged</i>
 	 * {@code DoubleFunction} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

@@ -96,7 +96,7 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	/**
 	 * Converts this {@code ObjDoubleConsumerWithException} to a <i>staged</i>
 	 * {@code BiFunction} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

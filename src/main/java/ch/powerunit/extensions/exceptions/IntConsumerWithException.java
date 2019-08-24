@@ -91,7 +91,7 @@ public interface IntConsumerWithException<E extends Exception>
 	/**
 	 * Converts this {@code IntConsumerWithException} to a <i>staged</i>
 	 * {@code IntFunction} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

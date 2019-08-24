@@ -49,8 +49,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface DoubleFunctionWithException<R, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<DoubleFunction<R>, DoubleFunction<Optional<R>>, R> {
+public interface DoubleFunctionWithException<R, E extends Exception> extends
+		ObjectReturnExceptionHandlerSupport<DoubleFunction<R>, DoubleFunction<Optional<R>>, DoubleFunction<CompletionStage<R>>, R> {
 
 	/**
 	 * Applies this function to the given argument.
@@ -109,6 +109,7 @@ public interface DoubleFunctionWithException<R, E extends Exception>
 	 * @return the lifted function
 	 * @see #staged(DoubleFunctionWithException)
 	 */
+	@Override
 	default DoubleFunction<CompletionStage<R>> stage() {
 		return t -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t));
 	}

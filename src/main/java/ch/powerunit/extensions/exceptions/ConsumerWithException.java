@@ -92,7 +92,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	/**
 	 * Converts this {@code ConsumerWithException} to a <i>staged</i>
 	 * {@code Function} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

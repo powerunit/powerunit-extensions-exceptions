@@ -112,7 +112,7 @@ public interface NoReturnExceptionHandlerSupport<F, S> extends ExceptionHandlerS
 	/**
 	 * Converts this functional interface to a lifted one, using a
 	 * {@code CompletionStage} as a return value.
-	 * 
+	 *
 	 * @return the lifted function
 	 * @since 1.1.0
 	 */

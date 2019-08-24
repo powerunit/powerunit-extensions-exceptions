@@ -50,8 +50,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface SupplierWithException<T, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, T> {
+public interface SupplierWithException<T, E extends Exception> extends
+		ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, Supplier<CompletionStage<T>>, T> {
 
 	/**
 	 * Gets a result.
@@ -108,6 +108,7 @@ public interface SupplierWithException<T, E extends Exception>
 	 * @return the lifted supplier
 	 * @see #staged(SupplierWithException)
 	 */
+	@Override
 	default Supplier<CompletionStage<T>> stage() {
 		return () -> ObjectReturnExceptionHandlerSupport.staged(this::get);
 	}

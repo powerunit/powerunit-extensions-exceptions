@@ -85,7 +85,7 @@ public interface RunnableWithException<E extends Exception>
 	/**
 	 * Converts this {@code RunnableWithException} to a <i>staged</i>
 	 * {@code Supplier} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */

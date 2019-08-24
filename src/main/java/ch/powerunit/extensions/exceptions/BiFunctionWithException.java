@@ -55,8 +55,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface BiFunctionWithException<T, U, R, E extends Exception>
-		extends ObjectReturnExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>, R> {
+public interface BiFunctionWithException<T, U, R, E extends Exception> extends
+		ObjectReturnExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>, BiFunction<T, U, CompletionStage<R>>, R> {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -123,6 +123,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception>
 	 * @see BiFunction
 	 * @see CompletionStage
 	 */
+	@Override
 	default BiFunction<T, U, CompletionStage<R>> stage() {
 		return (t, u) -> ObjectReturnExceptionHandlerSupport.staged(() -> apply(t, u));
 	}

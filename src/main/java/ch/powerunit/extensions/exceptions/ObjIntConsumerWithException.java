@@ -95,7 +95,7 @@ public interface ObjIntConsumerWithException<T, E extends Exception>
 	/**
 	 * Converts this {@code ObjIntConsumerWithException} to a <i>staged</i>
 	 * {@code BiFunction} that return a {@code CompletionStage}.
-	 * 
+	 *
 	 * @return the staged operation.
 	 * @since 1.1.0
 	 */
