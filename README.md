@@ -31,7 +31,7 @@ Add the following dependency to your maven project :
 </dependency>
 ```
 
-And then just use the interface from the package `ch.powerunit.extensions.exceptions`. Each available interface have a name similar with the one from the `java.util.function` package, but ending with `WithException`. Three essential static entry methods are available :
+And then just use the interface from the package `ch.powerunit.extensions.exceptions`. Each available interface has a name similar with the one from the `java.util.function` package, but ending with `WithException`. Three essential static entry methods are available :
 
 | Method      | Description                                                                                                                                                                                | Example                                                         |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
@@ -106,10 +106,11 @@ Two versions of this methods exists :
   Function<String,String> myLiftedFunction = FunctionWithException.ignored(x->x);
   ```
 
-
 ### `stage(d)`
 
-This method converts the functional interface to the one without exception, by returning an `CompletionStage`. _This is not available on interface returning primitive type_.
+This method converts the functional interface to the one without exception, by returning an `CompletionStage`. _This is not available on interface returning primitive type_. 
+
+For functional interface without result, a `CompletionStage<Void>` is returned.
 
 Two versions of this methods exists :
 
