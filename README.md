@@ -19,6 +19,8 @@ wraps the exception from `IOException` into a `RuntimeException` (which cause is
 
 ## Usage
 
+_Please note that some methods described here are related to the upcoming version of this library._
+
 Add the following dependency to your maven project :
 
 ```xml
@@ -68,7 +70,7 @@ Three versions of this methods exists :
 
 This method converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception or ignore the exception for interface without return value.
 
-Two version of this methods exists :
+Two versions of this methods exists :
 
 * `lift()` converting the functional interface directly.
   ```java
@@ -85,7 +87,7 @@ Two version of this methods exists :
 
 This method converts the functional interface to the one without exception, by returning a default value in case of exception or ignore the exception for interface without return value.
 
-Two version of this methods exists :
+Two versions of this methods exists :
 
 * `ignore()` converting the functional interface directly.
   ```java
@@ -103,7 +105,7 @@ Two version of this methods exists :
 
 This method converts the functional interface to the one without exception, by returning an `CompletionStage`. _This is not available on interface returning primitive type_.
 
-Two version of this methods exists :
+Two versions of this methods exists :
 
 * `stage()` converting the functional interface directly.
   ```java
