@@ -37,10 +37,13 @@ import java.util.function.Function;
  * @param <L>
  *            the type of the lifted functional interface. For example,
  *            {@code Function<T,Optional<R>>}.
+ * @param <S>
+ *            the type of the staged functional interface. For example,
+ *            {@code Function<T,CompletionStage<R>>}.
  * @param <T>
  *            the type of the return type of the Functional interface.
  */
-public interface ObjectReturnExceptionHandlerSupport<F, L, T> extends ExceptionHandlerSupport<F, L> {
+public interface ObjectReturnExceptionHandlerSupport<F, L, S, T> extends ExceptionHandlerSupport<F, L> {
 
 	/**
 	 * Converts this functional interface to the corresponding one in java and wrap
@@ -110,6 +113,16 @@ public interface ObjectReturnExceptionHandlerSupport<F, L, T> extends ExceptionH
 	 */
 	@Override
 	F ignore();
+
+	/**
+	 * Converts this functional interface to the corresponding java standard
+	 * functional interface with staged result.
+	 *
+	 * @return the operation supporting stage.
+	 * @since 1.1.0
+	 * @see CompletionStage
+	 */
+	S stage();
 
 	/**
 	 * Used internally to support the exception interception.

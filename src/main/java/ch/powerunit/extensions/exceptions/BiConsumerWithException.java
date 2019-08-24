@@ -23,7 +23,9 @@ import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL
 import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -51,7 +53,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiConsumerWithException<T, U, E extends Exception>
-		extends NoReturnExceptionHandlerSupport<BiConsumer<T, U>> {
+		extends NoReturnExceptionHandlerSupport<BiConsumer<T, U>, BiFunction<T, U, CompletionStage<Void>>> {
 
 	/**
 	 * Performs this operation on the given arguments.
@@ -91,6 +93,18 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	@Override
 	default BiConsumer<T, U> ignore() {
 		return (t, u) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, u), notThrowingHandler());
+	}
+
+	/**
+	 * Converts this {@code BiConsumerWithException} to a <i>staged</i>
+	 * {@code BiFunction} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default BiFunction<T, U, CompletionStage<Void>> stage() {
+		return (t, u) -> NoReturnExceptionHandlerSupport.staged(() -> accept(t, u));
 	}
 
 	/**
@@ -298,6 +312,27 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> ignored(BiConsumerWithException<T, U, E> consumer) {
 		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).ignore();
+	}
+
+	/**
+	 * Converts a {@code BiConsumerWithException} to a staged {@code BiFunction}.
+	 *
+	 * @param consumer
+	 *            to be staged
+	 * @param <T>
+	 *            the type of the first argument to the operation
+	 * @param <U>
+	 *            the type of the second argument to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 * @since 1.1.0
+	 */
+	static <T, U, E extends Exception> BiFunction<T, U, CompletionStage<Void>> staged(
+			BiConsumerWithException<T, U, E> consumer) {
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).stage();
 	}
 
 	/**

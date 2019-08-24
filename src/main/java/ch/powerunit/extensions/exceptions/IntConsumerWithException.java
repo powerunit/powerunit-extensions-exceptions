@@ -23,8 +23,10 @@ import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 /**
@@ -47,7 +49,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface IntConsumerWithException<E extends Exception> extends NoReturnExceptionHandlerSupport<IntConsumer> {
+public interface IntConsumerWithException<E extends Exception>
+		extends NoReturnExceptionHandlerSupport<IntConsumer, IntFunction<CompletionStage<Void>>> {
 
 	/**
 	 * Performs this operation on the given argument.
@@ -83,6 +86,18 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	@Override
 	default IntConsumer ignore() {
 		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), notThrowingHandler());
+	}
+
+	/**
+	 * Converts this {@code IntConsumerWithException} to a <i>staged</i>
+	 * {@code IntFunction} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default IntFunction<CompletionStage<Void>> stage() {
+		return t -> NoReturnExceptionHandlerSupport.staged(() -> accept(t));
 	}
 
 	/**
@@ -209,6 +224,22 @@ public interface IntConsumerWithException<E extends Exception> extends NoReturnE
 	 */
 	static <E extends Exception> IntConsumer ignored(IntConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+	}
+
+	/**
+	 * Converts a {@code IntConsumerWithException} to a staged {@code IntFunction} .
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.1.0
+	 */
+	static <E extends Exception> IntFunction<CompletionStage<Void>> staged(IntConsumerWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
 	}
 
 	/**

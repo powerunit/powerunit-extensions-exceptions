@@ -23,7 +23,9 @@ import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.DoubleConsumer;
+import java.util.function.DoubleFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -48,7 +50,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleConsumerWithException<E extends Exception>
-		extends NoReturnExceptionHandlerSupport<DoubleConsumer> {
+		extends NoReturnExceptionHandlerSupport<DoubleConsumer, DoubleFunction<CompletionStage<Void>>> {
 
 	/**
 	 * Performs this operation on the given argument.
@@ -84,6 +86,18 @@ public interface DoubleConsumerWithException<E extends Exception>
 	@Override
 	default DoubleConsumer ignore() {
 		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), notThrowingHandler());
+	}
+
+	/**
+	 * Converts this {@code DoubleConsumerWithException} to a <i>staged</i>
+	 * {@code DoubleFunction} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default DoubleFunction<CompletionStage<Void>> stage() {
+		return t -> NoReturnExceptionHandlerSupport.staged(() -> accept(t));
 	}
 
 	/**
@@ -211,6 +225,24 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleConsumer ignored(DoubleConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+	}
+
+	/**
+	 * Converts a {@code DoubleConsumerWithException} to a staged
+	 * {@code DoubleFunction}.
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.1.0
+	 */
+	static <E extends Exception> DoubleFunction<CompletionStage<Void>> staged(
+			DoubleConsumerWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
 	}
 
 	/**

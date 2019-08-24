@@ -19,8 +19,12 @@
  */
 package ch.powerunit.extensions.exceptions.samples;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Optional;
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 import ch.powerunit.Test;
@@ -77,6 +81,63 @@ public class FunctionSamplesTest implements TestSuite {
 				.unchecked(fonctionThrowingException, IllegalArgumentException::new);
 
 		assertThatFunction(functionThrowingRuntimeException, "x").is("x");
+
+	}
+
+	@Test
+	public void sample5() throws FileNotFoundException {
+		PrintStream sample = new PrintStream(new File("target/surefire-reports/sample1.txt"));
+
+		FunctionWithException<String, String, IOException> fonctionThrowingException = FunctionWithException
+				.failing(IOException::new);
+
+		Function<String, String> functionThrowingRuntime1Exception = FunctionWithException
+				.unchecked(fonctionThrowingException);
+
+		Function<String, String> functionThrowingRuntime2Exception = FunctionWithException
+				.unchecked(fonctionThrowingException, IllegalArgumentException::new);
+
+		try {
+			fonctionThrowingException.apply("x");
+		} catch (IOException e) {
+			e.printStackTrace(sample);
+		}
+
+		try {
+			functionThrowingRuntime1Exception.apply("x");
+		} catch (RuntimeException e) {
+			e.printStackTrace(sample);
+		}
+
+		try {
+			functionThrowingRuntime2Exception.apply("x");
+		} catch (RuntimeException e) {
+			e.printStackTrace(sample);
+		}
+
+		sample.flush();
+		sample.close();
+	}
+
+	@Test
+	public void sample6() {
+
+		FunctionWithException<String, String, IOException> fonctionThrowingException = x -> {
+			if (x == null) {
+				throw new IOException("test");
+			}
+			return x + "A";
+		};
+
+		Function<String, CompletionStage<String>> stage = FunctionWithException.staged(fonctionThrowingException);
+
+		CompletionStage<String> result1 = stage.apply("a").exceptionally(Throwable::getMessage);
+
+		CompletionStage<String> result2 = stage.apply(null).exceptionally(Throwable::getMessage);
+
+		assertThat(result1.toCompletableFuture().join()).is("aA");
+
+		assertThat(result2.toCompletableFuture().join()).is("test");
 
 	}
 

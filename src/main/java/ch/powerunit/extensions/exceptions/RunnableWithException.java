@@ -23,6 +23,7 @@ import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -44,7 +45,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface RunnableWithException<E extends Exception> extends NoReturnExceptionHandlerSupport<Runnable> {
+public interface RunnableWithException<E extends Exception>
+		extends NoReturnExceptionHandlerSupport<Runnable, Supplier<CompletionStage<Void>>> {
 
 	/**
 	 * Performs this operation.
@@ -78,6 +80,18 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	@Override
 	default Runnable ignore() {
 		return () -> NoReturnExceptionHandlerSupport.unchecked(this::run, notThrowingHandler());
+	}
+
+	/**
+	 * Converts this {@code RunnableWithException} to a <i>staged</i>
+	 * {@code Supplier} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default Supplier<CompletionStage<Void>> stage() {
+		return () -> NoReturnExceptionHandlerSupport.staged(this);
 	}
 
 	/**
@@ -177,9 +191,25 @@ public interface RunnableWithException<E extends Exception> extends NoReturnExce
 	 * @see #ignore()
 	 * @throws NullPointerException
 	 *             if operation is null
+	 * @since 1.1.0
 	 */
 	static <E extends Exception> Runnable ignored(RunnableWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a staged {@code Supplier}.
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static <E extends Exception> Supplier<CompletionStage<Void>> staged(RunnableWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
 	}
 
 }

@@ -19,6 +19,8 @@ wraps the exception from `IOException` into a `RuntimeException` (which cause is
 
 ## Usage
 
+_Please note that some methods described here are related to the upcoming version of this library._
+
 Add the following dependency to your maven project :
 
 ```xml
@@ -29,7 +31,7 @@ Add the following dependency to your maven project :
 </dependency>
 ```
 
-And then just use the interface from the package `ch.powerunit.extensions.exceptions`. Each available interface have a name similar with the one from the `java.util.function` package, but ending with `WithException`. Three essential static entry methods are available :
+And then just use the interface from the package `ch.powerunit.extensions.exceptions`. Each available interface has a name similar with the one from the `java.util.function` package, but ending with `WithException`. Three essential static entry methods are available :
 
 | Method      | Description                                                                                                                                                                                | Example                                                         |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
@@ -41,53 +43,139 @@ Also, non static version (`uncheck`, `lift`, `ignore`) of the methods are availa
 
 The method `unchecked` also support an additional parameter to define how to wrap the exception by passing a `Function<Exception,RuntimeException>` to do it.
 
+An additional method `stage(d)` is also available on several interface.
+
+### `uncheck(ed)`
+
+This method converts the functional interface to the one without exception, by wrapping the exception to a `RuntimeException`.
+
+Three versions of this methods exists :
+
+* `uncheck()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,String> myUncheckedFunction = myFunction.uncheck();
+  ```
+* `unchecked(myInterface)` converting the received parameter.
+  ```java
+  Function<String,String> myUncheckedFunction = FunctionWithException.unchecked(x->x);
+  ```
+* `unchecked(myInterface,myExceptionMapper)` converting the received parameter, and using the received exception mapper to wrap the exception.
+  ```java
+  Function<String,String> myUncheckedFunction = 
+    FunctionWithException.unchecked(
+      x->x,
+      IllegalArgumentException::new
+    );
+  ```
+  
+The resulting exceptions are :
+
+| Original With Exception Interface| Uncheck(ed) without exception mapper | Unchecked with exception mapper |
+| --------------------------------- | ------------------------------------ | -----------------------------------   |
+| _The original exception_          | An instance of `ch.powerunit.extensions.exceptions.WrappedException` having the original exception as cause | A instance of `RuntimeException` returned by the exception mapper |
+
+### `lift(ed)`
+
+This method converts the functional interface to the one without exception, by returning an `Optional` or a default value in case of exception or ignore the exception for interface without return value.
+
+Two versions of this methods exists :
+
+* `lift()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,Optional<String>> myLiftedFunction = myFunction.lift();
+  ```
+* `lifted(myInterface)` converting the received parameter.
+  ```java
+  Function<String,Optional<String>> myLiftedFunction = FunctionWithException.lifted(x->x);
+  ```
+
+### `ignore(d)`
+
+This method converts the functional interface to the one without exception, by returning a default value in case of exception or ignore the exception for interface without return value.
+
+Two versions of this methods exists :
+
+* `ignore()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,String> myLiftedFunction = myFunction.ignore();
+  ```
+* `ignored(myInterface)` converting the received parameter.
+  ```java
+  Function<String,String> myLiftedFunction = FunctionWithException.ignored(x->x);
+  ```
+
+### `stage(d)`
+
+This method converts the functional interface to the one without exception, by returning an `CompletionStage`. _This is not available on interface returning primitive type_. 
+
+For functional interface without result, a `CompletionStage<Void>` is returned.
+
+Two versions of this methods exists :
+
+* `stage()` converting the functional interface directly.
+  ```java
+  FunctionWithException<String,String,IOException> myFunction = ...;
+  
+  Function<String,CompletionStage<String>> myStagedFunction = myFunction.stage();
+  ```
+* `staged(myInterface)` converting the received parameter.
+  ```java
+  Function<String,CompletionStage<String>> myStagedFunction = FunctionWithException.staged(x->x);
+  ```
+
 ## Reference
 
 The following classes are provided:
 
-| Standard functional interface | Exception functional interface         | Unchecked version       | Lifted version                 | Ignore version                |
-| ----------------------------- | -------------------------------------- | ----------------------- | ------------------------------ | -------------- |
-| `BiFunction<T,U,R>`             | `BiFunctionWithException<T,U,R,E>`       | `BiFunction<T,U,R>`       | `BiFunction<T,U,Optional<R>>`    | `BiFunction<T,U,R>`      |
-| `BiConsumer<T,U>`               | `BiConsumerWithException<T,U,E>`         | `BiConsumer<T,U>`         | `BiConsumer<T,U>`                | `BiConsumer<T,U>`        |
-| `BiPredicate<T,U>`              | `BiPredicateWithException<T,U,E>`        | `BiPredicate<T,U>`        | `BiPredicate<T,U>`               | `BiPredicate<T,U>`       |
-| `BinaryOperator<T>`             | `BinaryOperatorWithException<T,E>`       | `BinaryOperator<T,U>`     | `BinaryFunction<T,T,Optional<T>>` | `BinaryOperator<T>`      |
-| `BooleanSupplier`               | `BooleanSupplierWithException<E>`        | `BooleanSupplier`         | `BooleanSupplier`                | `BooleanSupplier`        |
-| `Consumer<T>`                   | `ConsumerWithException<T,E>`             | `Consumer<T>`             | `Consumer<T>`                    | `Consumer<T>`            |
-| `DoubleBinaryOperator`          | `DoubleBinaryOperatorWithException<E>`   | `DoubleBinaryOperator`    | `DoubleBinaryOperator`           | `DoubleBinaryOperator`   |
-| `DoubleConsumer`                | `DoubleConsumerWithException<E>`         | `DoubleConsumer`          | `DoubleConsumer`                 | `DoubleConsumer`         |
-| `DoubleFunction<R>`             | `DoubleFunctionWithException<R,E>`       | `DoubleFunction<R>`       | `DoubleFunction<Optional<R>>`    | `DoubleFunction<R>`      |
-| `DoublePredicate`               | `DoublePredicateWithException<E>`        | `DoublePredicate`         | `DoublePredicate`                | `DoublePredicate`        |
-| `DoubleSupplier`                | `DoubleSupplierWithException<E>`         | `DoubleSupplier`          | `DoubleSupplier`                 | `DoubleSupplier`         |
-| `DoubleToIntFunction`           | `DoubleToIntFunctionWithException<E>`    | `DoubleToIntFunction`     | `DoubleToIntFunction`            | `DoubleToIntFunction`    |
-| `DoubleToLongFunction`          | `DoubleToLongFunctionWithException<E>`   | `DoubleToLongFunction`    | `DoubleToLongFunction`           | `DoubleToLongFunction`   |
-| `DoubleUnaryOperator`           | `DoubleUnaryOperatorWithException<E>`    | `DoubleUnaryOperator`     | `DoubleUnaryOperator`            | `DoubleUnaryOperator`    |
-| `Function<T,R>`                 | `FunctionWithException<T,R,E>`           | `Function<T,R>`           | `Function<T,Optional<R>>`        | `Function<T,R>`          |
-| `IntBinaryOperator`             | `IntBinaryOperatorWithException<E>`      | `IntBinaryOperator`       | `IntBinaryOperator`              | `IntBinaryOperator`      |
-| `IntConsumer`                   | `IntConsumerWithException<E>`            | `IntConsumer`             | `IntConsumer`                   | `IntConsumer`            |
-| `IntFunction<R>`                | `IntFunctionWithException<R,E>`          | `IntFunction<R>`          | `IntFunction<Optional<R>>`       | `IntFunction<R>`         |
-| `IntPredicate`                  | `IntPredicateWithException<E>`           | `IntPredicate`            | `IntPredicate`                   | `IntPredicate`           |
-| `IntSupplier`                   | `IntSupplierWithException<E>`            | `IntSupplier`             | `IntSupplier`                    | `IntSupplier`            |
-| `IntToDoubleFunction`           | `IntToDoubleFunctionWithException<E>`    | `IntToDoubleFunction`     | `IntToDoubleFunction`            | `IntToDoubleFunction`    |
-| `IntToLongFunction`             | `IntToLongFunctionWithException<E>`      | `IntToLongFunction`       | `IntToLongFunction`              | `IntToLongFunction`      |
-| `IntUnaryOperator`              | `IntUnaryOperatorWithException<E>`       | `IntUnaryOperator`        | `IntUnaryOperator`               | `IntUnaryOperator`       |
-| `LongBinaryOperator`            | `LongBinaryOperatorWithException<E>`     | `LongBinaryOperator`      | `LongBinaryOperator`             | `LongBinaryOperator`     |
-| `LongConsumer`                  | `LongConsumerWithException<E>`           | `LongConsumer`            | `LongConsumer`                  | `LongConsumer`           |
-| `LongFunction<R>`               | `LongFunctionWithException<R,E>`         | `LongFunction<R>`         | `LongFunction<Optional<R>>`      | `LongFunction<R>`        |
-| `LongPredicate`                 | `LongPredicateWithException<E>`          | `LongPredicate`           | `LongPredicate`                  | `LongPredicate`          |
-| `LongSupplier`                  | `LongSupplierWithException<E>`           | `LongSupplier`            | `LongSupplier`                   | `LongSupplier`           |
-| `LongToDoubleFunction`          | `LongToDoubleFunctionWithException<E>`   | `LongToDoubleFunction`    | `LongToDoubleFunction`           | `LongToDoubleFunction`   |
-| `LongToIntFunction`             | `LongToIntFunctionWithException`         | `LongToIntFunction`       | `LongToIntFunction`              | `LongToIntFunction`      |
-| `LongUnaryOperator`             | `LongUnaryOperatorWithException`         | `LongUnaryOperator`       | `LongUnaryOperator`              | `LongUnaryOperator`      |
-| `ObjDoubleConsumer<T>`          | `ObjDoubleConsumerWithException<T,E>`    | `ObjDoubleConsumer<T>`    | `ObjDoubleConsumer<T>`           | `ObjDoubleConsumer<T>`   |
-| `ObjIntConsumer<T>`             | `ObjIntConsumerWithException<T,E>`       | `ObjIntConsumer<T>`       | `ObjIntConsumer<T>`              | `ObjIntConsumer<T>`      |
-| `ObjLongConsumer<T>`            | `ObjLongConsumerWithException<T,E>`      | `ObjLongConsumer<T>`      | `ObjLongConsumer<T>`             | `ObjLongConsumer<T>`     |
-| `Predicate<T>`                  | `PredicateWithException<T,E>`            | `Predicate<T>`            | `Predicate<T>`                   | `Predicate<T>`           |
-| `Runnable`                      | `RunnableWithException<E>`               | `Runnable`                | `Runnable`                       | `Runnable`               |
-| `Supplier<T>`                   | `SupplierWithException<T,E>`             | `Supplier<T>`             | `Supplier<Optional<T>>`          | `Supplier<T>`            |
-| `ToDoubleBiFunction<T,U>`       | `ToDoubleBiFunctionWithException<T,U,E>` | `ToDoubleBiFunction<T,U>` | `ToDoubleBiFunction<T,U>`        | `ToDoubleBiFunction<T,U>`|
-| `ToDoubleFunction<T>`           | `ToDoubleFunctionWithException<T,E>`     | `ToDoubleFunction<T>`     | `ToDoubleFunction<T>`            |  `ToDoubleFunction<T>`    |
-| `ToIntBiFunction<T,U>`          | `ToIntBiFunctionWithException<T,U,E>`    | `ToIntBiFunction<T,U>`    | `ToIntBiFunction<T,U>`           | `ToIntBiFunction<T,U>`   |
-| `ToIntFunction<T>`              | `ToIntFunctionWithException<T,E>`        | `ToIntFunction<T>`        | `ToIntFunction<T>`               | `ToIntFunction<T>`       |
-| `ToLongBiFunction<T,U>`         | `ToLongBiFunctionWithException<T,U,E>`   | `ToLongBiFunction<T,U>`   | `ToLongBiFunction<T,U>`          | `ToLongBiFunction<T,U>`  |
-| `ToLongFunction<T>`             | `ToLongFunctionWithException<T,E>`       | `ToLongFunction<T>`       | `ToLongFunction<T>`              | `ToLongFunction<T>`      |
-| `UnaryOperator<T>`              | `UnaryOperatorWithException<T,E>`        | `UnaryOperator<T>`        | `Function<T,Optional<T>>`        | `UnaryOperator<T>`       |
+| Standard functional interface | Exception functional interface         | Unchecked version       | Lifted version                 | Ignored version               | Stage version                           |
+| ----------------------------- | -------------------------------------- | ----------------------- | ------------------------------ | -------------- |--------------------|
+| `BiFunction<T,U,R>`             | `BiFunctionWithException<T,U,R,E>`       | `BiFunction<T,U,R>`       | `BiFunction<T,U,Optional<R>>`    | `BiFunction<T,U,R>`      | `BiFunction<T,U,CompletionStage<R>>` |
+| `BiConsumer<T,U>`               | `BiConsumerWithException<T,U,E>`         | `BiConsumer<T,U>`         | `BiConsumer<T,U>`                | `BiConsumer<T,U>`        | `BiFunction<T,U,CompletionStage<Void>>` |
+| `BiPredicate<T,U>`              | `BiPredicateWithException<T,U,E>`        | `BiPredicate<T,U>`        | `BiPredicate<T,U>`               | `BiPredicate<T,U>`       | N/A |
+| `BinaryOperator<T>`             | `BinaryOperatorWithException<T,E>`       | `BinaryOperator<T,U>`     | `BinaryFunction<T,T,Optional<T>>` | `BinaryOperator<T>`      | `BinaryFunction<T,T,CompletionStage<T>>` |
+| `BooleanSupplier`               | `BooleanSupplierWithException<E>`        | `BooleanSupplier`         | `BooleanSupplier`                | `BooleanSupplier`        | N/A |
+| `Consumer<T>`                   | `ConsumerWithException<T,E>`             | `Consumer<T>`             | `Consumer<T>`                    | `Consumer<T>`            | `Function<T,CompletionStage<Void>>` |
+| `DoubleBinaryOperator`          | `DoubleBinaryOperatorWithException<E>`   | `DoubleBinaryOperator`    | `DoubleBinaryOperator`           | `DoubleBinaryOperator`   | N/A |
+| `DoubleConsumer`                | `DoubleConsumerWithException<E>`         | `DoubleConsumer`          | `DoubleConsumer`                 | `DoubleConsumer`         | `DoubleFunction<CompletionStage<Void>>` |
+| `DoubleFunction<R>`             | `DoubleFunctionWithException<R,E>`       | `DoubleFunction<R>`       | `DoubleFunction<Optional<R>>`    | `DoubleFunction<R>`      | `DoubleFunction<CompletionStage<R>>` |
+| `DoublePredicate`               | `DoublePredicateWithException<E>`        | `DoublePredicate`         | `DoublePredicate`                | `DoublePredicate`        | N/A |
+| `DoubleSupplier`                | `DoubleSupplierWithException<E>`         | `DoubleSupplier`          | `DoubleSupplier`                 | `DoubleSupplier`         | N/A |
+| `DoubleToIntFunction`           | `DoubleToIntFunctionWithException<E>`    | `DoubleToIntFunction`     | `DoubleToIntFunction`            | `DoubleToIntFunction`    | N/A |
+| `DoubleToLongFunction`          | `DoubleToLongFunctionWithException<E>`   | `DoubleToLongFunction`    | `DoubleToLongFunction`           | `DoubleToLongFunction`   | N/A |
+| `DoubleUnaryOperator`           | `DoubleUnaryOperatorWithException<E>`    | `DoubleUnaryOperator`     | `DoubleUnaryOperator`            | `DoubleUnaryOperator`    | N/A |
+| `Function<T,R>`                 | `FunctionWithException<T,R,E>`           | `Function<T,R>`           | `Function<T,Optional<R>>`        | `Function<T,R>`          | `Function<T,CompletionStage<R>>` |
+| `IntBinaryOperator`             | `IntBinaryOperatorWithException<E>`      | `IntBinaryOperator`       | `IntBinaryOperator`              | `IntBinaryOperator`      | N/A |
+| `IntConsumer`                   | `IntConsumerWithException<E>`            | `IntConsumer`             | `IntConsumer`                   | `IntConsumer`            | `IntFunction<CompletionStage<Void>>` |
+| `IntFunction<R>`                | `IntFunctionWithException<R,E>`          | `IntFunction<R>`          | `IntFunction<Optional<R>>`       | `IntFunction<R>`         | `IntFunction<CompletionStage<R>>` |
+| `IntPredicate`                  | `IntPredicateWithException<E>`           | `IntPredicate`            | `IntPredicate`                   | `IntPredicate`           | N/A |
+| `IntSupplier`                   | `IntSupplierWithException<E>`            | `IntSupplier`             | `IntSupplier`                    | `IntSupplier`            | N/A |
+| `IntToDoubleFunction`           | `IntToDoubleFunctionWithException<E>`    | `IntToDoubleFunction`     | `IntToDoubleFunction`            | `IntToDoubleFunction`    |N/A |
+| `IntToLongFunction`             | `IntToLongFunctionWithException<E>`      | `IntToLongFunction`       | `IntToLongFunction`              | `IntToLongFunction`      |N/A |
+| `IntUnaryOperator`              | `IntUnaryOperatorWithException<E>`       | `IntUnaryOperator`        | `IntUnaryOperator`               | `IntUnaryOperator`       |N/A |
+| `LongBinaryOperator`            | `LongBinaryOperatorWithException<E>`     | `LongBinaryOperator`      | `LongBinaryOperator`             | `LongBinaryOperator`     |N/A |
+| `LongConsumer`                  | `LongConsumerWithException<E>`           | `LongConsumer`            | `LongConsumer`                  | `LongConsumer`           | `LongFunction<CompletionStage<Void>>` |
+| `LongFunction<R>`               | `LongFunctionWithException<R,E>`         | `LongFunction<R>`         | `LongFunction<Optional<R>>`      | `LongFunction<R>`        | `LongFunction<CompletionStage<R>>` |
+| `LongPredicate`                 | `LongPredicateWithException<E>`          | `LongPredicate`           | `LongPredicate`                  | `LongPredicate`          | N/A |
+| `LongSupplier`                  | `LongSupplierWithException<E>`           | `LongSupplier`            | `LongSupplier`                   | `LongSupplier`           | N/A |
+| `LongToDoubleFunction`          | `LongToDoubleFunctionWithException<E>`   | `LongToDoubleFunction`    | `LongToDoubleFunction`           | `LongToDoubleFunction`   | N/A |
+| `LongToIntFunction`             | `LongToIntFunctionWithException`         | `LongToIntFunction`       | `LongToIntFunction`              | `LongToIntFunction`      |N/A |
+| `LongUnaryOperator`             | `LongUnaryOperatorWithException`         | `LongUnaryOperator`       | `LongUnaryOperator`              | `LongUnaryOperator`      |N/A |
+| `ObjDoubleConsumer<T>`          | `ObjDoubleConsumerWithException<T,E>`    | `ObjDoubleConsumer<T>`    | `ObjDoubleConsumer<T>`           | `ObjDoubleConsumer<T>`   | `Function<T,Double,CompletionStage<Void>>` |
+| `ObjIntConsumer<T>`             | `ObjIntConsumerWithException<T,E>`       | `ObjIntConsumer<T>`       | `ObjIntConsumer<T>`              | `ObjIntConsumer<T>`      | `Function<T,Integer,CompletionStage<Void>>` |
+| `ObjLongConsumer<T>`            | `ObjLongConsumerWithException<T,E>`      | `ObjLongConsumer<T>`      | `ObjLongConsumer<T>`             | `ObjLongConsumer<T>`     | `Function<T,Long,CompletionStage<Void>>` |
+| `Predicate<T>`                  | `PredicateWithException<T,E>`            | `Predicate<T>`            | `Predicate<T>`                   | `Predicate<T>`           | N/A
+| `Runnable`                      | `RunnableWithException<E>`               | `Runnable`                | `Runnable`                       | `Runnable`               | `Supplier<CompletionStage<Void>>`|
+| `Supplier<T>`                   | `SupplierWithException<T,E>`             | `Supplier<T>`             | `Supplier<Optional<T>>`          | `Supplier<T>`            | `Supplier<CompletionStage<T>>` |
+| `ToDoubleBiFunction<T,U>`       | `ToDoubleBiFunctionWithException<T,U,E>` | `ToDoubleBiFunction<T,U>` | `ToDoubleBiFunction<T,U>`        | `ToDoubleBiFunction<T,U>`| N/A |
+| `ToDoubleFunction<T>`           | `ToDoubleFunctionWithException<T,E>`     | `ToDoubleFunction<T>`     | `ToDoubleFunction<T>`            |  `ToDoubleFunction<T>`    | N/A |
+| `ToIntBiFunction<T,U>`          | `ToIntBiFunctionWithException<T,U,E>`    | `ToIntBiFunction<T,U>`    | `ToIntBiFunction<T,U>`           | `ToIntBiFunction<T,U>`   | N/A |
+| `ToIntFunction<T>`              | `ToIntFunctionWithException<T,E>`        | `ToIntFunction<T>`        | `ToIntFunction<T>`               | `ToIntFunction<T>`       | N/A |
+| `ToLongBiFunction<T,U>`         | `ToLongBiFunctionWithException<T,U,E>`   | `ToLongBiFunction<T,U>`   | `ToLongBiFunction<T,U>`          | `ToLongBiFunction<T,U>`  | N/A |
+| `ToLongFunction<T>`             | `ToLongFunctionWithException<T,E>`       | `ToLongFunction<T>`       | `ToLongFunction<T>`              | `ToLongFunction<T>`      | N/A |
+| `UnaryOperator<T>`              | `UnaryOperatorWithException<T,E>`        | `UnaryOperator<T>`        | `Function<T,Optional<T>>`        | `UnaryOperator<T>`       | `Function<T,CompletionStage<T>>` |

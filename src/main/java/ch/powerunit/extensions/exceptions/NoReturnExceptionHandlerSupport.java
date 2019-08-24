@@ -33,8 +33,11 @@ import java.util.function.Consumer;
  *            the type of the java standard functional interface. For example,
  *            {@code Consumer<T>}. The same functional interface is also used
  *            for the lifted and ignored version.
+ * @param <S>
+ *            the type of a java standard function interface to return a
+ *            {@code CompletionStage}.
  */
-public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupport<F, F> {
+public interface NoReturnExceptionHandlerSupport<F, S> extends ExceptionHandlerSupport<F, F> {
 
 	/**
 	 * Converts this functional interface to the corresponding one in java and wrap
@@ -105,6 +108,15 @@ public interface NoReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupp
 	 */
 	@Override
 	F ignore();
+
+	/**
+	 * Converts this functional interface to a lifted one, using a
+	 * {@code CompletionStage} as a return value.
+	 *
+	 * @return the lifted function
+	 * @since 1.1.0
+	 */
+	S stage();
 
 	/**
 	 * Used internally to support the exception interception.
