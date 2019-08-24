@@ -23,8 +23,10 @@ import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
 import java.util.function.Supplier;
 
 /**
@@ -47,7 +49,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface LongConsumerWithException<E extends Exception> extends NoReturnExceptionHandlerSupport<LongConsumer> {
+public interface LongConsumerWithException<E extends Exception>
+		extends NoReturnExceptionHandlerSupport<LongConsumer, LongFunction<CompletionStage<Void>>> {
 
 	/**
 	 * Performs this operation on the given argument.
@@ -83,6 +86,18 @@ public interface LongConsumerWithException<E extends Exception> extends NoReturn
 	@Override
 	default LongConsumer ignore() {
 		return t -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t), notThrowingHandler());
+	}
+
+	/**
+	 * Converts this {@code LongConsumerWithException} to a <i>staged</i>
+	 * {@code LongFunction} that return a {@code CompletionStage}.
+	 * 
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default LongFunction<CompletionStage<Void>> stage() {
+		return t -> NoReturnExceptionHandlerSupport.staged(() -> accept(t));
 	}
 
 	/**

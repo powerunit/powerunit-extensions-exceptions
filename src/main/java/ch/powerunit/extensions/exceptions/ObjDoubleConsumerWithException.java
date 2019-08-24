@@ -23,6 +23,8 @@ import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_
 import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
 
+import java.util.concurrent.CompletionStage;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ObjDoubleConsumer;
 import java.util.function.Supplier;
@@ -51,7 +53,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface ObjDoubleConsumerWithException<T, E extends Exception>
-		extends NoReturnExceptionHandlerSupport<ObjDoubleConsumer<T>> {
+		extends NoReturnExceptionHandlerSupport<ObjDoubleConsumer<T>, BiFunction<T, Double, CompletionStage<Void>>> {
 
 	/**
 	 * Performs this operation on the given arguments.
@@ -89,6 +91,18 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	@Override
 	default ObjDoubleConsumer<T> ignore() {
 		return (t, value) -> NoReturnExceptionHandlerSupport.unchecked(() -> accept(t, value), notThrowingHandler());
+	}
+
+	/**
+	 * Converts this {@code ObjDoubleConsumerWithException} to a <i>staged</i>
+	 * {@code BiFunction} that return a {@code CompletionStage}.
+	 * 
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default BiFunction<T, Double, CompletionStage<Void>> stage() {
+		return (t, value) -> NoReturnExceptionHandlerSupport.staged(() -> accept(t, value));
 	}
 
 	/**
