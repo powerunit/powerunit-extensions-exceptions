@@ -65,6 +65,12 @@ Three versions of this methods exists :
   ```java
   Function<String,String> myUncheckedFunction = FunctionWithException.unchecked(x->x,IllegalArgumentException::new);
   ```
+  
+The resulting exceptions are :
+
+| Original With Exception Interface| Uncheck(ed) without exception mapper | Unchecked with exception mapper |
+| --------------------------------- | ------------------------------------ | -----------------------------------   |
+| _The original exception_          | An instance of `ch.powerunit.extensions.exceptions.WrappedException` having the original exception as cause | A instance of `RuntimeException` returned by the exception mapper |
 
 ### `lift(ed)`
 
