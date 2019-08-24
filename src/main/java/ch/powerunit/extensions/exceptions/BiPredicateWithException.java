@@ -25,7 +25,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -65,7 +64,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 *         {@code false}
 	 * @throws E
 	 *             any exception
-	 * @see Predicate#test(Object)
+	 * @see BiPredicate#test(Object, Object)
 	 */
 	boolean test(T t, U u) throws E;
 
