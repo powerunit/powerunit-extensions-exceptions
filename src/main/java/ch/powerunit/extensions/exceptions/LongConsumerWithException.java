@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.LongConsumer;
 import java.util.function.LongFunction;
 import java.util.function.Supplier;
@@ -226,6 +227,23 @@ public interface LongConsumerWithException<E extends Exception>
 	 */
 	static <E extends Exception> LongConsumer ignored(LongConsumerWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+	}
+
+	/**
+	 * Converts a {@code LongConsumerWithException} to a staged {@code LongFunction}
+	 * .
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.1.0
+	 */
+	static <E extends Exception> LongFunction<CompletionStage<Void>> staged(LongConsumerWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
 	}
 
 	/**

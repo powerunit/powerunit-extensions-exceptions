@@ -191,9 +191,25 @@ public interface RunnableWithException<E extends Exception>
 	 * @see #ignore()
 	 * @throws NullPointerException
 	 *             if operation is null
+	 * @since 1.1.0
 	 */
 	static <E extends Exception> Runnable ignored(RunnableWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a staged {@code Supplier}.
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static <E extends Exception> Supplier<CompletionStage<Void>> staged(RunnableWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
 	}
 
 }

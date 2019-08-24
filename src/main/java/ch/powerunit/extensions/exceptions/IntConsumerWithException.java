@@ -227,6 +227,22 @@ public interface IntConsumerWithException<E extends Exception>
 	}
 
 	/**
+	 * Converts a {@code IntConsumerWithException} to a staged {@code IntFunction} .
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.1.0
+	 */
+	static <E extends Exception> IntFunction<CompletionStage<Void>> staged(IntConsumerWithException<E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+	}
+
+	/**
 	 * Converts a {@code IntConsumerWithException} to a
 	 * {@code ConsumerWithException}.
 	 *

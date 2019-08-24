@@ -219,6 +219,25 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	}
 
 	/**
+	 * Converts a {@code ObjDoubleConsumerWithException} to a staged
+	 * {@code BiFunction} .
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param <T>
+	 *            the type of the object argument to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static <T, E extends Exception> BiFunction<T, Double, CompletionStage<Void>> staged(
+			ObjDoubleConsumerWithException<T, E> operation) {
+		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+	}
+
+	/**
 	 * Converts a {@code ObjDoubleConsumerWithException} to a
 	 * {@code BiConsumerWithException} returning {@code null}.
 	 *
@@ -231,6 +250,7 @@ public interface ObjDoubleConsumerWithException<T, E extends Exception>
 	 * @return the function
 	 * @throws NullPointerException
 	 *             if operation is null
+	 * @since 1.1.0
 	 */
 	static <T, E extends Exception> BiConsumerWithException<T, Double, E> asBiConsumer(
 			ObjDoubleConsumerWithException<T, E> operation) {

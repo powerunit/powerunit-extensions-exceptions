@@ -315,6 +315,27 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	}
 
 	/**
+	 * Converts a {@code BiConsumerWithException} to a staged {@code BiFunction}.
+	 *
+	 * @param consumer
+	 *            to be staged
+	 * @param <T>
+	 *            the type of the first argument to the operation
+	 * @param <U>
+	 *            the type of the second argument to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 * @since 1.1.0
+	 */
+	static <T, U, E extends Exception> BiFunction<T, U, CompletionStage<Void>> staged(
+			BiConsumerWithException<T, U, E> consumer) {
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).stage();
+	}
+
+	/**
 	 * Converts a {@code BiConsumerWithException} to a
 	 * {@code BiFunctionWithException} returning {@code null}.
 	 *

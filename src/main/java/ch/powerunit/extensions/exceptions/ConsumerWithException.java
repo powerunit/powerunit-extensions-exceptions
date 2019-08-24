@@ -270,6 +270,24 @@ public interface ConsumerWithException<T, E extends Exception>
 	}
 
 	/**
+	 * Converts a {@code ConsumerWithException} to a staged {@code Function}.
+	 *
+	 * @param consumer
+	 *            to be staged
+	 * @param <T>
+	 *            the type of the input to the operation
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 * @since 1.1.0
+	 */
+	static <T, E extends Exception> Function<T, CompletionStage<Void>> staged(ConsumerWithException<T, E> consumer) {
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).stage();
+	}
+
+	/**
 	 * Converts a {@code ConsumerWithException} to a {@code FunctionWithException}
 	 * returning {@code null}.
 	 *
