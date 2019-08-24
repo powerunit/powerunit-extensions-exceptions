@@ -35,9 +35,9 @@ import java.util.function.Supplier;
  * <ul>
  * <li><b>{@link #matches(Path) boolean matches(Path path) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>
- * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code PathMatcher<T>}</li>
- * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code PathMatcher<T>}</li>
- * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code PathMatcher<T>}</li>
+ * <li><b>uncheck</b>&nbsp;-&nbsp;Return a {@code PathMatcher}</li>
+ * <li><b>lift</b>&nbsp;-&nbsp;Return a {@code PathMatcher}</li>
+ * <li><b>ignore</b>&nbsp;-&nbsp;Return a {@code PathMatcher}</li>
  * </ul>
  *
  * @see PathMatcher
