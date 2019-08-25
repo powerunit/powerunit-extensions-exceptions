@@ -20,10 +20,10 @@
 package ch.powerunit.extensions.exceptions;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.failedFuture;
 
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
@@ -162,10 +162,7 @@ public interface ObjectReturnExceptionHandlerSupport<F, L, S, T> extends Excepti
 		try {
 			return completedFuture(internal.call());
 		} catch (Exception e) {
-			// failedStage only available since 9
-			CompletableFuture<T> result = new CompletableFuture<>();
-			result.completeExceptionally(e);
-			return result;
+			return failedFuture(e);
 		}
 	}
 

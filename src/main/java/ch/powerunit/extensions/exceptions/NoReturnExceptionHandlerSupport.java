@@ -20,8 +20,8 @@
 package ch.powerunit.extensions.exceptions;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.failedFuture;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 
@@ -151,10 +151,7 @@ public interface NoReturnExceptionHandlerSupport<F, S> extends ExceptionHandlerS
 			internal.run();
 			return completedFuture(null);
 		} catch (Exception e) {
-			// failedStage only available since 9
-			CompletableFuture<Void> result = new CompletableFuture<>();
-			result.completeExceptionally(e);
-			return result;
+			return failedFuture(e);
 		}
 	}
 
