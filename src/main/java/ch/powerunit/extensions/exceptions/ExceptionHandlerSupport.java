@@ -182,3 +182,4 @@ public interface ExceptionHandlerSupport<F, L> {
 		return e -> clazz.isInstance(e) ? mapper.apply(clazz.cast(e)) : new WrappedException(e);
 	}
 }
+ 
