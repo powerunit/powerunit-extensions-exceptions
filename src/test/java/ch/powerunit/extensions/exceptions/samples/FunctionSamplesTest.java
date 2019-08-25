@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -30,6 +31,7 @@ import java.util.function.Function;
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 import ch.powerunit.extensions.exceptions.FunctionWithException;
+import ch.powerunit.extensions.exceptions.WrappedException;
 
 @SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
 public class FunctionSamplesTest implements TestSuite {
@@ -138,6 +140,28 @@ public class FunctionSamplesTest implements TestSuite {
 		assertThat(result1.toCompletableFuture().join()).is("aA");
 
 		assertThat(result2.toCompletableFuture().join()).is("test");
+
+	}
+
+	@Test
+	public void sample7() {
+
+		// Sample with SQLException
+
+		Function<Exception, RuntimeException> mapper = e -> Optional.of(e).filter(SQLException.class::isInstance)
+				.map(SQLException.class::cast)
+				.map(s -> new WrappedException(String.format("%s ; ErrorCode=%s ; SQLState=%s", s.getMessage(),
+						s.getErrorCode(), s.getSQLState()), s))
+				.orElseGet(() -> new WrappedException(e));
+
+		FunctionWithException<String, String, SQLException> fonctionThrowingException = FunctionWithException
+				.failing(SQLException::new);
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, mapper);
+
+		assertWhen(x -> functionThrowingRuntimeException.apply(x), "x").throwException(
+				both(exceptionMessage("null ; ErrorCode=0 ; SQLState=null")).and(instanceOf(WrappedException.class)));
 
 	}
 
