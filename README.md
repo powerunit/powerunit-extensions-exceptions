@@ -19,8 +19,6 @@ wraps the exception from `IOException` into a `RuntimeException` (which cause is
 
 ## Usage
 
-_Please note that some methods described here are related to the upcoming version of this library._
-
 Add the following dependency to your maven project :
 
 ```xml
