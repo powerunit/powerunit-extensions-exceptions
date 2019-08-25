@@ -163,4 +163,22 @@ public interface ExceptionHandlerSupport<F, L> {
 	 * @see #lift()
 	 */
 	F ignore();
+
+	/**
+	 * Helper methods to create exception wrapper that check the exception class.
+	 * 
+	 * @param clazz
+	 *            the class of the exception to be wrapped.
+	 * @param mapper
+	 *            the exception mapper.
+	 * @param <E>
+	 *            the type of the exception.
+	 * @return A new exception mapper, which use the one received as parameter or
+	 *         for the other exception just create a {@code WrappedException}.
+	 * @since 1.1.0
+	 */
+	static <E extends Exception> Function<Exception, RuntimeException> exceptionMapperFor(Class<E> clazz,
+			Function<E, RuntimeException> mapper) {
+		return e -> clazz.isInstance(e) ? mapper.apply(clazz.cast(e)) : new WrappedException(e);
+	}
 }

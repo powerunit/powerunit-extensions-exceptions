@@ -69,12 +69,24 @@ Three versions of this methods exists :
       IllegalArgumentException::new
     );
   ```
+  The resulting exceptions are :
   
-The resulting exceptions are :
-
-| Original With Exception Interface| Uncheck(ed) without exception mapper | Unchecked with exception mapper |
-| --------------------------------- | ------------------------------------ | -----------------------------------   |
-| _The original exception_          | An instance of `ch.powerunit.extensions.exceptions.WrappedException` having the original exception as cause | A instance of `RuntimeException` returned by the exception mapper |
+  | Original With Exception Interface| Uncheck(ed) without exception mapper | Unchecked with exception mapper |
+  | --------------------------------- | ------------------------------------ | -----------------------------------   |
+  | _The original exception_          | An instance of `ch.powerunit.extensions.exceptions.WrappedException` having the original exception as cause | A instance of `RuntimeException` returned by the exception mapper |
+  A more concrete example may be :
+  ```java
+  Function<Exception, RuntimeException> mapper = 
+    ExceptionHandlerSupport.exceptionMapperFor(
+      SQLException.class,
+      s -> 
+           new WrappedException(
+             String.format("%s ; ErrorCode=%s ; SQLState=%s", s.getMessage(),s.getErrorCode(), s.getSQLState()), 
+             s
+           )
+    );
+  ```
+  In this example, it extracts the SQL information from the `SQLException`. The `exceptionMapperFor` method ensures that in case the exception is not a `SQLException`, a standard wrapping is done.
 
 ### `lift(ed)`
 

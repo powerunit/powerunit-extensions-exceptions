@@ -30,6 +30,7 @@ import java.util.function.Function;
 
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
+import ch.powerunit.extensions.exceptions.ExceptionHandlerSupport;
 import ch.powerunit.extensions.exceptions.FunctionWithException;
 import ch.powerunit.extensions.exceptions.WrappedException;
 
@@ -148,11 +149,9 @@ public class FunctionSamplesTest implements TestSuite {
 
 		// Sample with SQLException
 
-		Function<Exception, RuntimeException> mapper = e -> Optional.of(e).filter(SQLException.class::isInstance)
-				.map(SQLException.class::cast)
-				.map(s -> new WrappedException(String.format("%s ; ErrorCode=%s ; SQLState=%s", s.getMessage(),
-						s.getErrorCode(), s.getSQLState()), s))
-				.orElseGet(() -> new WrappedException(e));
+		Function<Exception, RuntimeException> mapper = ExceptionHandlerSupport.exceptionMapperFor(SQLException.class,
+				s -> new WrappedException(String.format("%s ; ErrorCode=%s ; SQLState=%s", s.getMessage(),
+						s.getErrorCode(), s.getSQLState()), s));
 
 		FunctionWithException<String, String, SQLException> fonctionThrowingException = FunctionWithException
 				.failing(SQLException::new);
