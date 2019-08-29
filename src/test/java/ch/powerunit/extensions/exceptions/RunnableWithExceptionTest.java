@@ -42,7 +42,7 @@ public class RunnableWithExceptionTest implements TestSuite {
 		};
 		assertWhen((x) -> fct1.andThen(fct2).run()).throwException(instanceOf(Exception.class));
 	}
-	
+
 	@Test
 	public void testandThen2() throws Exception {
 		RunnableWithException<Exception> fct1 = () -> {
@@ -109,5 +109,18 @@ public class RunnableWithExceptionTest implements TestSuite {
 		assertWhen((x) -> RunnableWithException.staged(() -> {
 			throw new Exception();
 		}).get().toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
+	}
+
+	@Test
+	public void testAsFunctionNoException() throws Exception {
+		assertThat(RunnableWithException.asFunction(() -> {
+		}).apply("2")).isNull();
+	}
+
+	@Test
+	public void testAsFunctionException() {
+		assertWhen((x) -> RunnableWithException.asFunction(() -> {
+			throw new Exception();
+		}).apply("2")).throwException(instanceOf(Exception.class));
 	}
 }

@@ -235,4 +235,29 @@ public interface RunnableWithException<E extends Exception>
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
 	}
 
+	/**
+	 * Converts a {@code RunnableWithException} to a {@code FunctionWithException}
+	 * returning {@code null} and ignoring input.
+	 *
+	 * @param operation
+	 *            to be converted
+	 * @param <T>
+	 *            the type of the input to the operation
+	 * @param <R>
+	 *            the type of the return value
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(RunnableWithException<E> operation) {
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		return t -> {
+			operation.run();
+			return null;
+		};
+	}
+
 }
