@@ -398,7 +398,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 
 	/**
 	 * Converts a {@code BiFunctionWithException} to a
-	 * {@code BiConsumerWithException}.
+	 * {@code FunctionWithException}.
 	 * 
 	 * @param u
 	 *            the second parameter of the {@code BiFunctionWithException} that
