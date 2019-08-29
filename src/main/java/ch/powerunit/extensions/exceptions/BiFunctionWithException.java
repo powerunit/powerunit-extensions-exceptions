@@ -333,4 +333,39 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
 	}
 
+	/**
+	 * Converts a {@code BiFunctionWithException} to a
+	 * {@code BiConsumerWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param <T>
+	 *            the type of the first argument to the operation
+	 * @param <U>
+	 *            the type of the second argument to the operation
+	 * @param <R>
+	 *            the type of the return value of the function
+	 * @param <E>
+	 *            the type of the potential exception of the operation
+	 * @return the consumer
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static <T, U, R, E extends Exception> BiConsumerWithException<T, U, E> asBiConsumer(
+			BiFunctionWithException<T, U, R, E> function) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asBiConsumer();
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a
+	 * {@code BiConsumerWithException}.
+	 *
+	 * @return the consumer
+	 * @since 1.2.0
+	 */
+	default BiConsumerWithException<T, U, E> asBiConsumer() {
+		return (t, u) -> apply(t, u);
+	}
+
 }
