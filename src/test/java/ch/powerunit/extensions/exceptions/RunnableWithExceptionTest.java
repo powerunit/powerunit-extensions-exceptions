@@ -34,6 +34,16 @@ public class RunnableWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testandThen() throws Exception {
+		RunnableWithException<Exception> fct1 = () -> {
+		};
+		RunnableWithException<Exception> fct2 = () -> {
+			throw new Exception();
+		};
+		assertWhen((x) -> fct1.andThen(fct2).run()).throwException(instanceOf(Exception.class));
+	}
+
+	@Test
 	public void testCheckedNoException() {
 		RunnableWithException.unchecked(() -> {
 		}).run();
