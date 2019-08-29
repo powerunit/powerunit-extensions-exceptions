@@ -365,7 +365,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 * @since 1.2.0
 	 */
 	default BiConsumerWithException<T, U, E> asBiConsumer() {
-		return (t, u) -> apply(t, u);
+		return this::apply;
 	}
 
 	/**
@@ -409,7 +409,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 * @since 1.2.0
 	 */
 	default FunctionWithException<T, R, E> asFunction(U u) {
-		return (t) -> apply(t, u);
+		return t -> apply(t, u);
 	}
 
 }
