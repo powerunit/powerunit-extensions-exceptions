@@ -54,3 +54,12 @@ pull_request_rules:
       merge:
         method: merge
         strict: smart
+  pull_request_rules:
+- name: backport dependencies to version 1.2.X
+  conditions:
+    - base=master
+    - label=dependencies
+  actions:
+    backport:
+      branches:
+        - versions/1.2.X
