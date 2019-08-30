@@ -355,9 +355,21 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
 			BiConsumerWithException<T, U, E> consumer) {
-		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).asBiFunction();
+	}
+
+	/**
+	 * Converts a {@code BiConsumerWithException} to a
+	 * {@code BiFunctionWithException} returning {@code null}.
+	 *
+	 * @param <R>
+	 *            the type of the return value of the function
+	 * @return the function
+	 * @since 1.2.0
+	 */
+	default <R> BiFunctionWithException<T, U, R, E> asBiFunction() {
 		return (t, u) -> {
-			consumer.accept(t, u);
+			accept(t, u);
 			return null;
 		};
 	}

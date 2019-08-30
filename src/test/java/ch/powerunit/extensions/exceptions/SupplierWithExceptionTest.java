@@ -88,4 +88,16 @@ public class SupplierWithExceptionTest implements TestSuite {
 		}).get().toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
+	@Test
+	public void testAsFunctionNoException() throws Exception {
+		assertThat(SupplierWithException.asFunction(() -> 2).apply("2")).is(2);
+	}
+
+	@Test
+	public void testAsFunctionException() {
+		assertWhen((x) -> SupplierWithException.asFunction(() -> {
+			throw new Exception();
+		}).apply("2")).throwException(instanceOf(Exception.class));
+	}
+
 }
