@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
@@ -242,6 +243,38 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 */
 	static <T, E extends Exception> Supplier<CompletionStage<T>> staged(SupplierWithException<T, E> supplier) {
 		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).stage();
+	}
+
+	/**
+	 * Converts a {@code SupplierWithException} to a {@code FunctionWithException}.
+	 *
+	 * @param supplier
+	 *            the supplier to be converted
+	 * @param <T>
+	 *            the input type of the function
+	 * @param <R>
+	 *            the result type of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(SupplierWithException<R, E> supplier) {
+		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).asFunction();
+	}
+
+	/**
+	 * Converts a {@code SupplierWithException} to a {@code FunctionWithException} .
+	 *
+	 * @param <T1>
+	 *            the input parameter of the function
+	 * @return the function
+	 * @since 1.2.0
+	 */
+	default <T1> FunctionWithException<T1, T, E> asFunction() {
+		return t -> get();
 	}
 
 }
