@@ -107,4 +107,16 @@ public class FunctionWithExceptionTest implements TestSuite {
 		}).apply("x").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
+	@Test
+	public void testAsConsumerNoException() throws Exception {
+		FunctionWithException.asConsumer(x -> 1).accept("2");
+	}
+
+	@Test
+	public void testAsConsumerException() {
+		assertWhen((x) -> FunctionWithException.asConsumer(y -> {
+			throw new Exception();
+		}).accept("2")).throwException(instanceOf(Exception.class));
+	}
+
 }

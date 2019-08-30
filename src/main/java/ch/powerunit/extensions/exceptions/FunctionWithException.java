@@ -324,4 +324,34 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
 	}
 
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code ConsumerWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the consumer
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> ConsumerWithException<T, E> asConsumer(FunctionWithException<T, R, E> function) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asConsumer();
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code ConsumerWithException}.
+	 *
+	 * @return the consumer
+	 * @since 1.2.0
+	 */
+	default ConsumerWithException<T, E> asConsumer() {
+		return this::apply;
+	}
+
 }
