@@ -25,7 +25,7 @@ Add the following dependency to your maven project :
 <dependency>
   <groupId>ch.powerunit.extensions</groupId>
   <artifactId>powerunit-extensions-exceptions</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
