@@ -292,7 +292,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	 * returning {@code null}.
 	 *
 	 * @param consumer
-	 *            to be converted
+	 *            the consumer to be converted
 	 * @param <T>
 	 *            the type of the input to the operation
 	 * @param <R>
@@ -304,9 +304,21 @@ public interface ConsumerWithException<T, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(ConsumerWithException<T, E> consumer) {
-		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
+		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).asFunction();
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a {@code FunctionWithException}
+	 * returning {@code null}.
+	 *
+	 * @param <R>
+	 *            the type of the return value
+	 * @return the function
+	 * @since 1.2.0
+	 */
+	default <R> FunctionWithException<T, R, E> asFunction() {
 		return t -> {
-			consumer.accept(t);
+			accept(t);
 			return null;
 		};
 	}

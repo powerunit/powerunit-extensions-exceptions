@@ -95,6 +95,29 @@ public interface RunnableWithException<E extends Exception>
 	}
 
 	/**
+	 * Returns a composed {@code RunnableWithException} that performs, in sequence,
+	 * this operation followed by the {@code after} operation. If performing either
+	 * operation throws an exception, it is relayed to the caller of the composed
+	 * operation. If performing this operation throws an exception, the
+	 * {@code after} operation will not be performed.
+	 *
+	 * @param after
+	 *            the operation to perform after this operation
+	 * @return a composed {@code RunnableWithException} that performs in sequence
+	 *         this operation followed by the {@code after} operation
+	 * @throws NullPointerException
+	 *             if {@code after} is null
+	 * @since 1.2.0
+	 */
+	default RunnableWithException<E> andThen(RunnableWithException<? extends E> after) {
+		requireNonNull(after);
+		return () -> {
+			run();
+			after.run();
+		};
+	}
+
+	/**
 	 * Returns an operation that always throw exception.
 	 *
 	 * @param exceptionBuilder
@@ -210,6 +233,31 @@ public interface RunnableWithException<E extends Exception>
 	 */
 	static <E extends Exception> Supplier<CompletionStage<Void>> staged(RunnableWithException<E> operation) {
 		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a {@code FunctionWithException}
+	 * returning {@code null} and ignoring input.
+	 *
+	 * @param operation
+	 *            to be converted
+	 * @param <T>
+	 *            the type of the input to the operation
+	 * @param <R>
+	 *            the type of the return value
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(RunnableWithException<E> operation) {
+		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		return t -> {
+			operation.run();
+			return null;
+		};
 	}
 
 }
