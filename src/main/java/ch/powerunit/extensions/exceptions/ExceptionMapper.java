@@ -86,8 +86,8 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper mapper1, ExceptionMapper mapper2,
 			ExceptionMapper mapper3) {
-		return e -> mapper1.targetException().isInstance(e) ? mapper1.apply(e)
-				: mapper2.targetException().isInstance(e) ? mapper2.apply(e) : mapper3.apply(e);
+		Function<Exception, RuntimeException> last = forExceptions(mapper2, mapper3);
+		return e -> mapper1.targetException().isInstance(e) ? mapper1.apply(e) : last.apply(e);
 	}
 
 	/**
