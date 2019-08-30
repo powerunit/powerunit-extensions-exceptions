@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
 import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
 import static java.util.Objects.requireNonNull;
