@@ -176,10 +176,13 @@ public interface ExceptionHandlerSupport<F, L> {
 	 * @return A new exception mapper, which use the one received as parameter or
 	 *         for the other exception just create a {@code WrappedException}.
 	 * @since 1.1.0
+	 * @deprecated Since 2.0.0, use the {@link ExceptionMapper} interface and the
+	 *             method {@link ExceptionMapper#forException} or the others methods of this interface.
 	 */
+	@Deprecated
 	static <E extends Exception> Function<Exception, RuntimeException> exceptionMapperFor(Class<E> clazz,
 			Function<E, RuntimeException> mapper) {
-		return e -> clazz.isInstance(e) ? mapper.apply(clazz.cast(e)) : new WrappedException(e);
+		return ExceptionMapper.forException(clazz, mapper);
 	}
+
 }
- 
