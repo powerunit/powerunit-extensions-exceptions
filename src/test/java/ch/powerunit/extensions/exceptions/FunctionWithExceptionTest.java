@@ -119,4 +119,52 @@ public class FunctionWithExceptionTest implements TestSuite {
 		}).accept("2")).throwException(instanceOf(Exception.class));
 	}
 
+	@Test
+	public void testAsBiFunctionNoException() throws Exception {
+		assertThat(FunctionWithException.asBiFunction(x -> x).apply("3", "x")).is("3");
+	}
+
+	@Test
+	public void testAsFunctionException() {
+		assertWhen((x) -> FunctionWithException.asBiFunction(y -> {
+			throw new Exception();
+		}).apply("2", "1")).throwException(instanceOf(Exception.class));
+	}
+
+	@Test
+	public void testAsSupplierNoException() throws Exception {
+		assertThat(FunctionWithException.asSupplier(x -> x, "1").get()).is("1");
+	}
+
+	@Test
+	public void testAsSupplierException() {
+		assertWhen((x) -> FunctionWithException.asSupplier(y -> {
+			throw new Exception();
+		}, "").get()).throwException(instanceOf(Exception.class));
+	}
+
+	@Test
+	public void testAsCallableNoException() throws Exception {
+		assertThat(FunctionWithException.asCallable(x -> x, "1").call()).is("1");
+	}
+
+	@Test
+	public void testAsCallableException() {
+		assertWhen((x) -> FunctionWithException.asCallable(y -> {
+			throw new Exception();
+		}, "").call()).throwException(instanceOf(Exception.class));
+	}
+	
+	@Test
+	public void testAsRunnableNoException() throws Exception {
+		FunctionWithException.asRunnable(x -> x, "1").run();
+	}
+
+	@Test
+	public void testAsRunnableException() {
+		assertWhen((x) -> FunctionWithException.asRunnable(y -> {
+			throw new Exception();
+		}, "").run()).throwException(instanceOf(Exception.class));
+	}
+
 }

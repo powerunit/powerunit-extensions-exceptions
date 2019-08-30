@@ -24,6 +24,7 @@ import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -352,6 +353,151 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	default ConsumerWithException<T, E> asConsumer() {
 		return this::apply;
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a
+	 * {@code BiFunctionWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <U>
+	 *            the type of the second input to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the function
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
+			FunctionWithException<T, R, E> function) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asBiFunction();
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a
+	 * {@code BiFunctionWithException}.
+	 * 
+	 * @param <U>
+	 *            the type of the second input to the function
+	 * 
+	 * @return the function
+	 * @since 1.2.0
+	 */
+	default <U> BiFunctionWithException<T, U, R, E> asBiFunction() {
+		return (t, u) -> apply(t);
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code SupplierWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param t
+	 *            The input to the function.
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the supplier
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> SupplierWithException<R, E> asSupplier(FunctionWithException<T, R, E> function,
+			T t) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asSupplier(t);
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code SupplierWithException}.
+	 * 
+	 * @param t
+	 *            The input to the function.
+	 *
+	 * @return the supplier
+	 * @since 1.2.0
+	 */
+	default SupplierWithException<R, E> asSupplier(T t) {
+		return () -> apply(t);
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code Callable}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param t
+	 *            The input to the function.
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the callable
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> Callable<R> asCallable(FunctionWithException<T, R, E> function, T t) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asCallable(t);
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code Callable}.
+	 * 
+	 * @param t
+	 *            The input to the function.
+	 *
+	 * @return the callable
+	 * @since 1.2.0
+	 */
+	default Callable<R> asCallable(T t) {
+		return () -> apply(t);
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code RunnableWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param t
+	 *            The input to the function.
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the Runnable
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static <T, R, E extends Exception> RunnableWithException<E> asRunnable(FunctionWithException<T, R, E> function,
+			T t) {
+		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asRunnable(t);
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code RunnableWithException}.
+	 * 
+	 * @param t
+	 *            The input to the function.
+	 *
+	 * @return the Runnable
+	 * @since 1.2.0
+	 */
+	default RunnableWithException<E> asRunnable(T t) {
+		return () -> apply(t);
 	}
 
 }
