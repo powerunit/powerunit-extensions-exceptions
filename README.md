@@ -78,7 +78,7 @@ Three versions of this methods exists :
   A more concrete example may be :
   ```java
   Function<Exception, RuntimeException> mapper = 
-    ExceptionHandlerSupport.exceptionMapperFor(
+    ExceptionMapper.forException(
       SQLException.class,
       s -> 
            new WrappedException(
