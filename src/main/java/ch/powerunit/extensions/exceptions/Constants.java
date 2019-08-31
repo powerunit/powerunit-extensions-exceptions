@@ -46,14 +46,14 @@ final class Constants {
 			.lifted(Constants::buildJAXBExceptionMapper).get().orElse(null);
 
 	@SuppressWarnings("unchecked")
-	private static ExceptionMapper buildSQLExceptionMapper() throws Exception {
+	private static ExceptionMapper buildSQLExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException((Class<Exception>) Class.forName("java.sql.SQLException"),
 				e -> new WrappedException(String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(),
 						((SQLException) e).getErrorCode(), ((SQLException) e).getSQLState()), e));
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ExceptionMapper buildJAXBExceptionMapper() throws Exception {
+	private static ExceptionMapper buildJAXBExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException((Class<Exception>) Class.forName("javax.xml.bind.JAXBException"),
 				e -> new WrappedException(String.format("%s", e.toString()), e));
 	}
