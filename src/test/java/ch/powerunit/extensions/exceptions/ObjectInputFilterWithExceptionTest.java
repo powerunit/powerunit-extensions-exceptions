@@ -54,6 +54,13 @@ public class ObjectInputFilterWithExceptionTest implements TestSuite {
 	}
 
 	@Test
+	public void testCheckedExceptionHandlerNoException() {
+		assertThat(
+				ObjectInputFilterWithException.unchecked(x -> Status.ALLOWED, RuntimeException::new).checkInput(null))
+						.is(Status.ALLOWED);
+	}
+
+	@Test
 	public void testLiftedNoException() {
 		assertThat(ObjectInputFilterWithException.lifted(x -> Status.ALLOWED).apply(null))
 				.is(optionalIs(Status.ALLOWED));

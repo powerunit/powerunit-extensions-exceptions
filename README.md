@@ -197,6 +197,7 @@ The following classes are provided:
 | `LongToDoubleFunction`          | `LongToDoubleFunctionWithException<E>`   | `LongToDoubleFunction`    | `LongToDoubleFunction`           | `LongToDoubleFunction`   | N/A |
 | `LongToIntFunction`             | `LongToIntFunctionWithException`         | `LongToIntFunction`       | `LongToIntFunction`              | `LongToIntFunction`      |N/A |
 | `LongUnaryOperator`             | `LongUnaryOperatorWithException`         | `LongUnaryOperator`       | `LongUnaryOperator`              | `LongUnaryOperator`      |N/A |
+| `ObjectInputFilter`                 | `ObjectInputFilterWithException<T,R,E>`           | `ObjectInputFilter`           | `Function<FilterInfo,Optional<Status>>`        | `ObjectInputFilter`          | `Function<FilterInfo,CompletionStage<Status>>` |
 | `ObjDoubleConsumer<T>`          | `ObjDoubleConsumerWithException<T,E>`    | `ObjDoubleConsumer<T>`    | `ObjDoubleConsumer<T>`           | `ObjDoubleConsumer<T>`   | `Function<T,Double,CompletionStage<Void>>` |
 | `ObjIntConsumer<T>`             | `ObjIntConsumerWithException<T,E>`       | `ObjIntConsumer<T>`       | `ObjIntConsumer<T>`              | `ObjIntConsumer<T>`      | `Function<T,Integer,CompletionStage<Void>>` |
 | `ObjLongConsumer<T>`            | `ObjLongConsumerWithException<T,E>`      | `ObjLongConsumer<T>`      | `ObjLongConsumer<T>`             | `ObjLongConsumer<T>`     | `Function<T,Long,CompletionStage<Void>>` |
