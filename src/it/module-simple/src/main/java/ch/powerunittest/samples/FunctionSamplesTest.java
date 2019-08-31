@@ -47,7 +47,7 @@ public class FunctionSamplesTest {
 	public static void sample2() {
 
 		try {
-			Function<Exception, RuntimeException> mapper = ExceptionMapper.SQL_EXCEPTION_MAPPER;
+			Function<Exception, RuntimeException> mapper = ExceptionMapper.sqlExceptionMapper();
 		} catch (NoClassDefFoundError e) {
 			return;
 		}
@@ -56,7 +56,7 @@ public class FunctionSamplesTest {
 
 	public static void sample3() {
 
-		Function<Exception, RuntimeException> mapper = ExceptionMapper.SQL_EXCEPTION_MAPPER;
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.sqlExceptionMapper();
 		FunctionWithException<String, String, SQLException> fonctionThrowingException = FunctionWithException
 				.failing(SQLException::new);
 

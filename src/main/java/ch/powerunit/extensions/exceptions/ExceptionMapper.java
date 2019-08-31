@@ -19,7 +19,6 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -36,11 +35,16 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * <p>
 	 * <b>This mapper will only works correctly if the module <i>java.sql</i> is
 	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code SQLException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code SQLException} is not available (java.sql
+	 *             module missing).
 	 */
-	static final ExceptionMapper SQL_EXCEPTION_MAPPER = forException(SQLException.class,
-			e -> new WrappedException(
-					String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(), e.getErrorCode(), e.getSQLState()),
-					e));
+	static ExceptionMapper sqlExceptionMapper() {
+		return Constants.SQL_EXCEPTION_MAPPER;
+	}
 
 	Class<? extends Exception> targetException();
 

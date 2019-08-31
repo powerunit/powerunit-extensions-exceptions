@@ -19,6 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.sql.SQLException;
+
 /**
  * @author borettim
  *
@@ -36,6 +38,11 @@ final class Constants {
 	public static final String CONSUMER_CANT_BE_NULL = "consumer can't be null";
 
 	public static final String EXCEPTIONMAPPER_CANT_BE_NULL = "exceptionMapper can't be null";
+	
+	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = ExceptionMapper.forException(SQLException.class,
+			e -> new WrappedException(
+					String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(), e.getErrorCode(), e.getSQLState()),
+					e));
 
 	private Constants() {
 	}
