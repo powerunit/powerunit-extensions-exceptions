@@ -30,7 +30,6 @@ import java.util.function.Function;
 
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
-import ch.powerunit.extensions.exceptions.ExceptionHandlerSupport;
 import ch.powerunit.extensions.exceptions.ExceptionMapper;
 import ch.powerunit.extensions.exceptions.FunctionWithException;
 import ch.powerunit.extensions.exceptions.WrappedException;
@@ -162,6 +161,24 @@ public class FunctionSamplesTest implements TestSuite {
 
 		assertWhen(x -> functionThrowingRuntimeException.apply(x), "x").throwException(
 				both(exceptionMessage("null ; ErrorCode=0 ; SQLState=null")).and(instanceOf(WrappedException.class)));
+
+	}
+	
+	@Test
+	public void sample8() {
+
+		// Sample with SQLException
+
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.sqlExceptionMapper();
+
+		FunctionWithException<String, String, SQLException> fonctionThrowingException = FunctionWithException
+				.failing(SQLException::new);
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, mapper);
+
+		assertWhen(x -> functionThrowingRuntimeException.apply(x), "x").throwException(
+				both(exceptionMessage("null - ErrorCode=0 ; SQLState=null")).and(instanceOf(WrappedException.class)));
 
 	}
 

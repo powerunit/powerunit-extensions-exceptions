@@ -29,6 +29,23 @@ import java.util.function.Function;
  */
 public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 
+	/**
+	 * Exception wrapper, that may be used to copy error code and sql state to the
+	 * {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the module <i>java.sql</i> is
+	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code SQLException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code SQLException} is not available (java.sql
+	 *             module missing).
+	 */
+	static ExceptionMapper sqlExceptionMapper() {
+		return Constants.SQL_EXCEPTION_MAPPER;
+	}
+
 	Class<? extends Exception> targetException();
 
 	/**
