@@ -39,18 +39,24 @@ final class Constants {
 
 	public static final String EXCEPTIONMAPPER_CANT_BE_NULL = "exceptionMapper can't be null";
 
-	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = ExceptionMapper.forException(SQLException.class,
-			e -> new WrappedException(
-					String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(), e.getErrorCode(), e.getSQLState()),
-					e));
+	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildSQLExceptionMapper).get().orElse(null);
+
+	public static final ExceptionMapper JAXBEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildJAXBExceptionMapper).get().orElse(null);
 
 	@SuppressWarnings("unchecked")
-	public static final ExceptionMapper JAXBEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
-			.<ExceptionMapper, ClassNotFoundException>lifted(
-					() -> ExceptionMapper.forException((Class<Exception>) Class.forName("java.xml.bind.JAXBException"),
-							e -> new WrappedException(
-									String.format("%s", e.toString()), e)))
-			.get().orElse(null);
+	private static ExceptionMapper buildSQLExceptionMapper() throws Exception {
+		return ExceptionMapper.forException((Class<Exception>) Class.forName("java.sql.SQLException"),
+				e -> new WrappedException(String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(),
+						((SQLException) e).getErrorCode(), ((SQLException) e).getSQLState()), e));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildJAXBExceptionMapper() throws Exception {
+		return ExceptionMapper.forException((Class<Exception>) Class.forName("javax.xml.bind.JAXBException"),
+				e -> new WrappedException(String.format("%s", e.toString()), e));
+	}
 
 	private Constants() {
 	}

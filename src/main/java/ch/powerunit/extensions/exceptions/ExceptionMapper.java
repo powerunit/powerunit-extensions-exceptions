@@ -44,7 +44,8 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 *             module missing).
 	 */
 	static ExceptionMapper sqlExceptionMapper() {
-		return Constants.SQL_EXCEPTION_MAPPER;
+		return Optional.ofNullable(Constants.SQL_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the sqlException"));
 	}
 
 	/**

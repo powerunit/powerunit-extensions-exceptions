@@ -164,4 +164,9 @@ public class ExceptionMapperTest implements TestSuite {
 				new SQLException("test")).is(both(exceptionMessage("test")).and(instanceOf(WrappedException.class)));
 	}
 
+	@Test
+	public void testJaxbException() {
+		assertWhen(x -> ExceptionMapper.jaxbExceptionMapper()).throwException(instanceOf(NoClassDefFoundError.class));
+	}
+
 }

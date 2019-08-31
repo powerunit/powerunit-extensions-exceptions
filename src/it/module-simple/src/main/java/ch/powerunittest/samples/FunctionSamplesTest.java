@@ -95,7 +95,7 @@ public class FunctionSamplesTest {
 
 		Function<Exception, RuntimeException> mapper = ExceptionMapper.jaxbExceptionMapper();
 		FunctionWithException<String, String, JAXBException> fonctionThrowingException = FunctionWithException
-				.failing(()->new JAXBException("message", new Exception("cause")));
+				.failing(() -> new JAXBException("message", new Exception("cause")));
 
 		Function<String, String> functionThrowingRuntimeException = FunctionWithException
 				.unchecked(fonctionThrowingException, mapper);
@@ -104,7 +104,8 @@ public class FunctionSamplesTest {
 			functionThrowingRuntimeException.apply("x");
 		} catch (WrappedException e) {
 			e.printStackTrace();
-			if ("null - ErrorCode=0 ; SQLState=null".equals(e.getMessage())) {
+			if (("javax.xml.bind.JAXBException: message\n" + " - with linked exception:\n"
+					+ "[java.lang.Exception: cause]").equals(e.getMessage())) {
 				return;
 			}
 			throw new IllegalArgumentException("Wrong exception : " + e.getMessage(), e);
@@ -116,12 +117,16 @@ public class FunctionSamplesTest {
 
 	public static void main(String[] args) {
 		sample1();
-		if (args.length > 0 && "KO".equals(args[0])) {
+		if (args.length > 0 && "NOSQL".equals(args[0])) {
 			sample2();
+		} else if (args.length > 0 && "NOJAXB".equals(args[0])) {
 			sample4();
-		} else {
+		} else if (args.length > 0 && "SQL".equals(args[0])) {
 			sample3();
+			sample4();
+		} else if (args.length > 0 && "JAXB".equals(args[0])) {
 			sample5();
+			sample2();
 		}
 	}
 
