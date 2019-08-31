@@ -46,8 +46,17 @@ public class FunctionSamplesTest {
 
 	public static void sample2() {
 
-		Function<Exception, RuntimeException> mapper = ExceptionMapper.SQL_EXCEPTION_MAPPER;
+		try {
+			Function<Exception, RuntimeException> mapper = ExceptionMapper.SQL_EXCEPTION_MAPPER;
+		} catch (NoClassDefFoundError e) {
+			return;
+		}
+		throw new IllegalArgumentException("No exception thrown");
+	}
 
+	public static void sample3() {
+
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.SQL_EXCEPTION_MAPPER;
 		FunctionWithException<String, String, SQLException> fonctionThrowingException = FunctionWithException
 				.failing(SQLException::new);
 
@@ -69,7 +78,11 @@ public class FunctionSamplesTest {
 
 	public static void main(String[] args) {
 		sample1();
-		sample2();
+		if(args.length>0 && "KO".equals(args[0])) {
+			sample2();			
+		} else {
+			sample3();
+		}
 	}
 
 }
