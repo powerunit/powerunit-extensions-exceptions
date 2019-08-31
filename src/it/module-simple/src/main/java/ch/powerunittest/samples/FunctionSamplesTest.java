@@ -21,6 +21,8 @@ package ch.powerunittest.samples;
 
 import java.util.function.Function;
 
+import javax.xml.bind.JAXBException;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -49,6 +51,7 @@ public class FunctionSamplesTest {
 		try {
 			Function<Exception, RuntimeException> mapper = ExceptionMapper.sqlExceptionMapper();
 		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
 			return;
 		}
 		throw new IllegalArgumentException("No exception thrown");
@@ -66,6 +69,41 @@ public class FunctionSamplesTest {
 		try {
 			functionThrowingRuntimeException.apply("x");
 		} catch (WrappedException e) {
+			e.printStackTrace();
+			if ("null - ErrorCode=0 ; SQLState=null".equals(e.getMessage())) {
+				return;
+			}
+			throw new IllegalArgumentException("Wrong exception : " + e.getMessage(), e);
+
+		}
+		throw new IllegalArgumentException("No exception thrown");
+
+	}
+
+	public static void sample4() {
+
+		try {
+			Function<Exception, RuntimeException> mapper = ExceptionMapper.jaxbExceptionMapper();
+		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			return;
+		}
+		throw new IllegalArgumentException("No exception thrown");
+	}
+
+	public static void sample5() {
+
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.jaxbExceptionMapper();
+		FunctionWithException<String, String, JAXBException> fonctionThrowingException = FunctionWithException
+				.failing(()->new JAXBException("message", new Exception("cause")));
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, mapper);
+
+		try {
+			functionThrowingRuntimeException.apply("x");
+		} catch (WrappedException e) {
+			e.printStackTrace();
 			if ("null - ErrorCode=0 ; SQLState=null".equals(e.getMessage())) {
 				return;
 			}
@@ -78,10 +116,12 @@ public class FunctionSamplesTest {
 
 	public static void main(String[] args) {
 		sample1();
-		if(args.length>0 && "KO".equals(args[0])) {
-			sample2();			
+		if (args.length > 0 && "KO".equals(args[0])) {
+			sample2();
+			sample4();
 		} else {
 			sample3();
+			sample5();
 		}
 	}
 

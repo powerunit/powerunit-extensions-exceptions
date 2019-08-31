@@ -82,7 +82,7 @@
 								<argument>--module-path</argument>
 								<argument>${project.build.directory}/../../../local-repo/ch/powerunit/extensions/powerunit-extensions-exceptions/@project.version@/powerunit-extensions-exceptions-@project.version@.jar${path.separator}${project.build.directory}/${project.build.finalName}.jar</argument>
 								<argument>--add-modules</argument>
-								<argument>java.sql</argument>
+								<argument>java.sql,java.xml.bind</argument>
 								<argument>--module</argument>
 								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
 								<argument>OK</argument>

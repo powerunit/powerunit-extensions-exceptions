@@ -20,6 +20,7 @@
 package ch.powerunit.extensions.exceptions;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -44,6 +45,24 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 */
 	static ExceptionMapper sqlExceptionMapper() {
 		return Constants.SQL_EXCEPTION_MAPPER;
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy jaxb information to the
+	 * {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the class <i>JAXBException</i> is
+	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code JAXBException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code JAXBException} is not available.
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper jaxbExceptionMapper() {
+		return Optional.ofNullable(Constants.JAXBEXCEPTION_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the jaxbException"));
 	}
 
 	Class<? extends Exception> targetException();
