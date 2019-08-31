@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -28,6 +29,18 @@ import java.util.function.Function;
  * @since 2.0.0
  */
 public interface ExceptionMapper extends Function<Exception, RuntimeException> {
+
+	/**
+	 * Exception wrapper, that may be used to copy error code and sql state to the
+	 * {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the module <i>java.sql</i> is
+	 * available.</b>
+	 */
+	static final ExceptionMapper SQL_EXCEPTION_MAPPER = forException(SQLException.class,
+			e -> new WrappedException(
+					String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(), e.getErrorCode(), e.getSQLState()),
+					e));
 
 	Class<? extends Exception> targetException();
 

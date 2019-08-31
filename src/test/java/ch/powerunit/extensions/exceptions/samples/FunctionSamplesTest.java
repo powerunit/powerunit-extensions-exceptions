@@ -164,5 +164,23 @@ public class FunctionSamplesTest implements TestSuite {
 				both(exceptionMessage("null ; ErrorCode=0 ; SQLState=null")).and(instanceOf(WrappedException.class)));
 
 	}
+	
+	@Test
+	public void sample8() {
+
+		// Sample with SQLException
+
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.SQL_EXCEPTION_MAPPER;
+
+		FunctionWithException<String, String, SQLException> fonctionThrowingException = FunctionWithException
+				.failing(SQLException::new);
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, mapper);
+
+		assertWhen(x -> functionThrowingRuntimeException.apply(x), "x").throwException(
+				both(exceptionMessage("null - ErrorCode=0 ; SQLState=null")).and(instanceOf(WrappedException.class)));
+
+	}
 
 }
