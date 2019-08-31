@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.com/powerunit/powerunit-extensions-exceptions.svg?branch=master)](https://travis-ci.com/powerunit/powerunit-extensions-exceptions)[![Known Vulnerabilities](https://snyk.io/test/github/powerunit/powerunit-extensions-exceptions/badge.svg?targetFile=pom.xml)](https://snyk.io/test/github/powerunit/powerunit-extensions-exceptions?targetFile=pom.xml) [![DepShield Badge](https://depshield.sonatype.org/badges/powerunit/powerunit-extensions-exceptions/depshield.svg)](https://depshield.github.io) [![Total alerts](https://img.shields.io/lgtm/alerts/g/powerunit/powerunit-extensions-exceptions.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/powerunit/powerunit-extensions-exceptions/alerts/)[![Coverage Status](https://coveralls.io/repos/github/powerunit/powerunit-extensions-exceptions/badge.svg?branch=master)](https://coveralls.io/github/powerunit/powerunit-extensions-exceptions?branch=master)[![codecov](https://codecov.io/gh/powerunit/powerunit-extensions-exceptions/branch/master/graph/badge.svg)](https://codecov.io/gh/powerunit/powerunit-extensions-exceptions)[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/54e6f34a650147e48b1864a420695a1c)](https://www.codacy.com/app/mathieu.boretti/powerunit-extensions-exceptions?utm_source=github.com&utm_medium=referral&utm_content=powerunit/powerunit-extensions-exceptions&utm_campaign=Badge_Coverage)[![Codacy Badge](https://api.codacy.com/project/badge/Grade/54e6f34a650147e48b1864a420695a1c)](https://www.codacy.com/app/mathieu.boretti/powerunit-extensions-exceptions?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=powerunit/powerunit-extensions-exceptions&amp;utm_campaign=Badge_Grade)[![CodeFactor](https://www.codefactor.io/repository/github/powerunit/powerunit-extensions-exceptions/badge)](https://www.codefactor.io/repository/github/powerunit/powerunit-extensions-exceptions)[![BCH compliance](https://bettercodehub.com/edge/badge/powerunit/powerunit-extensions-exceptions?branch=master)](https://bettercodehub.com/results/powerunit/powerunit-extensions-exceptions)[![codebeat badge](https://codebeat.co/badges/cdebf167-fee0-46b4-b33d-c613f1586a9d)](https://codebeat.co/projects/github-com-powerunit-powerunit-extensions-exceptions-master)[![Maven Central](https://maven-badges.herokuapp.com/maven-central/ch.powerunit.extensions/powerunit-extensions-exceptions/badge.svg)](https://maven-badges.herokuapp.com/maven-central/ch.powerunit.extensions/powerunit-extensions-exceptions)![mergify-status](https://gh.mergify.io/badges/powerunit/powerunit-extensions-exceptions.png?style=cut)[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=powerunit_powerunit-extensions-exceptions&metric=alert_status)](https://sonarcloud.io/dashboard?id=powerunit_powerunit-extensions-exceptions)[![badge](https://report.ci/status/powerunit/powerunit-extensions-exceptions/badge.svg?branch=master)](https://report.ci/status/powerunit/powerunit-extensions-exceptions?branch=master)[![javadoc](http://javadoc.io/badge/ch.powerunit.extensions/powerunit-extensions-exceptions.svg?color=yellow)](http://javadoc.io/doc/ch.powerunit.extensions/powerunit-extensions-exceptions)
 
+**This version doesn't support anymore Java 8. [Please use an older version, for instance the version 1.2.0](https://github.com/powerunit/powerunit-extensions-exceptions/tree/powerunit-extensions-exceptions-1.2.0)**
+
+
 This library provides support to wraps _checked exception_, to be used as target functional interface (which by default only support `RuntimeException`).
 
 The library exposes several functional interface, similar to the one from `java.util.function`, but that may throw exception. Then several methods are provided to convert these exception to `RuntimeException` or lift the function.
@@ -25,7 +28,7 @@ Add the following dependency to your maven project :
 <dependency>
   <groupId>ch.powerunit.extensions</groupId>
   <artifactId>powerunit-extensions-exceptions</artifactId>
-  <version>1.2.0</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
@@ -76,7 +79,7 @@ Three versions of this methods exists :
   A more concrete example may be :
   ```java
   Function<Exception, RuntimeException> mapper = 
-    ExceptionHandlerSupport.exceptionMapperFor(
+    ExceptionMapper.forException(
       SQLException.class,
       s -> 
            new WrappedException(
@@ -90,7 +93,7 @@ Three versions of this methods exists :
            )
     );
   ```
-  In this example, it extracts the SQL information from the `SQLException`. The `exceptionMapperFor` method ensures that in case the exception is not a `SQLException`, a standard wrapping is done.
+  In this example, it extracts the SQL information from the `SQLException`. The `exceptionMapperFor` method ensures that in case the exception is not a `SQLException`, a standard wrapping is done. Please see [the dedicated section](#exception-mapper) for more information.
 
 ### `lift(ed)`
 
@@ -145,6 +148,16 @@ Two versions of this methods exists :
   Function<String,CompletionStage<String>> myStagedFunction = FunctionWithException.staged(x->x);
   ```
 
+### Exception Mapper
+
+_Since the version 2.0.0, the method `exceptionMapperFor` from interface `ExceptionHandlerSupport` is deprecated in favor of the new one `forException` from interface `ExceptionMapper`._
+
+The various methods `forExceptions` provides a way to chain several Exception Mapper.
+
+Also, some dedicated, _ready to used_, Exception Mapper are provided :
+
+* `sqlExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the SQL Error from the underlying exception. **This is only usable when the module java.sql is available**.
+
 ## Reference
 
 The following classes are provided:
@@ -184,6 +197,7 @@ The following classes are provided:
 | `LongToDoubleFunction`          | `LongToDoubleFunctionWithException<E>`   | `LongToDoubleFunction`    | `LongToDoubleFunction`           | `LongToDoubleFunction`   | N/A |
 | `LongToIntFunction`             | `LongToIntFunctionWithException`         | `LongToIntFunction`       | `LongToIntFunction`              | `LongToIntFunction`      |N/A |
 | `LongUnaryOperator`             | `LongUnaryOperatorWithException`         | `LongUnaryOperator`       | `LongUnaryOperator`              | `LongUnaryOperator`      |N/A |
+| `ObjectInputFilter`                 | `ObjectInputFilterWithException<T,R,E>`           | `ObjectInputFilter`           | `Function<FilterInfo,Optional<Status>>`        | `ObjectInputFilter`          | `Function<FilterInfo,CompletionStage<Status>>` |
 | `ObjDoubleConsumer<T>`          | `ObjDoubleConsumerWithException<T,E>`    | `ObjDoubleConsumer<T>`    | `ObjDoubleConsumer<T>`           | `ObjDoubleConsumer<T>`   | `Function<T,Double,CompletionStage<Void>>` |
 | `ObjIntConsumer<T>`             | `ObjIntConsumerWithException<T,E>`       | `ObjIntConsumer<T>`       | `ObjIntConsumer<T>`              | `ObjIntConsumer<T>`      | `Function<T,Integer,CompletionStage<Void>>` |
 | `ObjLongConsumer<T>`            | `ObjLongConsumerWithException<T,E>`      | `ObjLongConsumer<T>`      | `ObjLongConsumer<T>`             | `ObjLongConsumer<T>`     | `Function<T,Long,CompletionStage<Void>>` |
