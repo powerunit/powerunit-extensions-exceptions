@@ -21,6 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import java.sql.SQLException;
 
+import javax.xml.transform.TransformerException;
+
 /**
  * @author borettim
  *
@@ -48,6 +50,9 @@ final class Constants {
 	public static final ExceptionMapper SAXEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
 			.lifted(Constants::buildSAXExceptionMapper).get().orElse(null);
 
+	public static final ExceptionMapper TRANSFORMEREXCEPTION_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildTransformerExceptionMapper).get().orElse(null);
+
 	@SuppressWarnings("unchecked")
 	private static ExceptionMapper buildSQLExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException((Class<Exception>) Class.forName("java.sql.SQLException"),
@@ -65,6 +70,13 @@ final class Constants {
 	private static ExceptionMapper buildSAXExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException((Class<Exception>) Class.forName("org.xml.sax.SAXException"),
 				e -> new WrappedException(String.format("%s", e.toString()), e));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildTransformerExceptionMapper() throws ClassNotFoundException {
+		return ExceptionMapper.forException(
+				(Class<Exception>) Class.forName("javax.xml.transform.TransformerException"),
+				e -> new WrappedException(String.format("%s", ((TransformerException) e).getMessageAndLocation(), e)));
 	}
 
 	private Constants() {

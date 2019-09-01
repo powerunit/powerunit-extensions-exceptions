@@ -22,6 +22,7 @@ package ch.powerunittest.samples;
 import java.util.function.Function;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXParseException;
 
@@ -117,17 +118,6 @@ public class FunctionSamplesTest {
 
 	}
 
-	public static void sample6() {
-
-		try {
-			Function<Exception, RuntimeException> mapper = ExceptionMapper.saxExceptionMapper();
-		} catch (NoClassDefFoundError e) {
-			e.printStackTrace();
-			return;
-		}
-		throw new IllegalArgumentException("No exception thrown");
-	}
-
 	public static void sample7() {
 
 		Function<Exception, RuntimeException> mapper = ExceptionMapper.saxExceptionMapper();
@@ -143,6 +133,29 @@ public class FunctionSamplesTest {
 			e.printStackTrace();
 			if ("org.xml.sax.SAXParseExceptionpublicId: pid; systemId: sid; lineNumber: 1; columnNumber: 2; msg"
 					.equals(e.getMessage())) {
+				return;
+			}
+			throw new IllegalArgumentException("Wrong exception : " + e.getMessage(), e);
+
+		}
+		throw new IllegalArgumentException("No exception thrown");
+
+	}
+
+	public static void sample8() {
+
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.transformerExceptionMapper();
+		FunctionWithException<String, String, Exception> fonctionThrowingException = FunctionWithException
+				.failing(() -> new TransformerException("test"));
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, mapper);
+
+		try {
+			functionThrowingRuntimeException.apply("x");
+		} catch (WrappedException e) {
+			e.printStackTrace();
+			if ("test".equals(e.getMessage())) {
 				return;
 			}
 			throw new IllegalArgumentException("Wrong exception : " + e.getMessage(), e);
@@ -168,6 +181,7 @@ public class FunctionSamplesTest {
 			sample2();
 		} else if (args.length > 0 && "XML".equals(args[0])) {
 			sample7();
+			sample8();
 			sample4();
 			sample2();
 		}

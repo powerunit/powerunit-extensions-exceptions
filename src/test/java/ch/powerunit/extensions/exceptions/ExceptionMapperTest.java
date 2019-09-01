@@ -22,6 +22,11 @@ package ch.powerunit.extensions.exceptions;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+
+import org.xml.sax.SAXException;
+
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
@@ -166,12 +171,17 @@ public class ExceptionMapperTest implements TestSuite {
 
 	@Test
 	public void testJaxbException() {
-		ExceptionMapper.jaxbExceptionMapper();
+		ExceptionMapper.jaxbExceptionMapper().apply(new JAXBException("msg"));
 	}
 
 	@Test
-	public void testsaxException() {
-		ExceptionMapper.saxExceptionMapper();
+	public void testSaxException() {
+		ExceptionMapper.saxExceptionMapper().apply(new SAXException());
+	}
+
+	@Test
+	public void testTransformerException() {
+		ExceptionMapper.transformerExceptionMapper().apply(new TransformerException("msg"));
 	}
 
 }
