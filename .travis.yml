@@ -68,13 +68,13 @@ deploy:
       branch: master
       tags: false
       condition: $TRAVIS_JDK_VERSION = oraclejdk9
-  - provider: script
-    script: mvn deploy -DskipTests=true -B
-    skip-cleanup: true
-    on:
-      branch: master
-      tags: false
-      condition: $TRAVIS_JDK_VERSION = oraclejdk9
+#  - provider: script
+#    script: mvn deploy -DskipTests=true -B
+#    skip-cleanup: true
+#    on:
+#      branch: master
+#      tags: false
+#      condition: $TRAVIS_JDK_VERSION = oraclejdk9
 #  - provider: script
 #    script: mvn deploy -DskipTests=true -B -U -Psign,release
 #    skip-cleanup: true
