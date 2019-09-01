@@ -107,6 +107,10 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 
 	Class<? extends Exception> targetException();
 
+	private boolean accept(Exception e) {
+		return targetException().isInstance(e);
+	}
+
 	/**
 	 * Helper method to create exception wrapper that check the exception class.
 	 * 
@@ -145,7 +149,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * @return the mapping function.
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper mapper1, ExceptionMapper mapper2) {
-		return e -> mapper1.targetException().isInstance(e) ? mapper1.apply(e) : mapper2.apply(e);
+		return e -> mapper1.accept(e) ? mapper1.apply(e) : mapper2.apply(e);
 	}
 
 	/**
@@ -162,8 +166,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper mapper1, ExceptionMapper mapper2,
 			ExceptionMapper mapper3) {
-		Function<Exception, RuntimeException> last = forExceptions(mapper2, mapper3);
-		return e -> mapper1.targetException().isInstance(e) ? mapper1.apply(e) : last.apply(e);
+		return e -> (mapper1.accept(e) ? mapper1 : forExceptions(mapper2, mapper3)).apply(e);
 	}
 
 	/**
@@ -175,8 +178,8 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * @return the mapping function.
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper... mappers) {
-		return e -> stream(mappers).sequential().filter(m -> m.targetException().isInstance(e)).limit(1)
-				.map(m -> m.apply(e)).findFirst().orElseGet(() -> new WrappedException(e));
+		return e -> stream(mappers).sequential().filter(m -> m.accept(e)).limit(1).map(m -> m.apply(e)).findFirst()
+				.orElseGet(() -> new WrappedException(e));
 	}
 
 }
