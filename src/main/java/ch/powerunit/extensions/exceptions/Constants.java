@@ -76,7 +76,7 @@ final class Constants {
 	private static ExceptionMapper buildTransformerExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException(
 				(Class<Exception>) Class.forName("javax.xml.transform.TransformerException"),
-				e -> new WrappedException(String.format("%s", ((TransformerException) e).getMessageAndLocation(), e)));
+				e -> new WrappedException(String.format("%s", ((TransformerException) e).getMessageAndLocation()), e));
 	}
 
 	private Constants() {
