@@ -20,6 +20,7 @@
 package ch.powerunit.extensions.exceptions;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -43,7 +44,64 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 *             module missing).
 	 */
 	static ExceptionMapper sqlExceptionMapper() {
-		return Constants.SQL_EXCEPTION_MAPPER;
+		return Optional.ofNullable(Constants.SQL_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the sqlException"));
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy jaxb information to the
+	 * {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the class <i>JAXBException</i> is
+	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code JAXBException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code JAXBException} is not available.
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper jaxbExceptionMapper() {
+		return Optional.ofNullable(Constants.JAXBEXCEPTION_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the JAXBException"));
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy sax information to the
+	 * {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the class <i>SAXException</i> is
+	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code SAXException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code SAXException} is not available (java.xml
+	 *             module missing).
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper saxExceptionMapper() {
+		return Optional.ofNullable(Constants.SAXEXCEPTION_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the SAXException"));
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy transformer exception information
+	 * to the {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the class <i>SAXException</i> is
+	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code TransformerException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code TransformerException} is not available
+	 *             (java.xml module missing).
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper transformerExceptionMapper() {
+		return Optional.ofNullable(Constants.TRANSFORMEREXCEPTION_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the TransformerException"));
 	}
 
 	Class<? extends Exception> targetException();

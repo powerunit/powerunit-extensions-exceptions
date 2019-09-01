@@ -21,6 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import java.sql.SQLException;
 
+import javax.xml.transform.TransformerException;
+
 /**
  * @author borettim
  *
@@ -38,11 +40,44 @@ final class Constants {
 	public static final String CONSUMER_CANT_BE_NULL = "consumer can't be null";
 
 	public static final String EXCEPTIONMAPPER_CANT_BE_NULL = "exceptionMapper can't be null";
-	
-	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = ExceptionMapper.forException(SQLException.class,
-			e -> new WrappedException(
-					String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(), e.getErrorCode(), e.getSQLState()),
-					e));
+
+	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildSQLExceptionMapper).get().orElse(null);
+
+	public static final ExceptionMapper JAXBEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildJAXBExceptionMapper).get().orElse(null);
+
+	public static final ExceptionMapper SAXEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildSAXExceptionMapper).get().orElse(null);
+
+	public static final ExceptionMapper TRANSFORMEREXCEPTION_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildTransformerExceptionMapper).get().orElse(null);
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildSQLExceptionMapper() throws ClassNotFoundException {
+		return ExceptionMapper.forException((Class<Exception>) Class.forName("java.sql.SQLException"),
+				e -> new WrappedException(String.format("%s - ErrorCode=%s ; SQLState=%s", e.getMessage(),
+						((SQLException) e).getErrorCode(), ((SQLException) e).getSQLState()), e));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildJAXBExceptionMapper() throws ClassNotFoundException {
+		return ExceptionMapper.forException((Class<Exception>) Class.forName("javax.xml.bind.JAXBException"),
+				e -> new WrappedException(String.format("%s", e.toString()), e));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildSAXExceptionMapper() throws ClassNotFoundException {
+		return ExceptionMapper.forException((Class<Exception>) Class.forName("org.xml.sax.SAXException"),
+				e -> new WrappedException(String.format("%s", e.toString()), e));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildTransformerExceptionMapper() throws ClassNotFoundException {
+		return ExceptionMapper.forException(
+				(Class<Exception>) Class.forName("javax.xml.transform.TransformerException"),
+				e -> new WrappedException(String.format("%s", ((TransformerException) e).getMessageAndLocation()), e));
+	}
 
 	private Constants() {
 	}
