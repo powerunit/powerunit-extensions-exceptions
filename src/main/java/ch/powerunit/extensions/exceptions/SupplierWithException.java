@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -147,7 +146,7 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
+		return verifySupplier(supplier).uncheck();
 	}
 
 	/**
@@ -170,8 +169,8 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 */
 	static <T, E extends Exception> Supplier<T> unchecked(SupplierWithException<T, E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifySupplier(supplier);
+		verifyExceptionMapper(exceptionMapper);
 		return new SupplierWithException<T, E>() {
 
 			@Override
@@ -203,7 +202,7 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<Optional<T>> lifted(SupplierWithException<T, E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
+		return verifySupplier(supplier).lift();
 	}
 
 	/**
@@ -222,7 +221,7 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<T> ignored(SupplierWithException<T, E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
+		return verifySupplier(supplier).ignore();
 	}
 
 	/**
@@ -241,7 +240,7 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 *             if supplier is null
 	 */
 	static <T, E extends Exception> Supplier<CompletionStage<T>> staged(SupplierWithException<T, E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).stage();
+		return verifySupplier(supplier).stage();
 	}
 
 	/**
@@ -261,7 +260,7 @@ public interface SupplierWithException<T, E extends Exception> extends
 	 * @since 1.2.0
 	 */
 	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(SupplierWithException<R, E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).asFunction();
+		return verifySupplier(supplier).asFunction();
 	}
 
 	/**

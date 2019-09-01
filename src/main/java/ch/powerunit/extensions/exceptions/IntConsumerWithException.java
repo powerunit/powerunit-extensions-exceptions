@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyOperation;
 import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.CompletionStage;
@@ -155,7 +155,7 @@ public interface IntConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> IntConsumer unchecked(IntConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
+		return verifyOperation(operation).uncheck();
 	}
 
 	/**
@@ -177,8 +177,8 @@ public interface IntConsumerWithException<E extends Exception>
 	 */
 	static <E extends Exception> IntConsumer unchecked(IntConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyOperation(operation);
+		verifyExceptionMapper(exceptionMapper);
 		return new IntConsumerWithException<E>() {
 
 			@Override
@@ -206,7 +206,7 @@ public interface IntConsumerWithException<E extends Exception>
 	 * @see #lift()
 	 */
 	static <E extends Exception> IntConsumer lifted(IntConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
+		return verifyOperation(operation).lift();
 	}
 
 	/**
@@ -223,7 +223,7 @@ public interface IntConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> IntConsumer ignored(IntConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+		return verifyOperation(operation).ignore();
 	}
 
 	/**
@@ -239,7 +239,7 @@ public interface IntConsumerWithException<E extends Exception>
 	 * @since 1.1.0
 	 */
 	static <E extends Exception> IntFunction<CompletionStage<Void>> staged(IntConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+		return verifyOperation(operation).stage();
 	}
 
 	/**
@@ -255,7 +255,7 @@ public interface IntConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> ConsumerWithException<Integer, E> asConsumer(IntConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
+		return verifyOperation(operation)::accept;
 	}
 
 }

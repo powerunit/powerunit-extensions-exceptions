@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -117,7 +116,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> ToDoubleBiFunction<T, U> unchecked(
 			ToDoubleBiFunctionWithException<T, U, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -143,8 +142,8 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> ToDoubleBiFunction<T, U> unchecked(
 			ToDoubleBiFunctionWithException<T, U, E> function, Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new ToDoubleBiFunctionWithException<T, U, E>() {
 
 			@Override
@@ -179,7 +178,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> ToDoubleBiFunction<T, U> lifted(
 			ToDoubleBiFunctionWithException<T, U, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -201,7 +200,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> ToDoubleBiFunction<T, U> ignored(
 			ToDoubleBiFunctionWithException<T, U, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 }

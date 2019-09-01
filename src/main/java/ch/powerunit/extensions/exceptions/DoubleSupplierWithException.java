@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -103,7 +102,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> DoubleSupplier unchecked(DoubleSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
+		return verifySupplier(supplier).uncheck();
 	}
 
 	/**
@@ -125,8 +124,8 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleSupplier unchecked(DoubleSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifySupplier(supplier);
+		verifyExceptionMapper(exceptionMapper);
 		return new DoubleSupplierWithException<E>() {
 
 			@Override
@@ -156,7 +155,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> DoubleSupplier lifted(DoubleSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
+		return verifySupplier(supplier).lift();
 	}
 
 	/**
@@ -173,7 +172,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> DoubleSupplier ignored(DoubleSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
+		return verifySupplier(supplier).ignore();
 	}
 
 }

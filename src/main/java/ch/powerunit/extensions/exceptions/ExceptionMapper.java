@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 /**
  * Interface to help create mapper function for exception wrapping.
- * 
+ *
  * @since 2.0.0
  */
 public interface ExceptionMapper extends Function<Exception, RuntimeException> {
@@ -38,7 +38,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * <b>This mapper will only works correctly if the module <i>java.sql</i> is
 	 * available.</b>
 	 * <p>
-	 * 
+	 *
 	 * @return the Mapper for {@code SQLException}.
 	 * @throws NoClassDefFoundError
 	 *             In case the {@code SQLException} is not available (java.sql
@@ -56,7 +56,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * <b>This mapper will only works correctly if the class <i>JAXBException</i> is
 	 * available.</b>
 	 * <p>
-	 * 
+	 *
 	 * @return the Mapper for {@code JAXBException}.
 	 * @throws NoClassDefFoundError
 	 *             In case the {@code JAXBException} is not available.
@@ -74,7 +74,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * <b>This mapper will only works correctly if the class <i>SAXException</i> is
 	 * available.</b>
 	 * <p>
-	 * 
+	 *
 	 * @return the Mapper for {@code SAXException}.
 	 * @throws NoClassDefFoundError
 	 *             In case the {@code SAXException} is not available (java.xml
@@ -93,7 +93,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * <b>This mapper will only works correctly if the class <i>SAXException</i> is
 	 * available.</b>
 	 * <p>
-	 * 
+	 *
 	 * @return the Mapper for {@code TransformerException}.
 	 * @throws NoClassDefFoundError
 	 *             In case the {@code TransformerException} is not available
@@ -113,7 +113,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 
 	/**
 	 * Helper method to create exception wrapper that check the exception class.
-	 * 
+	 *
 	 * @param clazz
 	 *            the class of the exception to be wrapped.
 	 * @param mapper
@@ -141,7 +141,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	/**
 	 * Helper method to create exception wrapper to use the first mapper if
 	 * applicable or else the second.
-	 * 
+	 *
 	 * @param mapper1
 	 *            the first mapper to be used.
 	 * @param mapper2
@@ -155,7 +155,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	/**
 	 * Helper method to create exception wrapper to use the first mapper if
 	 * applicable or else the second or else the third
-	 * 
+	 *
 	 * @param mapper1
 	 *            the first mapper to be used.
 	 * @param mapper2
@@ -172,7 +172,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	/**
 	 * Helper method to create exception wrapper that use the first one that is
 	 * applicable.
-	 * 
+	 *
 	 * @param mappers
 	 *            the mapper to be tried
 	 * @return the mapping function.

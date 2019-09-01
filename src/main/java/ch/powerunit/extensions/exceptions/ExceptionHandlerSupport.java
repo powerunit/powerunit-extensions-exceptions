@@ -166,7 +166,7 @@ public interface ExceptionHandlerSupport<F, L> {
 
 	/**
 	 * Helper methods to create exception wrapper that check the exception class.
-	 * 
+	 *
 	 * @param clazz
 	 *            the class of the exception to be wrapped.
 	 * @param mapper

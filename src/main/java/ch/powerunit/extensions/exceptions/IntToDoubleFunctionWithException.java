@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.util.function.Function;
 import java.util.function.IntToDoubleFunction;
@@ -103,7 +102,7 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 *             if function is null
 	 */
 	static <E extends Exception> IntToDoubleFunction unchecked(IntToDoubleFunctionWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -125,8 +124,8 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 */
 	static <E extends Exception> IntToDoubleFunction unchecked(IntToDoubleFunctionWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new IntToDoubleFunctionWithException<E>() {
 
 			@Override
@@ -156,7 +155,7 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 *             if function is null
 	 */
 	static <E extends Exception> IntToDoubleFunction lifted(IntToDoubleFunctionWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -173,7 +172,7 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 	 *             if function is null
 	 */
 	static <E extends Exception> IntToDoubleFunction ignored(IntToDoubleFunctionWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 }

@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
 import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.CompletionStage;
@@ -184,7 +184,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).uncheck();
+		return verifyConsumer(consumer).uncheck();
 	}
 
 	/**
@@ -227,8 +227,8 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> unchecked(BiConsumerWithException<T, U, E> consumer,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyConsumer(consumer);
+		verifyExceptionMapper(exceptionMapper);
 		return new BiConsumerWithException<T, U, E>() {
 
 			@Override
@@ -276,7 +276,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> lifted(BiConsumerWithException<T, U, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).lift();
+		return verifyConsumer(consumer).lift();
 	}
 
 	/**
@@ -311,7 +311,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, U, E extends Exception> BiConsumer<T, U> ignored(BiConsumerWithException<T, U, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).ignore();
+		return verifyConsumer(consumer).ignore();
 	}
 
 	/**
@@ -332,7 +332,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiFunction<T, U, CompletionStage<Void>> staged(
 			BiConsumerWithException<T, U, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).stage();
+		return verifyConsumer(consumer).stage();
 	}
 
 	/**
@@ -355,7 +355,7 @@ public interface BiConsumerWithException<T, U, E extends Exception>
 	 */
 	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
 			BiConsumerWithException<T, U, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).asBiFunction();
+		return verifyConsumer(consumer).asBiFunction();
 	}
 
 	/**

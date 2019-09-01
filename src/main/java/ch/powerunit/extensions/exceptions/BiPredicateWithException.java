@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.BiPredicate;
@@ -132,7 +132,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicateWithException<T, U, E> negate(
 			BiPredicateWithException<T, U, E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
+		return verifyPredicate(predicate).negate();
 	}
 
 	/**
@@ -197,7 +197,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 *             if predicate is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
+		return verifyPredicate(predicate).uncheck();
 	}
 
 	/**
@@ -222,8 +222,8 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> unchecked(BiPredicateWithException<T, U, E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyPredicate(predicate);
+		verifyExceptionMapper(exceptionMapper);
 		return new BiPredicateWithException<T, U, E>() {
 
 			@Override
@@ -257,7 +257,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 *             if predicate is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> lifted(BiPredicateWithException<T, U, E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
+		return verifyPredicate(predicate).lift();
 	}
 
 	/**
@@ -278,7 +278,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 *             if predicate is null
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
+		return verifyPredicate(predicate).ignore();
 	}
 
 }

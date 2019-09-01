@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -220,7 +220,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -245,8 +245,8 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	static <T, R, E extends Exception> Function<T, R> unchecked(FunctionWithException<T, R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new FunctionWithException<T, R, E>() {
 
 			@Override
@@ -280,7 +280,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, Optional<R>> lifted(FunctionWithException<T, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -301,7 +301,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 	/**
@@ -322,7 +322,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <T, R, E extends Exception> Function<T, CompletionStage<R>> staged(FunctionWithException<T, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
+		return verifyFunction(function).stage();
 	}
 
 	/**
@@ -342,7 +342,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 * @since 1.2.0
 	 */
 	static <T, R, E extends Exception> ConsumerWithException<T, E> asConsumer(FunctionWithException<T, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asConsumer();
+		return verifyFunction(function).asConsumer();
 	}
 
 	/**
@@ -376,16 +376,16 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> BiFunctionWithException<T, U, R, E> asBiFunction(
 			FunctionWithException<T, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asBiFunction();
+		return verifyFunction(function).asBiFunction();
 	}
 
 	/**
 	 * Converts a {@code FunctionWithException} to a
 	 * {@code BiFunctionWithException}.
-	 * 
+	 *
 	 * @param <U>
 	 *            the type of the second input to the function
-	 * 
+	 *
 	 * @return the function
 	 * @since 1.2.0
 	 */
@@ -413,12 +413,12 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	static <T, R, E extends Exception> SupplierWithException<R, E> asSupplier(FunctionWithException<T, R, E> function,
 			T t) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asSupplier(t);
+		return verifyFunction(function).asSupplier(t);
 	}
 
 	/**
 	 * Converts a {@code FunctionWithException} to a {@code SupplierWithException}.
-	 * 
+	 *
 	 * @param t
 	 *            The input to the function.
 	 *
@@ -448,12 +448,12 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 * @since 1.2.0
 	 */
 	static <T, R, E extends Exception> Callable<R> asCallable(FunctionWithException<T, R, E> function, T t) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asCallable(t);
+		return verifyFunction(function).asCallable(t);
 	}
 
 	/**
 	 * Converts a {@code FunctionWithException} to a {@code Callable}.
-	 * 
+	 *
 	 * @param t
 	 *            The input to the function.
 	 *
@@ -484,12 +484,12 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	static <T, R, E extends Exception> RunnableWithException<E> asRunnable(FunctionWithException<T, R, E> function,
 			T t) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asRunnable(t);
+		return verifyFunction(function).asRunnable(t);
 	}
 
 	/**
 	 * Converts a {@code FunctionWithException} to a {@code RunnableWithException}.
-	 * 
+	 *
 	 * @param t
 	 *            The input to the function.
 	 *

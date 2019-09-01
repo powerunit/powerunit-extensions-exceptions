@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
@@ -182,7 +182,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 *             if function is null
 	 */
 	static <E extends Exception> LongUnaryOperator unchecked(LongUnaryOperatorWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -204,8 +204,8 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	static <E extends Exception> LongUnaryOperator unchecked(LongUnaryOperatorWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new LongUnaryOperatorWithException<E>() {
 
 			@Override
@@ -235,7 +235,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 *             if function is null
 	 */
 	static <E extends Exception> LongUnaryOperator lifted(LongUnaryOperatorWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -252,7 +252,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 *             if function is null
 	 */
 	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 }

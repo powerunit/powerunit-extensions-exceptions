@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyOperation;
 import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.CompletionStage;
@@ -154,7 +154,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
+		return verifyOperation(operation).uncheck();
 	}
 
 	/**
@@ -176,8 +176,8 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleConsumer unchecked(DoubleConsumerWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyOperation(operation);
+		verifyExceptionMapper(exceptionMapper);
 		return new DoubleConsumerWithException<E>() {
 
 			@Override
@@ -207,7 +207,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> DoubleConsumer lifted(DoubleConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
+		return verifyOperation(operation).lift();
 	}
 
 	/**
@@ -224,7 +224,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> DoubleConsumer ignored(DoubleConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+		return verifyOperation(operation).ignore();
 	}
 
 	/**
@@ -242,7 +242,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleFunction<CompletionStage<Void>> staged(
 			DoubleConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+		return verifyOperation(operation).stage();
 	}
 
 	/**
@@ -258,7 +258,7 @@ public interface DoubleConsumerWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> ConsumerWithException<Double, E> asConsumer(DoubleConsumerWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
+		return verifyOperation(operation)::accept;
 	}
 
 }

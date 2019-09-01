@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyOperation;
 
 import java.util.concurrent.CompletionStage;
 import java.util.function.BiFunction;
@@ -138,7 +137,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 *             if operation is null
 	 */
 	static <T, E extends Exception> ObjLongConsumer<T> unchecked(ObjLongConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
+		return verifyOperation(operation).uncheck();
 	}
 
 	/**
@@ -162,8 +161,8 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 */
 	static <T, E extends Exception> ObjLongConsumer<T> unchecked(ObjLongConsumerWithException<T, E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyOperation(operation);
+		verifyExceptionMapper(exceptionMapper);
 		return new ObjLongConsumerWithException<T, E>() {
 
 			@Override
@@ -195,7 +194,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 *             if operation is null
 	 */
 	static <T, E extends Exception> ObjLongConsumer<T> lifted(ObjLongConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
+		return verifyOperation(operation).lift();
 	}
 
 	/**
@@ -214,7 +213,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 *             if operation is null
 	 */
 	static <T, E extends Exception> ObjLongConsumer<T> ignored(ObjLongConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+		return verifyOperation(operation).ignore();
 	}
 
 	/**
@@ -234,7 +233,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 */
 	static <T, E extends Exception> BiFunction<T, Long, CompletionStage<Void>> staged(
 			ObjLongConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+		return verifyOperation(operation).stage();
 	}
 
 	/**
@@ -253,7 +252,7 @@ public interface ObjLongConsumerWithException<T, E extends Exception>
 	 */
 	static <T, E extends Exception> BiConsumerWithException<T, Long, E> asBiConsumer(
 			ObjLongConsumerWithException<T, E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL)::accept;
+		return verifyOperation(operation)::accept;
 	}
 
 }

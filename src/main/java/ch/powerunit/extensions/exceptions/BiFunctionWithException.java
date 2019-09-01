@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -207,7 +207,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -245,8 +245,8 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> unchecked(BiFunctionWithException<T, U, R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new BiFunctionWithException<T, U, R, E>() {
 
 			@Override
@@ -283,7 +283,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, Optional<R>> lifted(
 			BiFunctionWithException<T, U, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -306,7 +306,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 	/**
@@ -330,7 +330,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, CompletionStage<R>> staged(
 			BiFunctionWithException<T, U, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
+		return verifyFunction(function).stage();
 	}
 
 	/**
@@ -354,7 +354,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> BiConsumerWithException<T, U, E> asBiConsumer(
 			BiFunctionWithException<T, U, R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asBiConsumer();
+		return verifyFunction(function).asBiConsumer();
 	}
 
 	/**
@@ -374,7 +374,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 *
 	 * @param function
 	 *            to be converter
-	 * 
+	 *
 	 * @param u
 	 *            the second parameter of the {@code BiFunctionWithException} that
 	 *            will be used inside the new {code FunctionWithException}.
@@ -393,17 +393,17 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> FunctionWithException<T, R, E> asFunction(
 			BiFunctionWithException<T, U, R, E> function, U u) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).asFunction(u);
+		return verifyFunction(function).asFunction(u);
 	}
 
 	/**
 	 * Converts a {@code BiFunctionWithException} to a
 	 * {@code FunctionWithException}.
-	 * 
+	 *
 	 * @param u
 	 *            the second parameter of the {@code BiFunctionWithException} that
 	 *            will be used inside the new {code FunctionWithException}.
-	 * 
+	 *
 	 *
 	 * @return the consumer
 	 * @since 1.2.0

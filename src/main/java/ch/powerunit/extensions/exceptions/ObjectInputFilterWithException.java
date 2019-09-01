@@ -19,14 +19,13 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.io.ObjectInputFilter;
-import java.io.ObjectInputStream;
 import java.io.ObjectInputFilter.FilterInfo;
 import java.io.ObjectInputFilter.Status;
+import java.io.ObjectInputStream;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -164,7 +163,7 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 *             if function is null
 	 */
 	static <E extends Exception> ObjectInputFilter unchecked(ObjectInputFilterWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -186,8 +185,8 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 */
 	static <E extends Exception> ObjectInputFilter unchecked(ObjectInputFilterWithException<E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new ObjectInputFilterWithException<E>() {
 
 			@Override
@@ -218,7 +217,7 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 */
 	static <E extends Exception> Function<FilterInfo, Optional<Status>> lifted(
 			ObjectInputFilterWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -236,7 +235,7 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 *             if function is null
 	 */
 	static <E extends Exception> ObjectInputFilter ignored(ObjectInputFilterWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 	/**
@@ -254,7 +253,7 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 */
 	static <E extends Exception> Function<FilterInfo, CompletionStage<Status>> staged(
 			ObjectInputFilterWithException<E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
+		return verifyFunction(function).stage();
 	}
 
 }

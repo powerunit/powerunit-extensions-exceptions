@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
@@ -100,7 +99,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
+		return verifySupplier(supplier).uncheck();
 	}
 
 	/**
@@ -122,8 +121,8 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 */
 	static <E extends Exception> BooleanSupplier unchecked(BooleanSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifySupplier(supplier);
+		verifyExceptionMapper(exceptionMapper);
 		return new BooleanSupplierWithException<E>() {
 
 			@Override
@@ -153,7 +152,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> BooleanSupplier lifted(BooleanSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
+		return verifySupplier(supplier).lift();
 	}
 
 	/**
@@ -170,7 +169,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> BooleanSupplier ignored(BooleanSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
+		return verifySupplier(supplier).ignore();
 	}
 
 }

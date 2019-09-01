@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.PREDICATE_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
 import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
@@ -120,7 +120,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 * @see #negate()
 	 */
 	static <E extends Exception> LongPredicateWithException<E> negate(LongPredicateWithException<E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).negate();
+		return verifyPredicate(predicate).negate();
 	}
 
 	/**
@@ -178,7 +178,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 *             if predicate is null
 	 */
 	static <E extends Exception> LongPredicate unchecked(LongPredicateWithException<E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).uncheck();
+		return verifyPredicate(predicate).uncheck();
 	}
 
 	/**
@@ -199,8 +199,8 @@ public interface LongPredicateWithException<E extends Exception>
 	 */
 	static <E extends Exception> LongPredicate unchecked(LongPredicateWithException<E> predicate,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(predicate, PREDICATE_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyPredicate(predicate);
+		verifyExceptionMapper(exceptionMapper);
 		return new LongPredicateWithException<E>() {
 
 			@Override
@@ -230,7 +230,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 *             if predicate is null
 	 */
 	static <E extends Exception> LongPredicate lifted(LongPredicateWithException<E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).lift();
+		return verifyPredicate(predicate).lift();
 	}
 
 	/**
@@ -247,7 +247,7 @@ public interface LongPredicateWithException<E extends Exception>
 	 *             if predicate is null
 	 */
 	static <E extends Exception> LongPredicate ignored(LongPredicateWithException<E> predicate) {
-		return requireNonNull(predicate, PREDICATE_CANT_BE_NULL).ignore();
+		return verifyPredicate(predicate).ignore();
 	}
 
 }

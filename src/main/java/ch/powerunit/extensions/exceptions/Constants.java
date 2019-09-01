@@ -21,6 +21,7 @@ package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.ExceptionMapper.forException;
 import static ch.powerunit.extensions.exceptions.SupplierWithException.ignored;
+import static java.util.Objects.requireNonNull;
 
 import java.sql.SQLException;
 
@@ -32,18 +33,6 @@ import javax.xml.transform.TransformerException;
  */
 final class Constants {
 
-	public static final String OPERATION_CANT_BE_NULL = "operation can't be null";
-
-	public static final String FUNCTION_CANT_BE_NULL = "function can't be null";
-
-	public static final String SUPPLIER_CANT_BE_NULL = "supplier can't be null";
-
-	public static final String PREDICATE_CANT_BE_NULL = "predicate can't be null";
-
-	public static final String CONSUMER_CANT_BE_NULL = "consumer can't be null";
-
-	public static final String EXCEPTIONMAPPER_CANT_BE_NULL = "exceptionMapper can't be null";
-
 	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = ignored(Constants::buildSQLExceptionMapper).get();
 
 	public static final ExceptionMapper JAXBEXCEPTION_EXCEPTION_MAPPER = ignored(Constants::buildJAXBExceptionMapper)
@@ -54,6 +43,30 @@ final class Constants {
 
 	public static final ExceptionMapper TRANSFORMEREXCEPTION_EXCEPTION_MAPPER = ignored(
 			Constants::buildTransformerExceptionMapper).get();
+
+	public static <T> T verifyOperation(T obj) {
+		return requireNonNull(obj, "operation can't be null");
+	}
+
+	public static <T> T verifyFunction(T obj) {
+		return requireNonNull(obj, "function can't be null");
+	}
+
+	public static <T> T verifySupplier(T obj) {
+		return requireNonNull(obj, "supplier can't be null");
+	}
+
+	public static <T> T verifyPredicate(T obj) {
+		return requireNonNull(obj, "predicate can't be null");
+	}
+
+	public static <T> T verifyConsumer(T obj) {
+		return requireNonNull(obj, "consumer can't be null");
+	}
+
+	public static <T> T verifyExceptionMapper(T obj) {
+		return requireNonNull(obj, "exceptionMapper can't be null");
+	}
 
 	@SuppressWarnings("unchecked")
 	private static ExceptionMapper buildSQLExceptionMapper() throws ClassNotFoundException {

@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.SUPPLIER_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 
 import java.util.function.Function;
 import java.util.function.IntSupplier;
@@ -104,7 +103,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> IntSupplier unchecked(IntSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).uncheck();
+		return verifySupplier(supplier).uncheck();
 	}
 
 	/**
@@ -126,8 +125,8 @@ public interface IntSupplierWithException<E extends Exception>
 	 */
 	static <E extends Exception> IntSupplier unchecked(IntSupplierWithException<E> supplier,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(supplier, SUPPLIER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifySupplier(supplier);
+		verifyExceptionMapper(exceptionMapper);
 		return new IntSupplierWithException<E>() {
 
 			@Override
@@ -157,7 +156,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> IntSupplier lifted(IntSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).lift();
+		return verifySupplier(supplier).lift();
 	}
 
 	/**
@@ -174,7 +173,7 @@ public interface IntSupplierWithException<E extends Exception>
 	 *             if supplier is null
 	 */
 	static <E extends Exception> IntSupplier ignored(IntSupplierWithException<E> supplier) {
-		return requireNonNull(supplier, SUPPLIER_CANT_BE_NULL).ignore();
+		return verifySupplier(supplier).ignore();
 	}
 
 }

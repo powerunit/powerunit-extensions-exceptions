@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.OPERATION_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyOperation;
 import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.CompletionStage;
@@ -147,7 +147,7 @@ public interface RunnableWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).uncheck();
+		return verifyOperation(operation).uncheck();
 	}
 
 	/**
@@ -168,8 +168,8 @@ public interface RunnableWithException<E extends Exception>
 	 */
 	static <E extends Exception> Runnable unchecked(RunnableWithException<E> operation,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyOperation(operation);
+		verifyExceptionMapper(exceptionMapper);
 		return new RunnableWithException<E>() {
 
 			@Override
@@ -199,7 +199,7 @@ public interface RunnableWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> Runnable lifted(RunnableWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).lift();
+		return verifyOperation(operation).lift();
 	}
 
 	/**
@@ -217,7 +217,7 @@ public interface RunnableWithException<E extends Exception>
 	 * @since 1.1.0
 	 */
 	static <E extends Exception> Runnable ignored(RunnableWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).ignore();
+		return verifyOperation(operation).ignore();
 	}
 
 	/**
@@ -232,7 +232,7 @@ public interface RunnableWithException<E extends Exception>
 	 *             if operation is null
 	 */
 	static <E extends Exception> Supplier<CompletionStage<Void>> staged(RunnableWithException<E> operation) {
-		return requireNonNull(operation, OPERATION_CANT_BE_NULL).stage();
+		return verifyOperation(operation).stage();
 	}
 
 	/**
@@ -253,7 +253,7 @@ public interface RunnableWithException<E extends Exception>
 	 * @since 1.2.0
 	 */
 	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(RunnableWithException<E> operation) {
-		requireNonNull(operation, OPERATION_CANT_BE_NULL);
+		verifyOperation(operation);
 		return t -> {
 			operation.run();
 			return null;

@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
@@ -148,7 +147,7 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <R, E extends Exception> DoubleFunction<R> unchecked(DoubleFunctionWithException<R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -172,8 +171,8 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	 */
 	static <R, E extends Exception> DoubleFunction<R> unchecked(DoubleFunctionWithException<R, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new DoubleFunctionWithException<R, E>() {
 
 			@Override
@@ -205,7 +204,7 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <R, E extends Exception> DoubleFunction<Optional<R>> lifted(DoubleFunctionWithException<R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -224,7 +223,7 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	 *             if function is null
 	 */
 	static <R, E extends Exception> DoubleFunction<R> ignored(DoubleFunctionWithException<R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 	/**
@@ -244,7 +243,7 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	 */
 	static <R, E extends Exception> DoubleFunction<CompletionStage<R>> staged(
 			DoubleFunctionWithException<R, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).stage();
+		return verifyFunction(function).stage();
 	}
 
 }

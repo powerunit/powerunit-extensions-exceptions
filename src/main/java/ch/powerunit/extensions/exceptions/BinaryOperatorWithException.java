@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -116,7 +115,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 *             if function is null
 	 */
 	static <T, E extends Exception> BinaryOperator<T> unchecked(BinaryOperatorWithException<T, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -140,8 +139,8 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 */
 	static <T, E extends Exception> BinaryOperator<T> unchecked(BinaryOperatorWithException<T, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new BinaryOperatorWithException<T, E>() {
 
 			@Override
@@ -173,7 +172,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 *             if function is null
 	 */
 	static <T, E extends Exception> BiFunction<T, T, Optional<T>> lifted(BinaryOperatorWithException<T, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -192,7 +191,7 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 	 *             if function is null
 	 */
 	static <T, E extends Exception> BinaryOperator<T> ignored(BinaryOperatorWithException<T, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 }

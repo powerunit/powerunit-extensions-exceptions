@@ -19,8 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.CONSUMER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
+import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
 import static java.util.Objects.requireNonNull;
 
 import java.util.concurrent.CompletionStage;
@@ -173,7 +173,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).uncheck();
+		return verifyConsumer(consumer).uncheck();
 	}
 
 	/**
@@ -214,8 +214,8 @@ public interface ConsumerWithException<T, E extends Exception>
 	 */
 	static <T, E extends Exception> Consumer<T> unchecked(ConsumerWithException<T, E> consumer,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(consumer, CONSUMER_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyConsumer(consumer);
+		verifyExceptionMapper(exceptionMapper);
 		return new ConsumerWithException<T, E>() {
 
 			@Override
@@ -247,7 +247,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, E extends Exception> Consumer<T> lifted(ConsumerWithException<T, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).lift();
+		return verifyConsumer(consumer).lift();
 	}
 
 	/**
@@ -266,7 +266,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, E extends Exception> Consumer<T> ignored(ConsumerWithException<T, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).ignore();
+		return verifyConsumer(consumer).ignore();
 	}
 
 	/**
@@ -284,7 +284,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	 * @since 1.1.0
 	 */
 	static <T, E extends Exception> Function<T, CompletionStage<Void>> staged(ConsumerWithException<T, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).stage();
+		return verifyConsumer(consumer).stage();
 	}
 
 	/**
@@ -304,7 +304,7 @@ public interface ConsumerWithException<T, E extends Exception>
 	 *             if consumer is null
 	 */
 	static <T, R, E extends Exception> FunctionWithException<T, R, E> asFunction(ConsumerWithException<T, E> consumer) {
-		return requireNonNull(consumer, CONSUMER_CANT_BE_NULL).asFunction();
+		return verifyConsumer(consumer).asFunction();
 	}
 
 	/**

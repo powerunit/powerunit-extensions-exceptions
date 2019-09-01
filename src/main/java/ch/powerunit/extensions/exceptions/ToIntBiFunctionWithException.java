@@ -19,9 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import static ch.powerunit.extensions.exceptions.Constants.EXCEPTIONMAPPER_CANT_BE_NULL;
-import static ch.powerunit.extensions.exceptions.Constants.FUNCTION_CANT_BE_NULL;
-import static java.util.Objects.requireNonNull;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -116,7 +115,7 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 	 *             if function is null
 	 */
 	static <T, U, E extends Exception> ToIntBiFunction<T, U> unchecked(ToIntBiFunctionWithException<T, U, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).uncheck();
+		return verifyFunction(function).uncheck();
 	}
 
 	/**
@@ -142,8 +141,8 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> ToIntBiFunction<T, U> unchecked(ToIntBiFunctionWithException<T, U, E> function,
 			Function<Exception, RuntimeException> exceptionMapper) {
-		requireNonNull(function, FUNCTION_CANT_BE_NULL);
-		requireNonNull(exceptionMapper, EXCEPTIONMAPPER_CANT_BE_NULL);
+		verifyFunction(function);
+		verifyExceptionMapper(exceptionMapper);
 		return new ToIntBiFunctionWithException<T, U, E>() {
 
 			@Override
@@ -177,7 +176,7 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 	 *             if function is null
 	 */
 	static <T, U, E extends Exception> ToIntBiFunction<T, U> lifted(ToIntBiFunctionWithException<T, U, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).lift();
+		return verifyFunction(function).lift();
 	}
 
 	/**
@@ -198,7 +197,7 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 	 *             if function is null
 	 */
 	static <T, U, E extends Exception> ToIntBiFunction<T, U> ignored(ToIntBiFunctionWithException<T, U, E> function) {
-		return requireNonNull(function, FUNCTION_CANT_BE_NULL).ignore();
+		return verifyFunction(function).ignore();
 	}
 
 }
