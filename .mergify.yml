@@ -11,7 +11,6 @@ pull_request_rules:
       - "status-success=Travis CI - Pull Request"
       - "status-success=WIP"
       - "status-success=guardrails/scan"
-      - "status-success=LGTM analysis: Java"
       - "status-success=Better Code Hub"
       - "base=master"
     actions:
@@ -46,7 +45,6 @@ pull_request_rules:
       - "status-success=Travis CI - Pull Request"
       - "status-success=WIP"
       - "status-success=guardrails/scan"
-      - "status-success=LGTM analysis: Java"
       - "status-success=Better Code Hub"
       - "base=master"
       - "milestone~=^.+$"
