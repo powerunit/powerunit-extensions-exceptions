@@ -30,7 +30,7 @@ public class ExceptionHandlerSupportTest implements TestSuite {
 
 	@Test
 	public void testExceptionMapper() {
-		assertThatFunction(new ExceptionHandlerSupport<Object, Object>() {
+		assertThatFunction(new ExceptionHandlerSupport<>() {
 
 			@Override
 			public Object uncheck() {

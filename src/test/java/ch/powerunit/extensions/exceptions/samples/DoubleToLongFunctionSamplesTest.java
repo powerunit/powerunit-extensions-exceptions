@@ -54,7 +54,7 @@ public class DoubleToLongFunctionSamplesTest implements TestSuite {
 				.throwException(instanceOf(IllegalArgumentException.class));
 
 	}
-	
+
 	@Test
 	public void sample3() {
 

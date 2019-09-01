@@ -163,7 +163,7 @@ public class FunctionSamplesTest implements TestSuite {
 				both(exceptionMessage("null ; ErrorCode=0 ; SQLState=null")).and(instanceOf(WrappedException.class)));
 
 	}
-	
+
 	@Test
 	public void sample8() {
 

@@ -154,7 +154,7 @@ public class FunctionWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}, "").call()).throwException(instanceOf(Exception.class));
 	}
-	
+
 	@Test
 	public void testAsRunnableNoException() throws Exception {
 		FunctionWithException.asRunnable(x -> x, "1").run();

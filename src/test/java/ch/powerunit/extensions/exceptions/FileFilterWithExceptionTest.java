@@ -113,8 +113,7 @@ public class FileFilterWithExceptionTest implements TestSuite {
 
 	@Test
 	public void acceptCheckedNoExceptionHandler() {
-		assertThat(FileFilterWithException.unchecked(x -> true, RuntimeException::new).accept(new File(".")))
-				.is(true);
+		assertThat(FileFilterWithException.unchecked(x -> true, RuntimeException::new).accept(new File("."))).is(true);
 	}
 
 	@Test
