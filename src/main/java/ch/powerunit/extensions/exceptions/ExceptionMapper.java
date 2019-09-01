@@ -19,7 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
-import java.util.Arrays;
+import static java.util.Arrays.stream;
+
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -174,8 +175,8 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * @return the mapping function.
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper... mappers) {
-		return e -> Arrays.stream(mappers).sequential().filter(m -> m.targetException().isInstance(e)).limit(1)
-				.map(m -> m.apply(m.targetException().cast(e))).findFirst().orElseGet(() -> new WrappedException(e));
+		return e -> stream(mappers).sequential().filter(m -> m.targetException().isInstance(e)).limit(1)
+				.map(m -> m.apply(e)).findFirst().orElseGet(() -> new WrappedException(e));
 	}
 
 }
