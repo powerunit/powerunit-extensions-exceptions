@@ -45,6 +45,9 @@ final class Constants {
 	public static final ExceptionMapper JAXBEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
 			.lifted(Constants::buildJAXBExceptionMapper).get().orElse(null);
 
+	public static final ExceptionMapper SAXEXCEPTION_EXCEPTION_MAPPER = SupplierWithException
+			.lifted(Constants::buildSAXExceptionMapper).get().orElse(null);
+
 	@SuppressWarnings("unchecked")
 	private static ExceptionMapper buildSQLExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException((Class<Exception>) Class.forName("java.sql.SQLException"),
@@ -55,6 +58,12 @@ final class Constants {
 	@SuppressWarnings("unchecked")
 	private static ExceptionMapper buildJAXBExceptionMapper() throws ClassNotFoundException {
 		return ExceptionMapper.forException((Class<Exception>) Class.forName("javax.xml.bind.JAXBException"),
+				e -> new WrappedException(String.format("%s", e.toString()), e));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static ExceptionMapper buildSAXExceptionMapper() throws ClassNotFoundException {
+		return ExceptionMapper.forException((Class<Exception>) Class.forName("org.xml.sax.SAXException"),
 				e -> new WrappedException(String.format("%s", e.toString()), e));
 	}
 

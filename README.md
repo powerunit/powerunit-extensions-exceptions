@@ -157,6 +157,8 @@ The various methods `forExceptions` provides a way to chain several Exception Ma
 Also, some dedicated, _ready to used_, Exception Mapper are provided :
 
 * `sqlExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the SQL Error from the underlying exception. **This is only usable when the module java.sql is available**.
+* `jaxbExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the JAXB Error from the underlying exception. **This is only usable when JAXB is available**.
+* `saxExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the SAX Error from the underlying exception. **This is only usable when the module java.xml is available**.
 
 ## Reference
 

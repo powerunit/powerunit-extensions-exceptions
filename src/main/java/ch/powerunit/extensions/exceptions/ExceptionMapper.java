@@ -63,7 +63,26 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 */
 	static ExceptionMapper jaxbExceptionMapper() {
 		return Optional.ofNullable(Constants.JAXBEXCEPTION_EXCEPTION_MAPPER)
-				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the jaxbException"));
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the JAXBException"));
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy sax information to the
+	 * {@code WrappedException} message.
+	 * <p>
+	 * <b>This mapper will only works correctly if the class <i>SAXException</i> is
+	 * available.</b>
+	 * <p>
+	 * 
+	 * @return the Mapper for {@code SAXException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code SAXException} is not available (java.xml
+	 *             module missing).
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper saxExceptionMapper() {
+		return Optional.ofNullable(Constants.SAXEXCEPTION_EXCEPTION_MAPPER)
+				.orElseThrow(() -> new NoClassDefFoundError("Unable to find the SAXException"));
 	}
 
 	Class<? extends Exception> targetException();

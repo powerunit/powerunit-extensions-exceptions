@@ -100,11 +100,9 @@
 							<arguments>
 								<argument>--module-path</argument>
 								<argument>${project.build.directory}/../../../local-repo/ch/powerunit/extensions/powerunit-extensions-exceptions/@project.version@/powerunit-extensions-exceptions-@project.version@.jar${path.separator}${project.build.directory}/${project.build.finalName}.jar</argument>
-								<argument>--add-modules</argument>
-								<argument>java.sql</argument>
 								<argument>--module</argument>
 								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
-								<argument>SQL</argument>
+								<argument>NOXML</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -121,10 +119,50 @@
 								<argument>--module-path</argument>
 								<argument>${project.build.directory}/../../../local-repo/ch/powerunit/extensions/powerunit-extensions-exceptions/@project.version@/powerunit-extensions-exceptions-@project.version@.jar${path.separator}${project.build.directory}/${project.build.finalName}.jar</argument>
 								<argument>--add-modules</argument>
+								<argument>java.sql</argument>
+								<argument>--module</argument>
+								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
+								<argument>SQL</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Test main 5</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<executable>java</executable>
+							<longModulepath>false</longModulepath>
+							<arguments>
+								<argument>--module-path</argument>
+								<argument>${project.build.directory}/../../../local-repo/ch/powerunit/extensions/powerunit-extensions-exceptions/@project.version@/powerunit-extensions-exceptions-@project.version@.jar${path.separator}${project.build.directory}/${project.build.finalName}.jar</argument>
+								<argument>--add-modules</argument>
 								<argument>java.xml.bind</argument>
 								<argument>--module</argument>
 								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
 								<argument>JAXB</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>Test main 6</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<executable>java</executable>
+							<longModulepath>false</longModulepath>
+							<arguments>
+								<argument>--module-path</argument>
+								<argument>${project.build.directory}/../../../local-repo/ch/powerunit/extensions/powerunit-extensions-exceptions/@project.version@/powerunit-extensions-exceptions-@project.version@.jar${path.separator}${project.build.directory}/${project.build.finalName}.jar</argument>
+								<argument>--add-modules</argument>
+								<argument>java.xml</argument>
+								<argument>--module</argument>
+								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
+								<argument>XML</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -144,6 +182,11 @@
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.2.11</version>
+		</dependency>
+		<dependency>
+			<groupId>sax</groupId>
+			<artifactId>sax</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 	</dependencies>
 

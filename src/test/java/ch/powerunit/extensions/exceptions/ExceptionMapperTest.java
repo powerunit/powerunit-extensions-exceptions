@@ -166,7 +166,12 @@ public class ExceptionMapperTest implements TestSuite {
 
 	@Test
 	public void testJaxbException() {
-		assertWhen(x -> ExceptionMapper.jaxbExceptionMapper()).throwException(instanceOf(NoClassDefFoundError.class));
+		ExceptionMapper.jaxbExceptionMapper();
+	}
+
+	@Test
+	public void testsaxException() {
+		ExceptionMapper.saxExceptionMapper();
 	}
 
 }

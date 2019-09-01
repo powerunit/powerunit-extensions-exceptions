@@ -23,6 +23,8 @@ import java.util.function.Function;
 
 import javax.xml.bind.JAXBException;
 
+import org.xml.sax.SAXParseException;
+
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -115,17 +117,58 @@ public class FunctionSamplesTest {
 
 	}
 
+	public static void sample6() {
+
+		try {
+			Function<Exception, RuntimeException> mapper = ExceptionMapper.saxExceptionMapper();
+		} catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			return;
+		}
+		throw new IllegalArgumentException("No exception thrown");
+	}
+
+	public static void sample7() {
+
+		Function<Exception, RuntimeException> mapper = ExceptionMapper.saxExceptionMapper();
+		FunctionWithException<String, String, Exception> fonctionThrowingException = FunctionWithException
+				.failing(() -> new SAXParseException("msg", "pid", "sid", 1, 2));
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException, mapper);
+
+		try {
+			functionThrowingRuntimeException.apply("x");
+		} catch (WrappedException e) {
+			e.printStackTrace();
+			if ("org.xml.sax.SAXParseExceptionpublicId: pid; systemId: sid; lineNumber: 1; columnNumber: 2; msg"
+					.equals(e.getMessage())) {
+				return;
+			}
+			throw new IllegalArgumentException("Wrong exception : " + e.getMessage(), e);
+
+		}
+		throw new IllegalArgumentException("No exception thrown");
+
+	}
+
 	public static void main(String[] args) {
 		sample1();
 		if (args.length > 0 && "NOSQL".equals(args[0])) {
 			sample2();
 		} else if (args.length > 0 && "NOJAXB".equals(args[0])) {
 			sample4();
+		} else if (args.length > 0 && "NOXML".equals(args[0])) {
+			// sample6();
 		} else if (args.length > 0 && "SQL".equals(args[0])) {
 			sample3();
 			sample4();
 		} else if (args.length > 0 && "JAXB".equals(args[0])) {
 			sample5();
+			sample2();
+		} else if (args.length > 0 && "XML".equals(args[0])) {
+			sample7();
+			sample4();
 			sample2();
 		}
 	}

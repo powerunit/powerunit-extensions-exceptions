@@ -71,10 +71,10 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-			        <groupId>org.codehaus.mojo</groupId>
-			        <artifactId>build-helper-maven-plugin</artifactId>
-			        <version>3.0.0</version>
-		        </plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.0.0</version>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
@@ -276,23 +276,23 @@
 
 		<plugins>
 			<plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		        <artifactId>build-helper-maven-plugin</artifactId>
-		    	<executions>
-		    		<execution>
-		    			<id>add-java-module-source</id>
-		    			<phase>prepare-package</phase>
-		    			<goals>
-		    				<goal>add-source</goal>
-		    			</goals>
-		    			<configuration>
-		    				<sources>
-		    					<source>${basedir}/src/main/module</source>
-		    				</sources>
-		    			</configuration>
-		    		</execution>
-		    	</executions>    
-		    </plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-java-module-source</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/src/main/module</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<executions>
@@ -533,15 +533,17 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>${jaxb-api.version}</version>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.2.11</version>
+			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>${jaxb-api.version}</version>
+			<groupId>sax</groupId>
+			<artifactId>sax</artifactId>
+			<version>2.0.1</version>
+			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
