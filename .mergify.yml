@@ -12,7 +12,6 @@ pull_request_rules:
       - "status-success=WIP"
       - "status-success=guardrails/scan"
       - "status-success=Better Code Hub"
-      - "status-success=AnyLint"
       - "base=master"
     actions:
       request_reviews:
@@ -47,7 +46,6 @@ pull_request_rules:
       - "status-success=WIP"
       - "status-success=guardrails/scan"
       - "status-success=Better Code Hub"
-      - "status-success=AnyLint"
       - "base=master"
       - "milestone~=^.+$"
     actions:
