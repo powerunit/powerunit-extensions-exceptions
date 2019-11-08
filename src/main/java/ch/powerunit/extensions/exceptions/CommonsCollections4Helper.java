@@ -66,6 +66,6 @@ public final class CommonsCollections4Helper {
 	 */
 	public static <T> org.apache.commons.collections4.Predicate<T> asPredicate(PredicateWithException<T, ?> predicate) {
 		Predicate<T> internal = PredicateWithException.unchecked(verifyPredicate(predicate), DEFAULT_EXCEPTION_MAPPER);
-		return t -> internal.test(t);
+		return internal::test;
 	}
 }
