@@ -161,6 +161,13 @@ Also, some dedicated, _ready to used_, Exception Mapper are provided :
 * `saxExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the SAX Error from the underlying exception. **This is only usable when the module java.xml is available**.
 * `transformerExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the Transformer Error from the underlying exception. **This is only usable when the module java.xml is available**.
 
+### CommonsCollections4Helper
+
+_This helper is only available since version 2.2.0 and only if the commons-collections4 library is available_
+
+The class `CommonsCollections4Helper` provides several static methods to convert interface
+from this library to the corresponding version in commons-collections4.
+
 ## Reference
 
 The following classes are provided:

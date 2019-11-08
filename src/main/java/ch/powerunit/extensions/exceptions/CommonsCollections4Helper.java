@@ -37,6 +37,16 @@ import org.apache.commons.collections4.Transformer;
  * "https://commons.apache.org/proper/commons-collections">commons-collections4</a>.
  * <p>
  * <b>This class is only available if commons-collections4 is available</b>
+ * <p>
+ * The mapping between the interface from <i>commons-collections4</i> and this library is the following :
+ * 
+ * <table border="1" summary="Mapping between interfaces">
+ * <tr><th>commons-collections4</th><th>powerunit-extensions-exceptions</th></tr>
+ * <tr><td>Predicate</td><td>PredicateWithException</td></tr>
+ * <tr><td>Factory</td><td>SupplierWithException</td></tr>
+ * <tr><td>Transformer</td><td>FunctionWithException</td></tr>
+ * <tr><td>Closure</td><td>ConsumerWithException</td></tr>
+ * </table>
  * 
  * @since 2.2.0
  *
