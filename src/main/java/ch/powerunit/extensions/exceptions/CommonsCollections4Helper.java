@@ -20,6 +20,8 @@
 package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
+import static ch.powerunit.extensions.exceptions.ExceptionMapper.forException;
+import static ch.powerunit.extensions.exceptions.ExceptionMapper.forExceptions;
 import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
 import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
@@ -38,14 +40,30 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * <b>This class is only available if commons-collections4 is available</b>
  * <p>
- * The mapping between the interface from <i>commons-collections4</i> and this library is the following :
+ * The mapping between the interface from <i>commons-collections4</i> and this
+ * library is the following :
  * 
  * <table border="1" summary="Mapping between interfaces">
- * <tr><th>commons-collections4</th><th>powerunit-extensions-exceptions</th></tr>
- * <tr><td>Predicate</td><td>PredicateWithException</td></tr>
- * <tr><td>Factory</td><td>SupplierWithException</td></tr>
- * <tr><td>Transformer</td><td>FunctionWithException</td></tr>
- * <tr><td>Closure</td><td>ConsumerWithException</td></tr>
+ * <tr>
+ * <th>commons-collections4</th>
+ * <th>powerunit-extensions-exceptions</th>
+ * </tr>
+ * <tr>
+ * <td>Predicate</td>
+ * <td>PredicateWithException</td>
+ * </tr>
+ * <tr>
+ * <td>Factory</td>
+ * <td>SupplierWithException</td>
+ * </tr>
+ * <tr>
+ * <td>Transformer</td>
+ * <td>FunctionWithException</td>
+ * </tr>
+ * <tr>
+ * <td>Closure</td>
+ * <td>ConsumerWithException</td>
+ * </tr>
  * </table>
  * 
  * @since 2.2.0
@@ -53,10 +71,9 @@ import org.apache.commons.collections4.Transformer;
  */
 public final class CommonsCollections4Helper {
 
-	private static final Function<Exception, RuntimeException> DEFAULT_EXCEPTION_MAPPER = ExceptionMapper.forExceptions(
-			ExceptionMapper.forException(ClassCastException.class, e -> e),
-			ExceptionMapper.forException(IllegalArgumentException.class, e -> e),
-			ExceptionMapper.forException(Exception.class, FunctorException::new));
+	private static final Function<Exception, RuntimeException> DEFAULT_EXCEPTION_MAPPER = forExceptions(
+			forException(ClassCastException.class, e -> e), forException(IllegalArgumentException.class, e -> e),
+			forException(Exception.class, FunctorException::new));
 
 	private CommonsCollections4Helper() {
 	}
