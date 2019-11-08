@@ -29,21 +29,22 @@ import org.apache.commons.collections4.FunctorException;
 /**
  * This class provides several helper methods for the functional interface of
  * the <a href=
- * "https://commons.apache.org/proper/commons-collections">commons-collections</a>.
+ * "https://commons.apache.org/proper/commons-collections">commons-collections4</a>.
  * <p>
- * <b>This class is only available if commons-collections is available</b>
+ * <b>This class is only available if commons-collections4 is available</b>
  * 
  * @since 2.2.0
  *
  */
 public final class CommonsCollections4Helper {
-	private CommonsCollections4Helper() {
-	}
 
 	private static final Function<Exception, RuntimeException> DEFAULT_EXCEPTION_MAPPER = ExceptionMapper.forExceptions(
 			ExceptionMapper.forException(ClassCastException.class, e -> e),
 			ExceptionMapper.forException(IllegalArgumentException.class, e -> e),
 			ExceptionMapper.forException(Exception.class, FunctorException::new));
+
+	private CommonsCollections4Helper() {
+	}
 
 	/**
 	 * Transforms a {@link PredicateWithException} to the one from
@@ -59,7 +60,7 @@ public final class CommonsCollections4Helper {
 	 *         IllegalArgumentException are not wrapped and the other exception are
 	 *         wrapped in a FunctorException.
 	 * @throws NoClassDefFoundError
-	 *             In case the commons-collections library is not available.
+	 *             In case the commons-collections4 library is not available.
 	 * @throws NullPointerException
 	 *             if predicate is null.
 	 * @see org.apache.commons.collections4.Predicate
