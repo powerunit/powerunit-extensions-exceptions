@@ -145,7 +145,7 @@ public final class CommonsCollections4Helper {
 	 *             In case the commons-collections4 library is not available.
 	 * @throws NullPointerException
 	 *             if consumer is null.
-	 * @see org.apache.commons.collections4.Predicate
+	 * @see org.apache.commons.collections4.Closure
 	 */
 	public static <T> Closure<T> asClosure(ConsumerWithException<T, ?> consumer) {
 		return ConsumerWithException.unchecked(verifyConsumer(consumer), DEFAULT_EXCEPTION_MAPPER)::accept;
