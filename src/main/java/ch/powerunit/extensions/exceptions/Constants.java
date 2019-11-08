@@ -25,7 +25,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.SQLException;
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.function.Function;
