@@ -101,10 +101,8 @@ final class Constants {
 	}
 
 	private static Function<Exception, RuntimeException> computeDefaultMapper() {
-		return Optional
-				.of(ServiceLoader.load(ExceptionMapper.class).stream().map(Provider::get)
-						.sorted(Comparator.comparingInt(ExceptionMapper::order)).toArray(ExceptionMapper[]::new))
-				.filter(a -> a.length > 0).map(ExceptionMapper::forExceptions).orElse(WrappedException::new);
+		return ExceptionMapper.forExceptions(ServiceLoader.load(ExceptionMapper.class).stream().map(Provider::get)
+				.sorted(Comparator.comparingInt(ExceptionMapper::order)).toArray(ExceptionMapper[]::new));
 	}
 
 	private Constants() {

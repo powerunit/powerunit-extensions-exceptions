@@ -110,10 +110,11 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	private boolean accept(Exception e) {
 		return targetException().isInstance(e);
 	}
-	
+
 	/**
 	 * This method is used when ExceptionMapper are registered as default Mapper to
 	 * defines the right order to select then.
+	 * 
 	 * @return a ordering key, by default 0.
 	 * @since 2.2.0
 	 */
@@ -188,6 +189,9 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * @return the mapping function.
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper... mappers) {
+		if (mappers.length == 0) {
+			return WrappedException::new;
+		}
 		return e -> stream(mappers).sequential().filter(m -> m.accept(e)).limit(1).map(m -> m.apply(e)).findFirst()
 				.orElseGet(() -> new WrappedException(e));
 	}

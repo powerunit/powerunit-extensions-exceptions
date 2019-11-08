@@ -71,6 +71,12 @@ public class ExceptionMapperTest implements TestSuite {
 	}
 
 	@Test
+	public void testForExceptions3None() {
+		assertThatFunction(ExceptionMapper.forExceptions(), new IOException("test"))
+				.is(instanceOf(WrappedException.class));
+	}
+
+	@Test
 	public void testForExceptions3SameExceptionFirst() {
 		assertThatFunction(
 				ExceptionMapper.forExceptions(

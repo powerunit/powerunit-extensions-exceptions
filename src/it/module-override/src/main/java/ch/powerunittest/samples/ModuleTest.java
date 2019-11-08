@@ -71,6 +71,24 @@ public class ModuleTest {
 
 		try {
 			functionThrowingRuntimeException.apply("x");
+		} catch (IllegalArgumentException e) {
+			//OK
+			
+			return;
+		}
+		throw new IllegalArgumentException("Expecting an exception, but none or the wrong has been thrown");
+	}
+	
+	public static void sample4() {
+
+		FunctionWithException<String, String, Exception> fonctionThrowingException = FunctionWithException
+				.failing(IOException::new);
+
+		Function<String, String> functionThrowingRuntimeException = FunctionWithException
+				.unchecked(fonctionThrowingException);
+
+		try {
+			functionThrowingRuntimeException.apply("x");
 		} catch (WrappedException e) {
 			//OK
 			
@@ -83,6 +101,7 @@ public class ModuleTest {
 		sample1();
 		sample2();
 		sample3();
+		sample4();
 	}
 
 }
