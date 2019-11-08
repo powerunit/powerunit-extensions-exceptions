@@ -92,4 +92,31 @@ public class CommonsCollections4HelperTest implements TestSuite {
 				.transform("x")).throwException(instanceOf(FunctorException.class));
 	}
 
+	// AsClosure
+
+	@Test
+	public void testAsClosureNoException() {
+		CommonsCollections4Helper.asClosure(x -> {
+		}).execute("x");
+	}
+
+	@Test
+	public void testAsClosureClassCastException() {
+		assertWhen((x) -> CommonsCollections4Helper.asClosure(ConsumerWithException.failing(ClassCastException::new))
+				.execute("x")).throwException(instanceOf(ClassCastException.class));
+	}
+
+	@Test
+	public void testAsClosureIllegalArgumentException() {
+		assertWhen((x) -> CommonsCollections4Helper
+				.asClosure(ConsumerWithException.failing(IllegalArgumentException::new)).execute("x"))
+						.throwException(instanceOf(IllegalArgumentException.class));
+	}
+
+	@Test
+	public void testAsClosureOtherException() {
+		assertWhen((x) -> CommonsCollections4Helper.asClosure(ConsumerWithException.failing(RuntimeException::new))
+				.execute("x")).throwException(instanceOf(FunctorException.class));
+	}
+
 }

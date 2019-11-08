@@ -22,9 +22,11 @@ package ch.powerunit.extensions.exceptions;
 import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
 import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
 
 import java.util.function.Function;
 
+import org.apache.commons.collections4.Closure;
 import org.apache.commons.collections4.Factory;
 import org.apache.commons.collections4.FunctorException;
 import org.apache.commons.collections4.Transformer;
@@ -115,5 +117,27 @@ public final class CommonsCollections4Helper {
 	 */
 	public static <I, O> Transformer<I, O> asTransformer(FunctionWithException<I, O, ?> function) {
 		return FunctionWithException.unchecked(verifyFunction(function), DEFAULT_EXCEPTION_MAPPER)::apply;
+	}
+
+	/**
+	 * Transforms a {@link ConsumerWithException} to the one from
+	 * commons-collections.
+	 * 
+	 * @param consumer
+	 *            the {@link ConsumerWithException} to be transformed to the one
+	 *            from commons-collections.
+	 * @param <T>
+	 *            the type of the input argument for the consumer
+	 * @return the {@link Closure closure} from commons-collections. The
+	 *         ClassCastException and IllegalArgumentException are not wrapped and
+	 *         the other exception are wrapped in a FunctorException.
+	 * @throws NoClassDefFoundError
+	 *             In case the commons-collections4 library is not available.
+	 * @throws NullPointerException
+	 *             if consumer is null.
+	 * @see org.apache.commons.collections4.Predicate
+	 */
+	public static <T> Closure<T> asClosure(ConsumerWithException<T, ?> consumer) {
+		return ConsumerWithException.unchecked(verifyConsumer(consumer), DEFAULT_EXCEPTION_MAPPER)::accept;
 	}
 }
