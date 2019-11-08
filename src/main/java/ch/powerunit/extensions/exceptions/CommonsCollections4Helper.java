@@ -19,11 +19,12 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
+import org.apache.commons.collections4.Factory;
 import org.apache.commons.collections4.FunctorException;
 
 /**
@@ -67,5 +68,26 @@ public final class CommonsCollections4Helper {
 	 */
 	public static <T> org.apache.commons.collections4.Predicate<T> asPredicate(PredicateWithException<T, ?> predicate) {
 		return PredicateWithException.unchecked(verifyPredicate(predicate), DEFAULT_EXCEPTION_MAPPER)::test;
+	}
+
+	/**
+	 * Transforms a {@link SupplierWithException} to the one from
+	 * commons-collections.
+	 * 
+	 * @param supplier
+	 *            the {@link SupplierWithException} to be transformed to the one
+	 *            from commons-collections.
+	 * @param <T>
+	 *            the type of the result of the supplier
+	 * @return the {@link Factory factory} from commons-collections. The exception
+	 *         are wrapped in a FunctorException.
+	 * @throws NoClassDefFoundError
+	 *             In case the commons-collections4 library is not available.
+	 * @throws NullPointerException
+	 *             if supplier is null.
+	 * @see org.apache.commons.collections4.Factory
+	 */
+	public static <T> Factory<T> asFactory(SupplierWithException<T, ?> supplier) {
+		return SupplierWithException.unchecked(verifySupplier(supplier), FunctorException::new)::get;
 	}
 }

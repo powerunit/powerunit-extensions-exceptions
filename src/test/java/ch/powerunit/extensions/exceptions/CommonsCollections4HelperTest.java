@@ -25,6 +25,8 @@ import ch.powerunit.TestSuite;
 @SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
 public class CommonsCollections4HelperTest implements TestSuite {
 
+	// AsPredicate
+
 	@Test
 	public void testAsPredicateNoException() {
 		assertThat(CommonsCollections4Helper.asPredicate(x -> true).evaluate("x")).is(true);
@@ -47,6 +49,19 @@ public class CommonsCollections4HelperTest implements TestSuite {
 	public void testAsPredicateOtherException() {
 		assertWhen(() -> CommonsCollections4Helper.asPredicate(PredicateWithException.failing(Exception::new))
 				.evaluate("x")).throwException(instanceOf(Exception.class));
+	}
+
+	// AsFactory
+
+	@Test
+	public void testAsFactoryNoException() {
+		assertThat(CommonsCollections4Helper.asFactory(() -> "").create()).is("");
+	}
+
+	@Test
+	public void testAsFactoryOtherException() {
+		assertWhen(() -> CommonsCollections4Helper.asFactory(SupplierWithException.failing(Exception::new)).create())
+				.throwException(instanceOf(Exception.class));
 	}
 
 }
