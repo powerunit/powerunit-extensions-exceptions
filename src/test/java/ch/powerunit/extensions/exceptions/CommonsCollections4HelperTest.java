@@ -19,6 +19,8 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import org.apache.commons.collections4.FunctorException;
+
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
@@ -48,7 +50,7 @@ public class CommonsCollections4HelperTest implements TestSuite {
 	@Test
 	public void testAsPredicateOtherException() {
 		assertWhen(() -> CommonsCollections4Helper.asPredicate(PredicateWithException.failing(Exception::new))
-				.evaluate("x")).throwException(instanceOf(Exception.class));
+				.evaluate("x")).throwException(instanceOf(FunctorException.class));
 	}
 
 	// AsFactory
@@ -62,6 +64,32 @@ public class CommonsCollections4HelperTest implements TestSuite {
 	public void testAsFactoryOtherException() {
 		assertWhen(() -> CommonsCollections4Helper.asFactory(SupplierWithException.failing(Exception::new)).create())
 				.throwException(instanceOf(Exception.class));
+	}
+
+	// AsTransformer
+
+	@Test
+	public void testAsTransformerNoException() {
+		assertThat(CommonsCollections4Helper.asTransformer(x -> "y").transform("x")).is("y");
+	}
+
+	@Test
+	public void testAsTransformerClassCastException() {
+		assertWhen(() -> CommonsCollections4Helper.asTransformer(FunctionWithException.failing(ClassCastException::new))
+				.transform("x")).throwException(instanceOf(ClassCastException.class));
+	}
+
+	@Test
+	public void testAsTransformerIllegalArgumentException() {
+		assertWhen(() -> CommonsCollections4Helper
+				.asTransformer(FunctionWithException.failing(IllegalArgumentException::new)).transform("x"))
+						.throwException(instanceOf(IllegalArgumentException.class));
+	}
+
+	@Test
+	public void testAsTransformerOtherException() {
+		assertWhen(() -> CommonsCollections4Helper.asTransformer(FunctionWithException.failing(RuntimeException::new))
+				.transform("x")).throwException(instanceOf(FunctorException.class));
 	}
 
 }

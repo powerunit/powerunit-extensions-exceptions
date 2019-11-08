@@ -21,11 +21,13 @@ package ch.powerunit.extensions.exceptions;
 
 import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
 
 import java.util.function.Function;
 
 import org.apache.commons.collections4.Factory;
 import org.apache.commons.collections4.FunctorException;
+import org.apache.commons.collections4.Transformer;
 
 /**
  * This class provides several helper methods for the functional interface of
@@ -89,5 +91,29 @@ public final class CommonsCollections4Helper {
 	 */
 	public static <T> Factory<T> asFactory(SupplierWithException<T, ?> supplier) {
 		return SupplierWithException.unchecked(verifySupplier(supplier), FunctorException::new)::get;
+	}
+
+	/**
+	 * Transforms a {@link FunctionWithException} to the one from
+	 * commons-collections.
+	 * 
+	 * @param function
+	 *            the {@link FunctionWithException} to be transformed to the one
+	 *            from commons-collections.
+	 * @param <I>
+	 *            the input argument type of the function
+	 * @param <O>
+	 *            the result type of the function
+	 * @return the {@link Transformer transformer} from commons-collections. The
+	 *         ClassCastException and IllegalArgumentException are not wrapped and
+	 *         the other exception are wrapped in a FunctorException.
+	 * @throws NoClassDefFoundError
+	 *             In case the commons-collections4 library is not available.
+	 * @throws NullPointerException
+	 *             if function is null.
+	 * @see org.apache.commons.collections4.Transformer
+	 */
+	public static <I, O> Transformer<I, O> asTransformer(FunctionWithException<I, O, ?> function) {
+		return FunctionWithException.unchecked(verifyFunction(function), DEFAULT_EXCEPTION_MAPPER)::apply;
 	}
 }
