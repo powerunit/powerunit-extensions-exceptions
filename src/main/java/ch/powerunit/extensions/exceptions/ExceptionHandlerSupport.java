@@ -36,13 +36,21 @@ public interface ExceptionHandlerSupport<F, L> {
 	/**
 	 * Mapping operation to convert the exception that may be thrown during
 	 * execution to {@code RuntimeException}.
+	 * <p>
+	 * The default mapper function may be changed by :
+	 * <ul>
+	 * <li>Using the second argument of the various {@code unchecked} methods. This
+	 * override only the current interface.</li>
+	 * <li>By defining global {@code ExceptionMapper}, using the module syntax :
+	 * {@code provides ch.powerunit.extensions.exceptions.ExceptionMapper with XXX}</li>
+	 * </ul>
 	 *
 	 * @return the mapping function, which is by default constructing
 	 *         {@code WrappedException}.
 	 * @see WrappedException
 	 */
 	default Function<Exception, RuntimeException> exceptionMapper() {
-		return WrappedException::new;
+		return Constants.MAPPERS;
 	}
 
 	/**

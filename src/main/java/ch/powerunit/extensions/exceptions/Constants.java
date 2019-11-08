@@ -24,6 +24,11 @@ import static ch.powerunit.extensions.exceptions.SupplierWithException.ignored;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.function.Function;
 
 import javax.xml.transform.TransformerException;
 
@@ -43,6 +48,8 @@ final class Constants {
 
 	public static final ExceptionMapper TRANSFORMEREXCEPTION_EXCEPTION_MAPPER = ignored(
 			Constants::buildTransformerExceptionMapper).get();
+
+	public static final Function<Exception, RuntimeException> MAPPERS = computeDefaultMapper();
 
 	public static <T> T verifyOperation(T obj) {
 		return requireNonNull(obj, "operation can't be null");
@@ -91,6 +98,13 @@ final class Constants {
 	private static ExceptionMapper buildTransformerExceptionMapper() throws ClassNotFoundException {
 		return forException((Class<Exception>) Class.forName("javax.xml.transform.TransformerException"),
 				e -> new WrappedException(String.format("%s", ((TransformerException) e).getMessageAndLocation()), e));
+	}
+
+	private static Function<Exception, RuntimeException> computeDefaultMapper() {
+		return Optional
+				.of(ServiceLoader.load(ExceptionMapper.class).stream().map(Provider::get)
+						.sorted(Comparator.comparingInt(ExceptionMapper::order)).toArray(ExceptionMapper[]::new))
+				.filter(a -> a.length > 0).map(ExceptionMapper::forExceptions).orElse(WrappedException::new);
 	}
 
 	private Constants() {

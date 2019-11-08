@@ -110,6 +110,16 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	private boolean accept(Exception e) {
 		return targetException().isInstance(e);
 	}
+	
+	/**
+	 * This method is used when ExceptionMapper are registered as default Mapper to
+	 * defines the right order to select then.
+	 * @return a ordering key, by default 0.
+	 * @since 2.2.0
+	 */
+	default int order() {
+		return 0;
+	}
 
 	/**
 	 * Helper method to create exception wrapper that check the exception class.
