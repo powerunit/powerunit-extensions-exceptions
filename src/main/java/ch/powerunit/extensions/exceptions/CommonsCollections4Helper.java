@@ -60,6 +60,8 @@ public final class CommonsCollections4Helper {
 	 *         wrapped in a FunctorException.
 	 * @throws NoClassDefFoundError
 	 *             In case the commons-collections library is not available.
+	 * @throws NullPointerException
+	 *             if predicate is null.
 	 * @see org.apache.commons.collections4.Predicate
 	 */
 	public static <T> org.apache.commons.collections4.Predicate<T> asPredicate(PredicateWithException<T, ?> predicate) {
