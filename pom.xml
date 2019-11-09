@@ -388,6 +388,7 @@
 				<postBuildHookScript>verify.bsh</postBuildHookScript>
 				<settingsFile>src/it/settings.xml</settingsFile>
 				<invokerPropertiesFile>params.properties</invokerPropertiesFile>
+				<streamLogs>true</streamLogs>
 			</configuration>
 			<executions>
 				<execution>
