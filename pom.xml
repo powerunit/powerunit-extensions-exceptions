@@ -380,26 +380,26 @@
 				</dependencies>
 			</plugin>
 			<plugin>
-			<artifactId>maven-invoker-plugin</artifactId>
-			<configuration>
-				<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-				<localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-				<preBuildHookScript>prepare.bsh</preBuildHookScript>
-				<postBuildHookScript>verify.bsh</postBuildHookScript>
-				<settingsFile>src/it/settings.xml</settingsFile>
-				<invokerPropertiesFile>params.properties</invokerPropertiesFile>
-				<streamLogs>true</streamLogs>
-			</configuration>
-			<executions>
-				<execution>
-					<id>integration-test</id>
-					<goals>
-						<goal>install</goal>
-						<goal>run</goal>
-					</goals>
-				</execution>
-			</executions>
-		</plugin>
+				<artifactId>maven-invoker-plugin</artifactId>
+				<configuration>
+					<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+					<localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+					<preBuildHookScript>prepare.bsh</preBuildHookScript>
+					<postBuildHookScript>verify.bsh</postBuildHookScript>
+					<settingsFile>src/it/settings.xml</settingsFile>
+					<invokerPropertiesFile>params.properties</invokerPropertiesFile>
+					<streamLogs>true</streamLogs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<goals>
+							<goal>install</goal>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
@@ -533,26 +533,33 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>com.sun.activation</groupId>
+			<artifactId>javax.activation</artifactId>
+			<version>1.2.0</version>
+			<scope>test</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
 			<version>2.3.1</version>
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.2</version>
-            <scope>test</scope>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.3.2</version>
+			<scope>test</scope>
 			<optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.3.0.1</version>
-            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.3.0.1</version>
+			<scope>test</scope>
 			<optional>true</optional>
-        </dependency>
+		</dependency>
 		<dependency>
 			<groupId>sax</groupId>
 			<artifactId>sax</artifactId>
@@ -561,11 +568,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-collections4</artifactId>
-		    <scope>compile</scope>
-		    <optional>true</optional>
-		    <version>4.4</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<scope>compile</scope>
+			<optional>true</optional>
+			<version>4.4</version>
 		</dependency>
 	</dependencies>
 </project>
