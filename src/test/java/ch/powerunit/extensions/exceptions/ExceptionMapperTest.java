@@ -184,10 +184,30 @@ public class ExceptionMapperTest implements TestSuite {
 	}
 
 	@Test
-	public void testForOrderedOneElement() {
+	public void testForOrderedOneElementV1() {
 		assertThatFunction(
 				ExceptionMapper.forOrderedExceptions(List.of(
 						ExceptionMapper.forException(RuntimeException.class, e -> new WrappedException("testme1"), 2))),
+				new IllegalArgumentException("test"))
+						.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
+	}
+	
+	@Test
+	public void testForOrderedOneElementV2Default() {
+		assertThatFunction(
+				ExceptionMapper.forOrderedExceptions(List.of(new ExceptionMapper() {
+					
+					@Override
+					public RuntimeException apply(Exception t) {
+						return new WrappedException("testme1");
+					}
+					
+					@Override
+					public Class<? extends Exception> targetException() {
+						return Exception.class;
+					}
+					
+				})),
 				new IllegalArgumentException("test"))
 						.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
 	}
