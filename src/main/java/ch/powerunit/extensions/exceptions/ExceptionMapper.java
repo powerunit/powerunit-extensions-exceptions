@@ -236,7 +236,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 		if (mappers.isEmpty()) {
 			return WrappedException::new;
 		}
-		return ExceptionMapper.forExceptions(mappers.stream().sorted(Comparator.comparingInt(ExceptionMapper::order))
+		return forExceptions(mappers.stream().sorted(Comparator.comparingInt(ExceptionMapper::order))
 				.toArray(ExceptionMapper[]::new));
 	}
 
