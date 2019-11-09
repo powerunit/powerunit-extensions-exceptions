@@ -24,8 +24,6 @@ import static java.util.Arrays.stream;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.ServiceLoader.Provider;
 import java.util.function.Function;
 
 /**
