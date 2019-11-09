@@ -49,7 +49,7 @@ after_success:
 - mkdir -p target/announcement ; mvn org.apache.maven.plugins:maven-changes-plugin:announcement-generate || echo 'Nothing for the moment' > target/announcement/announcement.vm ; export RELEASE_NOTES=$(jshon -s "$(cat target/announcement/announcement.vm)")
 deploy:
   - provider: script
-    script: git rev-list --tags=ci/master* --before=`date --date yesterday +%Y-%M-%d`|xargs -n 1 git describe --abbrev=0 --tags | grep "ci/$TRAVIS_BRANCH" | uniq | xargs -n 1 git push --delete origin ; git tag -m "Create ci tag [ci skip]" -f "ci/$TRAVIS_BRANCH/$TRAVIS_BUILD_NUMBER"
+    script: git tag -m "Create ci tag [ci skip]" -f "ci/$TRAVIS_BRANCH/$TRAVIS_BUILD_NUMBER"
     skip-cleanup: true
     on:
       branch: master
