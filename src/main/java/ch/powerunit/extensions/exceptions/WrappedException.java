@@ -39,7 +39,7 @@ public final class WrappedException extends RuntimeException {
 	 *            {@link #getMessage()} method).
 	 * @param cause
 	 *            the cause (which is saved for later retrieval by the
-	 *            {@link #getCause()} method). (A <tt>null</tt> value is permitted,
+	 *            {@link #getCause()} method). (A {@code null} value is permitted,
 	 *            and indicates that the cause is nonexistent or unknown.)
 	 */
 	public WrappedException(String message, Throwable cause) {
@@ -61,7 +61,7 @@ public final class WrappedException extends RuntimeException {
 
 	/**
 	 * Constructs a new wrapped exception with the specified cause and a detail
-	 * message of <tt>(cause.getMessage())</tt>
+	 * message of {@code (cause.getMessage())}
 	 *
 	 * @param cause
 	 *            the cause (which is saved for later retrieval by the
