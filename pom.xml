@@ -539,6 +539,20 @@
 			<scope>test</scope>
 			<optional>true</optional>
 		</dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.2</version>
+            <scope>test</scope>
+			<optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+            <scope>test</scope>
+			<optional>true</optional>
+        </dependency>
 		<dependency>
 			<groupId>sax</groupId>
 			<artifactId>sax</artifactId>
