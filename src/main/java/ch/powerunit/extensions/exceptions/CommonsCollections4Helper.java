@@ -43,7 +43,8 @@ import org.apache.commons.collections4.Transformer;
  * The mapping between the interface from <i>commons-collections4</i> and this
  * library is the following :
  * 
- * <table border="1" summary="Mapping between interfaces">
+ * <table border="1">
+ * <caption>Mapping between interfaces</caption>
  * <tr>
  * <th>commons-collections4</th>
  * <th>powerunit-extensions-exceptions</th>
