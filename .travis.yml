@@ -37,9 +37,9 @@ after_success:
 - "curl -s https://report.ci/annotate.py | python - --name annotate$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION --tool java --input maven.log"
 - "curl -s https://report.ci/upload.py | python - --name upload$TRAVIS_OS_NAME$TRAVIS_JDK_VERSION --include='*.xml' --framework=junit"
 - "(cd target/dependency && java -jar codacy-coverage-reporter-6.0.0-assembly.jar report -l Java -r ../site/jacoco/jacoco.xml)"
+- if [[ "$TRAVIS_JDK_VERSION" = openjdk10 ]]; then git fetch --unshallow ; fi
 - if [[ "$TRAVIS_JDK_VERSION" = openjdk10 ]]; then mvn sonar:sonar -Dsonar.projectKey=powerunit_powerunit-extensions-exceptions ; fi
 - if [[ "$TRAVIS_JDK_VERSION" = openjdk10 ]]; then rm -f target/classes/module-info.class; mvn site ; fi
-- if [[ "$TRAVIS_JDK_VERSION" = openjdk10 ]]; then git fetch --unshallow ; fi
 before_deploy:
 - git config --local user.name "powerunitci"
 - git config --local user.email "powerunitci@powerunit.ch"
@@ -68,13 +68,13 @@ deploy:
       branch: master
       tags: false
       condition: $TRAVIS_JDK_VERSION = openjdk10
-#  - provider: script
-#    script: mvn deploy -DskipTests=true -B
-#    skip-cleanup: true
-#    on:
-#      branch: master
-#      tags: false
-#      condition: $TRAVIS_JDK_VERSION = openjdk10
+  - provider: script
+    script: mvn deploy -DskipTests=true -B
+    skip-cleanup: true
+    on:
+      branch: master
+      tags: false
+      condition: $TRAVIS_JDK_VERSION = openjdk10
 #  - provider: script
 #    script: mvn deploy -DskipTests=true -B -U -Psign,release
 #    skip-cleanup: true
