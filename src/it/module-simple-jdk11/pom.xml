@@ -126,7 +126,26 @@
 							</arguments>
 						</configuration>
 					</execution>
-					
+					<execution>
+						<id>Test main 5</id>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<phase>package</phase>
+						<configuration>
+							<executable>java</executable>
+							<longModulepath>false</longModulepath>
+							<arguments>
+								<argument>--module-path</argument>
+								<argument>${project.build.directory}/../../../local-repo/ch/powerunit/extensions/powerunit-extensions-exceptions/@project.version@/powerunit-extensions-exceptions-@project.version@.jar${path.separator}${project.build.directory}/${project.build.finalName}.jar</argument>
+								<argument>-cp</argument>
+								<argument>${project.build.directory}/../../../local-repo/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar${path.separator}${project.build.directory}/../../../local-repo/javax/com/sun/activation/javax.activation/1.2.0/javax.activation-1.2.0.jar${path.separator}${project.build.directory}/../../../local-repo/javax/com/sun/xml/bind/jaxb-core/2.3.1/jaxb-core-2.3.1.jar${path.separator}${project.build.directory}/../../../local-repo/javax/com/sun/xml/bind/jaxb-impl/2.3.1/jaxb-impl-2.3.1.jar</argument>
+								<argument>--module</argument>
+								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
+								<argument>JAXB</argument>
+							</arguments>
+						</configuration>
+					</execution>
 					<execution>
 						<id>Test main 6</id>
 						<goals>
@@ -169,6 +188,24 @@
 			<artifactId>sax</artifactId>
 			<version>2.0.1</version>
 		</dependency>
+		
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+ 
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.1</version>
+        </dependency>
 	</dependencies>
 
 </project>
