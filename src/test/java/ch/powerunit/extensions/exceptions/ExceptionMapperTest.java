@@ -191,33 +191,50 @@ public class ExceptionMapperTest implements TestSuite {
 				new IllegalArgumentException("test"))
 						.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
 	}
-	
+
 	@Test
 	public void testForOrderedOneElementV2Default() {
-		assertThatFunction(
-				ExceptionMapper.forOrderedExceptions(List.of(new ExceptionMapper() {
-					
-					@Override
-					public RuntimeException apply(Exception t) {
-						return new WrappedException("testme1");
-					}
-					
-					@Override
-					public Class<? extends Exception> targetException() {
-						return Exception.class;
-					}
-					
-				})),
-				new IllegalArgumentException("test"))
-						.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
+		assertThatFunction(ExceptionMapper.forOrderedExceptions(List.of(new ExceptionMapper() {
+
+			@Override
+			public RuntimeException apply(Exception t) {
+				return new WrappedException("testme1");
+			}
+
+			@Override
+			public Class<? extends Exception> targetException() {
+				return Exception.class;
+			}
+
+		})), new IllegalArgumentException("test"))
+				.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
 	}
 
 	@Test
-	public void testForOrderedTwoElement() {
+	public void testForOrderedTwoElementV1() {
 		assertThatFunction(ExceptionMapper.forOrderedExceptions(
 				List.of(ExceptionMapper.forException(RuntimeException.class, e -> new WrappedException("testme1"), 2),
 						ExceptionMapper.forException(IllegalArgumentException.class,
 								e -> new WrappedException("testme2"), 1))),
+				new IllegalArgumentException("test"))
+						.is(both(exceptionMessage("testme2")).and(instanceOf(WrappedException.class)));
+	}
+
+	@Test
+	public void testForOrderedTwoElementV2Default() {
+		assertThatFunction(ExceptionMapper.forOrderedExceptions(List.of(new ExceptionMapper() {
+
+			@Override
+			public RuntimeException apply(Exception t) {
+				return new WrappedException("testme1");
+			}
+
+			@Override
+			public Class<? extends Exception> targetException() {
+				return Exception.class;
+			}
+
+		}, ExceptionMapper.forException(IllegalArgumentException.class, e -> new WrappedException("testme2"), -1))),
 				new IllegalArgumentException("test"))
 						.is(both(exceptionMessage("testme2")).and(instanceOf(WrappedException.class)));
 	}
