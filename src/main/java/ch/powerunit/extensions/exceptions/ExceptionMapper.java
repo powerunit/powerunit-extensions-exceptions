@@ -21,6 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import static java.util.Arrays.stream;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -112,6 +114,17 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	}
 
 	/**
+	 * This method is used when ExceptionMapper are registered as default Mapper to
+	 * defines the right order to select then.
+	 * 
+	 * @return an ordering key, by default 0.
+	 * @since 2.2.0
+	 */
+	default int order() {
+		return 0;
+	}
+
+	/**
 	 * Helper method to create exception wrapper that check the exception class.
 	 *
 	 * @param clazz
@@ -124,6 +137,26 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 *         for the other exception just create a {@code WrappedException}.
 	 */
 	static <E extends Exception> ExceptionMapper forException(Class<E> clazz, Function<E, RuntimeException> mapper) {
+		return forException(clazz, mapper, 0);
+	}
+
+	/**
+	 * Helper method to create exception wrapper that check the exception class.
+	 *
+	 * @param clazz
+	 *            the class of the exception to be wrapped.
+	 * @param mapper
+	 *            the exception mapper.
+	 * @param order
+	 *            the order
+	 * @param <E>
+	 *            the type of the exception.
+	 * @return A new exception mapper, which use the one received as parameter or
+	 *         for the other exception just create a {@code WrappedException}.
+	 * @since 2.2.0
+	 */
+	static <E extends Exception> ExceptionMapper forException(Class<E> clazz, Function<E, RuntimeException> mapper,
+			int order) {
 		return new ExceptionMapper() {
 
 			@Override
@@ -134,6 +167,11 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 			@Override
 			public Class<E> targetException() {
 				return clazz;
+			}
+
+			@Override
+			public int order() {
+				return order;
 			}
 		};
 	}
@@ -178,8 +216,28 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	 * @return the mapping function.
 	 */
 	static Function<Exception, RuntimeException> forExceptions(ExceptionMapper... mappers) {
+		if (mappers.length == 0) {
+			return WrappedException::new;
+		}
 		return e -> stream(mappers).sequential().filter(m -> m.accept(e)).limit(1).map(m -> m.apply(e)).findFirst()
 				.orElseGet(() -> new WrappedException(e));
+	}
+
+	/**
+	 * Helper method to create exception wrapper that use the first one that is
+	 * applicable, but having them sorted using the {@link #order()} method.
+	 *
+	 * @param mappers
+	 *            the mapper to be tried
+	 * @return the mapping function.
+	 * @since 2.2.0
+	 */
+	static Function<Exception, RuntimeException> forOrderedExceptions(Collection<ExceptionMapper> mappers) {
+		if (mappers.isEmpty()) {
+			return WrappedException::new;
+		}
+		return forExceptions(mappers.stream().sorted(Comparator.comparingInt(ExceptionMapper::order))
+				.toArray(ExceptionMapper[]::new));
 	}
 
 }

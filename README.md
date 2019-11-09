@@ -150,9 +150,7 @@ Two versions of this methods exists :
 
 ### Exception Mapper
 
-_Since the version 2.0.0, the method `exceptionMapperFor` from interface `ExceptionHandlerSupport` is deprecated in favor of the new one `forException` from interface `ExceptionMapper`._
-
-The various methods `forExceptions` provides a way to chain several Exception Mapper.
+The various methods `forExceptions` from `ExceptionMapper` provides a way to chain several Exception Mapper.
 
 Also, some dedicated, _ready to used_, Exception Mapper are provided :
 
@@ -160,6 +158,43 @@ Also, some dedicated, _ready to used_, Exception Mapper are provided :
 * `jaxbExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the JAXB Error from the underlying exception. **This is only usable when JAXB is available**.
 * `saxExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the SAX Error from the underlying exception. **This is only usable when the module java.xml is available**.
 * `transformerExceptionMapper()` - Return an exception mapper that adds to the message of the `RuntimeException` the Transformer Error from the underlying exception. **This is only usable when the module java.xml is available**.
+
+#### Define global ExceptionMapper
+
+_Since version 2.2.0, it is possible to define a default exception mappers by using service loader._
+
+By default, the exception are wrapped in a `WrappedException`. This behaviour may be change by implementing the required `ExceptionMapper` and register them as _service implementation_. 
+
+To do so, create all the required implementation, for example :
+
+```java
+public class MyExceptionMapper implements ch.powerunit.extensions.exceptions.ExceptionMapper {
+  public RuntimeException apply(Exception e) {
+    //Add code here
+  }
+
+  public Class<? extends Exception> targetException() {
+    return //Add code here;
+  }
+	
+  // Optional, to define the order between the ExceptionMapper
+  public int order() {
+    return 100;
+  }
+
+}
+```
+
+Then this may be registered in the `module-info.java` file:
+
+```java
+module XXX {
+  requires powerunit.exceptions;
+
+  provides ch.powerunit.extensions.exceptions.ExceptionMapper
+    with ....MyExceptionMapper;
+}
+```
 
 ### CommonsCollections4Helper
 

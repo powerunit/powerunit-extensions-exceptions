@@ -21,6 +21,8 @@ package ch.powerunit.extensions.exceptions;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
@@ -117,6 +119,12 @@ public class ExceptionMapperTest implements TestSuite {
 	}
 
 	@Test
+	public void testForExceptionsAnyNone() {
+		assertThatFunction(ExceptionMapper.forExceptions(), new IOException("test"))
+				.is(instanceOf(WrappedException.class));
+	}
+
+	@Test
 	public void testForExceptionsAnySameExceptionFirst() {
 		assertThatFunction(ExceptionMapper.forExceptions(
 				ExceptionMapper.forException(IOException.class, e -> new WrappedException("testme1")),
@@ -167,6 +175,68 @@ public class ExceptionMapperTest implements TestSuite {
 				ExceptionMapper.forException(NullPointerException.class, e -> new WrappedException("testme3")),
 				ExceptionMapper.forException(IllegalStateException.class, e -> new WrappedException("testme4"))),
 				new SQLException("test")).is(both(exceptionMessage("test")).and(instanceOf(WrappedException.class)));
+	}
+
+	@Test
+	public void testForOrderedExceptionsNone() {
+		assertThatFunction(ExceptionMapper.forOrderedExceptions(Collections.emptyList()), new IOException("test"))
+				.is(instanceOf(WrappedException.class));
+	}
+
+	@Test
+	public void testForOrderedOneElementV1() {
+		assertThatFunction(
+				ExceptionMapper.forOrderedExceptions(List.of(
+						ExceptionMapper.forException(RuntimeException.class, e -> new WrappedException("testme1"), 2))),
+				new IllegalArgumentException("test"))
+						.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
+	}
+
+	@Test
+	public void testForOrderedOneElementV2Default() {
+		assertThatFunction(ExceptionMapper.forOrderedExceptions(List.of(new ExceptionMapper() {
+
+			@Override
+			public RuntimeException apply(Exception t) {
+				return new WrappedException("testme1");
+			}
+
+			@Override
+			public Class<? extends Exception> targetException() {
+				return Exception.class;
+			}
+
+		})), new IllegalArgumentException("test"))
+				.is(both(exceptionMessage("testme1")).and(instanceOf(WrappedException.class)));
+	}
+
+	@Test
+	public void testForOrderedTwoElementV1() {
+		assertThatFunction(ExceptionMapper.forOrderedExceptions(
+				List.of(ExceptionMapper.forException(RuntimeException.class, e -> new WrappedException("testme1"), 2),
+						ExceptionMapper.forException(IllegalArgumentException.class,
+								e -> new WrappedException("testme2"), 1))),
+				new IllegalArgumentException("test"))
+						.is(both(exceptionMessage("testme2")).and(instanceOf(WrappedException.class)));
+	}
+
+	@Test
+	public void testForOrderedTwoElementV2Default() {
+		assertThatFunction(ExceptionMapper.forOrderedExceptions(List.of(new ExceptionMapper() {
+
+			@Override
+			public RuntimeException apply(Exception t) {
+				return new WrappedException("testme1");
+			}
+
+			@Override
+			public Class<? extends Exception> targetException() {
+				return Exception.class;
+			}
+
+		}, ExceptionMapper.forException(IllegalArgumentException.class, e -> new WrappedException("testme2"), -1))),
+				new IllegalArgumentException("test"))
+						.is(both(exceptionMessage("testme2")).and(instanceOf(WrappedException.class)));
 	}
 
 	@Test

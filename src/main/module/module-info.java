@@ -10,4 +10,5 @@ module powerunit.exceptions {
 	requires static java.sql;
 	requires static java.xml;
 	requires static org.apache.commons.collections4;
+	uses ch.powerunit.extensions.exceptions.ExceptionMapper;
 }
