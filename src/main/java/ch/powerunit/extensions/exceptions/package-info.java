@@ -70,10 +70,10 @@
  * <pre>
  * public class MyExceptionMapper implements ExceptionMapper {
  *   public RuntimeException apply(Exception e) {
- *     //TODO
+ *     //Add the code
  *   }
  *   public Class&gt;? extends Exception&lt; targetException() {
- *     return //TODO;
+ *     return //Add the code;
  *   }
  *   // Optional, to define the order between the ExceptionMapper
  *   public int order() {
