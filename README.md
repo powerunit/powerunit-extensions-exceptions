@@ -170,11 +170,11 @@ To do so, create all the required implementation, for example :
 ```java
 public class MyExceptionMapper implements ch.powerunit.extensions.exceptions.ExceptionMapper {
   public RuntimeException apply(Exception e) {
-    //TODO
+    //Add code here
   }
 
   public Class<? extends Exception> targetException() {
-    return //TODO;
+    return //Add code here;
   }
 	
   // Optional, to define the order between the ExceptionMapper

@@ -22,9 +22,9 @@ package ch.powerunit.extensions.exceptions;
 import static ch.powerunit.extensions.exceptions.ExceptionMapper.forException;
 import static ch.powerunit.extensions.exceptions.SupplierWithException.ignored;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.ServiceLoader;
 import java.util.ServiceLoader.Provider;
 import java.util.function.Function;
@@ -100,8 +100,8 @@ final class Constants {
 	}
 
 	private static Function<Exception, RuntimeException> computeDefaultMapper() {
-		return ExceptionMapper.forExceptions(ServiceLoader.load(ExceptionMapper.class).stream().map(Provider::get)
-				.sorted(Comparator.comparingInt(ExceptionMapper::order)).toArray(ExceptionMapper[]::new));
+		return ExceptionMapper.forOrderedExceptions(
+				ServiceLoader.load(ExceptionMapper.class).stream().map(Provider::get).collect(toList()));
 	}
 
 	private Constants() {
