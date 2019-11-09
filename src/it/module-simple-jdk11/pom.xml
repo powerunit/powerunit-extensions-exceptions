@@ -141,7 +141,7 @@
 								<argument>-cp</argument>
 								<argument>${project.build.directory}/../../../local-repo/javax/javax/activation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2.jar${path.separator}${project.build.directory}/../../../local-repo/javax/com/sun/xml/bind/jaxb-core/2.3.0.1/jaxb-core-2.3.0.1.jar${path.separator}${project.build.directory}/../../../local-repo/javax/com/sun/xml/bind/jaxb-impl/2.3.2/jaxb-impl-2.3.2.jar</argument>
 								<argument>--add-modules</argument>
-								<argument>jaxb-api</argument>
+								<argument>java.xml.bind</argument>
 								<argument>--module</argument>
 								<argument>powerunit.test/ch.powerunittest.samples.FunctionSamplesTest</argument>
 								<argument>JAXB</argument>
