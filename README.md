@@ -161,7 +161,7 @@ Also, some dedicated, _ready to used_, Exception Mapper are provided :
 
 #### Define global ExceptionMapper
 
-_Since version 2.2.0, it is possible to define a default exception mappers by using service loader._
+It is possible to define a default exception mappers by using service loader.
 
 By default, the exception are wrapped in a `WrappedException`. This behaviour may be change by implementing the required `ExceptionMapper` and register them as _service implementation_. 
 
@@ -198,7 +198,7 @@ module XXX {
 
 ### CommonsCollections4Helper
 
-_This helper is only available since version 2.2.0 and only if the commons-collections4 library is available_
+_This helper is only available if the commons-collections4 library is available_
 
 The class `CommonsCollections4Helper` provides several static methods to convert interface
 from this library to the corresponding version in commons-collections4.
