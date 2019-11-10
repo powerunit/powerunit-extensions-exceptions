@@ -20,7 +20,6 @@
 package ch.powerunit.extensions.exceptions;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
@@ -48,20 +47,6 @@ public class ExceptionHandlerSupportTest implements TestSuite {
 			}
 		}.exceptionMapper(), new IOException("test"))
 				.is(both(exceptionMessage("test")).and(instanceOf(WrappedException.class)));
-	}
-
-	@Test
-	public void testExceptionMapperForSameException() {
-		assertThatFunction(
-				ExceptionHandlerSupport.exceptionMapperFor(IOException.class, e -> new WrappedException("testme")),
-				new IOException("test")).is(both(exceptionMessage("testme")).and(instanceOf(WrappedException.class)));
-	}
-
-	@Test
-	public void testExceptionMapperForOtherException() {
-		assertThatFunction(
-				ExceptionHandlerSupport.exceptionMapperFor(IOException.class, e -> new WrappedException("testme")),
-				new SQLException("test")).is(both(exceptionMessage("test")).and(instanceOf(WrappedException.class)));
 	}
 
 }
