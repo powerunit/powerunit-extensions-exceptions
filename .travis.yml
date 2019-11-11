@@ -10,10 +10,12 @@ matrix:
     jdk: openjdk10
   - os: linux
     jdk: openjdk11
+  - os: linux
+    jdk: openjdk12
 jobs:
   allow_failures:
-#    - os: linux
-#      jdk: openjdk11
+    - os: linux
+      jdk: openjdk12
 sudo: false
 addons:
     apt:
