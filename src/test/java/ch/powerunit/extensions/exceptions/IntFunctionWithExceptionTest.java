@@ -88,4 +88,16 @@ public class IntFunctionWithExceptionTest implements TestSuite {
 		}).apply(2).toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntFunctionWithException.ignored(x -> "1", "x").apply(2)).is("1");
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, "x").apply(1)).is("x");
+	}
+
 }
