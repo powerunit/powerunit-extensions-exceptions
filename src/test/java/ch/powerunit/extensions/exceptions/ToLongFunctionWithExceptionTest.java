@@ -78,5 +78,17 @@ public class ToLongFunctionWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).applyAsLong("x")).is(0L);
 	}
+	
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ToLongFunctionWithException.ignored(x -> 11,1L).applyAsLong("2")).is(11L);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(ToLongFunctionWithException.ignored(y -> {
+			throw new Exception();
+		},1L).applyAsLong("x")).is(1L);
+	}
 
 }
