@@ -186,4 +186,41 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 		return verifyFunction(function).ignore();
 	}
 
+	/**
+	 * Converts a {@code ToLongFunctionWithException} to a lifted
+	 * {@code ToIntFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception.
+	 * @param <T>
+	 *            the type of the input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ToIntFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, E extends Exception> ToIntFunction<T> ignored(ToIntFunctionWithException<T, E> function,
+			int defaultValue) {
+		verifyFunction(function);
+		return new ToIntFunctionWithException<T, E>() {
+
+			@Override
+			public int applyAsInt(T value) throws E {
+				return function.applyAsInt(value);
+			}
+
+			@Override
+			public int defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

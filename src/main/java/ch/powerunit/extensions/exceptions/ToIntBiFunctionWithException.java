@@ -200,4 +200,43 @@ public interface ToIntBiFunctionWithException<T, U, E extends Exception>
 		return verifyFunction(function).ignore();
 	}
 
+	/**
+	 * Converts a {@code ToIntBiFunctionWithException} to a lifted
+	 * {@code ToIntBiFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <T>
+	 *            the type of the first argument to the function
+	 * @param <U>
+	 *            the type of the second argument to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ToIntBiFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, U, E extends Exception> ToIntBiFunction<T, U> ignored(ToIntBiFunctionWithException<T, U, E> function,
+			int defaultValue) {
+		verifyFunction(function);
+		return new ToIntBiFunctionWithException<T, U, E>() {
+
+			@Override
+			public int applyAsInt(T t, U u) throws E {
+				return function.applyAsInt(t, u);
+			}
+
+			@Override
+			public int defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

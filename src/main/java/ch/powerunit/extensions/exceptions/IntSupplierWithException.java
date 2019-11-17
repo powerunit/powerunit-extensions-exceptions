@@ -176,4 +176,38 @@ public interface IntSupplierWithException<E extends Exception>
 		return verifySupplier(supplier).ignore();
 	}
 
+	/**
+	 * Converts a {@code IntSupplierWithException} to a lifted {@code IntSupplier}
+	 * returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(IntSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> IntSupplier ignored(IntSupplierWithException<E> supplier, int defaultValue) {
+		verifySupplier(supplier);
+		return new IntSupplierWithException<E>() {
+
+			@Override
+			public int getAsInt() throws E {
+				return supplier.getAsInt();
+			}
+
+			@Override
+			public int defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

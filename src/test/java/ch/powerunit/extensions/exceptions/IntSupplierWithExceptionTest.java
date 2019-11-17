@@ -74,4 +74,16 @@ public class IntSupplierWithExceptionTest implements TestSuite {
 		}).getAsInt()).is(0);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntSupplierWithException.ignored(() -> 2, 1).getAsInt()).is(2);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntSupplierWithException.ignored(() -> {
+			throw new Exception();
+		}, 1).getAsInt()).is(1);
+	}
+
 }

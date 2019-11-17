@@ -74,4 +74,16 @@ public class DoubleToIntFunctionWithExceptionTest implements TestSuite {
 		}).applyAsInt(1)).is(0);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(DoubleToIntFunctionWithException.ignored(x -> 1, 2).applyAsInt(2)).is(1);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(DoubleToIntFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, 1).applyAsInt(1)).is(1);
+	}
+
 }

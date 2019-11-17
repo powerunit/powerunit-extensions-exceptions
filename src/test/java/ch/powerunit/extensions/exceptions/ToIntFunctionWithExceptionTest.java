@@ -79,4 +79,16 @@ public class ToIntFunctionWithExceptionTest implements TestSuite {
 		}).applyAsInt("x")).is(0);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ToIntFunctionWithException.ignored(x -> 11, 2).applyAsInt("2")).is(11);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(ToIntFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, 1).applyAsInt("x")).is(1);
+	}
+
 }
