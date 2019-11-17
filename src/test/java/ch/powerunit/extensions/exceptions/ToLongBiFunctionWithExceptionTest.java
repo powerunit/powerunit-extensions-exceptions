@@ -80,4 +80,16 @@ public class ToLongBiFunctionWithExceptionTest implements TestSuite {
 		}).applyAsLong("x", "x")).is(0L);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ToLongBiFunctionWithException.ignored((x, y) -> 1, 2L).applyAsLong("2", "3")).is(1L);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(ToLongBiFunctionWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, 1L).applyAsLong("x", "x")).is(1L);
+	}
+
 }

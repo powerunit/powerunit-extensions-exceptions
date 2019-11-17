@@ -74,4 +74,16 @@ public class IntToLongFunctionWithExceptionTest implements TestSuite {
 		}).applyAsLong(1)).is(0L);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntToLongFunctionWithException.ignored(x -> 1, 2L).applyAsLong(2)).is(1L);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntToLongFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, 1L).applyAsLong(1)).is(1L);
+	}
+
 }

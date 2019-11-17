@@ -93,4 +93,16 @@ public class LongUnaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsLong(1)).is(0L);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(LongUnaryOperatorWithException.ignored(x -> x + 1, 1L).applyAsLong(2)).is(3L);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(LongUnaryOperatorWithException.ignored(x -> {
+			throw new Exception();
+		}, 1L).applyAsLong(1)).is(1L);
+	}
+
 }

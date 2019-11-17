@@ -176,4 +176,39 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 		return verifyFunction(function).ignore();
 	}
 
+	/**
+	 * Converts a {@code DoubleToLongFunctionWithException} to a lifted
+	 * {@code DoubleToLongFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(DoubleToLongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> DoubleToLongFunction ignored(DoubleToLongFunctionWithException<E> function,
+			long defaultValue) {
+		verifyFunction(function);
+		return new DoubleToLongFunctionWithException<E>() {
+
+			@Override
+			public long applyAsLong(double value) throws E {
+				return function.applyAsLong(value);
+			}
+
+			@Override
+			public long defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }
