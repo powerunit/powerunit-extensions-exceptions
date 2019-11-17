@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntBinaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntBinaryOperator>, IntDefaultValue {
 
 	/**
 	 * Applies this operator to the given operands.
@@ -68,7 +68,7 @@ public interface IntBinaryOperatorWithException<E extends Exception>
 				return applyAsInt(left, right);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

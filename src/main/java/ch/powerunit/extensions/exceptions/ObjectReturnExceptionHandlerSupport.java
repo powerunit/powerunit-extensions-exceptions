@@ -125,9 +125,9 @@ public interface ObjectReturnExceptionHandlerSupport<F, L, S, T> extends Excepti
 	S stage();
 
 	/**
-	 * Defines the default value (by default {@code null}) returned by the ignore and
-	 * ignored method.
-	 * 
+	 * Defines the default value (by default {@code null}) returned by the ignore
+	 * and ignored method.
+	 *
 	 * @return the default value for the ignore/ignored method.
 	 * @since 3.0.0
 	 */

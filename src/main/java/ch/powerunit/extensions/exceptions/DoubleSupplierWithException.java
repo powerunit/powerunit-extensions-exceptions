@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier>, DoubleDefaultValue {
 
 	/**
 	 * Gets a result.
@@ -70,16 +70,6 @@ public interface DoubleSupplierWithException<E extends Exception>
 				return defaultValue();
 			}
 		};
-	}
-
-	/**
-	 * Defines the default value returned by the ignore and ignored method.
-	 * 
-	 * @return the default value for the ignore/ignored method.
-	 * @since 3.0.0
-	 */
-	default double defaultValue() {
-		return 0;
 	}
 
 	/**

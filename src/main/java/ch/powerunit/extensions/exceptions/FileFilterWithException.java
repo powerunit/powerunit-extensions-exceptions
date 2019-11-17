@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FileFilterWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<FileFilter> {
+		extends PrimitiveReturnExceptionHandlerSupport<FileFilter>, BooleanDefaultValue {
 
 	/**
 	 * Tests whether or not the specified abstract pathname should be included in a
@@ -69,7 +69,7 @@ public interface FileFilterWithException<E extends Exception>
 				return accept(pathname);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}

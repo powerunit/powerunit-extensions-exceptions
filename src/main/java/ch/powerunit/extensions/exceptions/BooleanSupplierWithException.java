@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BooleanSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<BooleanSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<BooleanSupplier>, BooleanDefaultValue {
 
 	/**
 	 * Gets a result.
@@ -64,7 +64,7 @@ public interface BooleanSupplierWithException<E extends Exception>
 				return getAsBoolean();
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}

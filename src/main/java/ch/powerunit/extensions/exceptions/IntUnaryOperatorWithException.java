@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntUnaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator>, IntDefaultValue {
 
 	/**
 	 * Applies this operator to the given operand.
@@ -67,7 +67,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 				return applyAsInt(t);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

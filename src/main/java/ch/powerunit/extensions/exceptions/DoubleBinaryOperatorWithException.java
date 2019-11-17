@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleBinaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator>, DoubleDefaultValue {
 
 	/**
 	 * Applies this operator to the given operands.
@@ -69,7 +69,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 				return applyAsDouble(left, right);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

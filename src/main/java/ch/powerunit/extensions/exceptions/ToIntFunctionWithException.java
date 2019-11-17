@@ -47,7 +47,7 @@ import java.util.function.ToIntFunction;
  */
 @FunctionalInterface
 public interface ToIntFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToIntFunction<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<ToIntFunction<T>>, IntDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.
@@ -68,7 +68,7 @@ public interface ToIntFunctionWithException<T, E extends Exception>
 				return applyAsInt(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

@@ -51,7 +51,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiPredicateWithException<T, U, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<BiPredicate<T, U>> {
+		extends PrimitiveReturnExceptionHandlerSupport<BiPredicate<T, U>>, BooleanDefaultValue {
 
 	/**
 	 * Evaluates this predicate on the given arguments.
@@ -75,7 +75,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 				return test(t, u);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}

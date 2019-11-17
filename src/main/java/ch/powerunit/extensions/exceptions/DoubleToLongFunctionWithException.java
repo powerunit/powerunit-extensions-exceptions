@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleToLongFunctionWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleToLongFunction> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleToLongFunction>, LongDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.
@@ -67,7 +67,7 @@ public interface DoubleToLongFunctionWithException<E extends Exception>
 				return applyAsLong(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

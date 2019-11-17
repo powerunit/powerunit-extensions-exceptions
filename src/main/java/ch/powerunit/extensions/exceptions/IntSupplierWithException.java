@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntSupplier>, IntDefaultValue {
 
 	/**
 	 * Gets a result.
@@ -68,7 +68,7 @@ public interface IntSupplierWithException<E extends Exception>
 				return getAsInt();
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

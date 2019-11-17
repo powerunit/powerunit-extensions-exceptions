@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongUnaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator>, LongDefaultValue {
 
 	/**
 	 * Applies this operator to the given operand.
@@ -69,7 +69,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 				return applyAsLong(operand);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

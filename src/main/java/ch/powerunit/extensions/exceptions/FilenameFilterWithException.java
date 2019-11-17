@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FilenameFilterWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<FilenameFilter> {
+		extends PrimitiveReturnExceptionHandlerSupport<FilenameFilter>, BooleanDefaultValue {
 
 	/**
 	 * Tests if a specified file should be included in a file list.
@@ -71,7 +71,7 @@ public interface FilenameFilterWithException<E extends Exception>
 				return accept(dir, name);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}

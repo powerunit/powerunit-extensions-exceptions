@@ -116,7 +116,7 @@ public interface ExceptionMapper extends Function<Exception, RuntimeException> {
 	/**
 	 * This method is used when ExceptionMapper are registered as default Mapper to
 	 * defines the right order to select then.
-	 * 
+	 *
 	 * @return an ordering key, by default 0.
 	 * @since 2.2.0
 	 */

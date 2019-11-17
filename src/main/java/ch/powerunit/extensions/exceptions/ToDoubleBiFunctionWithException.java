@@ -49,7 +49,7 @@ import java.util.function.ToDoubleBiFunction;
  */
 @FunctionalInterface
 public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleBiFunction<T, U>> {
+		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleBiFunction<T, U>>, DoubleDefaultValue {
 
 	/**
 	 * Applies this function to the given arguments.
@@ -72,7 +72,7 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 				return applyAsDouble(t, u);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongSupplier>, LongDefaultValue {
 
 	/**
 	 * Gets a result.
@@ -68,7 +68,7 @@ public interface LongSupplierWithException<E extends Exception>
 				return getAsLong();
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

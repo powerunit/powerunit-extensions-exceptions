@@ -47,7 +47,7 @@ import java.util.function.ToLongFunction;
  */
 @FunctionalInterface
 public interface ToLongFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToLongFunction<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<ToLongFunction<T>>, LongDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.
@@ -71,16 +71,6 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 				return defaultValue();
 			}
 		};
-	}
-
-	/**
-	 * Defines the default value 0 returned by the ignore and ignored method.
-	 * 
-	 * @return the default value for the ignore/ignored method.
-	 * @since 3.0.0
-	 */
-	default long defaultValue() {
-		return 0;
 	}
 
 	/**

@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleToIntFunctionWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleToIntFunction> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleToIntFunction>, IntDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.
@@ -67,7 +67,7 @@ public interface DoubleToIntFunctionWithException<E extends Exception>
 				return applyAsInt(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}

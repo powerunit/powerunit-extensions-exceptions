@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface PredicateWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<Predicate<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<Predicate<T>>, BooleanDefaultValue {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -69,7 +69,7 @@ public interface PredicateWithException<T, E extends Exception>
 				return test(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}

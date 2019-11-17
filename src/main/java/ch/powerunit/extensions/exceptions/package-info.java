@@ -56,17 +56,17 @@
  * Function&lt;String, Optional&lt;String&gt;&gt; functionWithOptionalResult =
  *   FunctionWithException.lifted(fonctionThrowingException);
  * </pre>
- * 
+ *
  * <h2>Exception Mapping</h2>
- * 
+ *
  * By default, the exception are transformed into a {@code RuntimeException}
  * using the {@link ch.powerunit.extensions.exceptions.WrappedException}. This
  * behaviour can be changed locally (second argument of the {@code unchecked}
  * methods) or globally (by registering default {@code ExceptionMapper}.
- * 
+ *
  * To do the global configuration, it is required first to create the
  * {@code ExceptionMapper}:
- * 
+ *
  * <pre>
  * public class MyExceptionMapper implements ExceptionMapper {
  *   public RuntimeException apply(Exception e) {
@@ -81,9 +81,9 @@
  *   }
  * }
  * </pre>
- * 
+ *
  * Then, the {@code ExceptionMapper} must be registered :
- * 
+ *
  * <pre>
  * module XXX {
  *   requires powerunit.exceptions;
