@@ -100,4 +100,16 @@ public class SupplierWithExceptionTest implements TestSuite {
 		}).apply("2")).throwException(instanceOf(Exception.class));
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(SupplierWithException.ignored(() -> "1", "x").get()).is("1");
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(SupplierWithException.ignored(() -> {
+			throw new Exception();
+		}, "x").get()).is("x");
+	}
+
 }

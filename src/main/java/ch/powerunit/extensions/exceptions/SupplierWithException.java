@@ -226,6 +226,42 @@ public interface SupplierWithException<T, E extends Exception> extends
 	}
 
 	/**
+	 * Converts a {@code SupplierWithException} to a lifted {@code Supplier}
+	 * returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of exception
+	 * @param <T>
+	 *            the type of the output object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(SupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static <T, E extends Exception> Supplier<T> ignored(SupplierWithException<T, E> supplier, T defaultValue) {
+		verifySupplier(supplier);
+		return new SupplierWithException<T, E>() {
+
+			@Override
+			public T get() throws E {
+				return supplier.get();
+			}
+
+			@Override
+			public T defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
+	/**
 	 * Convert this {@code SupplierWithException} to a lifted {@code Supplier}
 	 * return {@code CompletionStage} as return value.
 	 *
