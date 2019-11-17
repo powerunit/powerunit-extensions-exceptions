@@ -203,4 +203,43 @@ public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
 		return verifyFunction(function).ignore();
 	}
 
+	/**
+	 * Converts a {@code ToDoubleBiFunctionWithException} to a lifted
+	 * {@code ToDoubleBiFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <T>
+	 *            the type of the first argument to the function
+	 * @param <U>
+	 *            the type of the second argument the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ToDoubleBiFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, U, E extends Exception> ToDoubleBiFunction<T, U> ignored(
+			ToDoubleBiFunctionWithException<T, U, E> function, double defaultValue) {
+		verifyFunction(function);
+		return new ToDoubleBiFunctionWithException<T, U, E>() {
+
+			@Override
+			public double applyAsDouble(T t, U u) throws E {
+				return function.applyAsDouble(t, u);
+			}
+
+			@Override
+			public double defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

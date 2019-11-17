@@ -79,4 +79,16 @@ public class ToDoubleFunctionWithExceptionTest implements TestSuite {
 		}).applyAsDouble("x")).is(0d);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ToDoubleFunctionWithException.ignored(x -> 11, 1d).applyAsDouble("2")).is(11d);
+	}
+
+	@Test
+	public void testIgnoredDoubleException() {
+		assertThat(ToDoubleFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, 1d).applyAsDouble("x")).is(1d);
+	}
+
 }

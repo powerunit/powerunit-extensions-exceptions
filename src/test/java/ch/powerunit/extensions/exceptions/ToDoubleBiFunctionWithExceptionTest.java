@@ -80,4 +80,16 @@ public class ToDoubleBiFunctionWithExceptionTest implements TestSuite {
 		}).applyAsDouble("x", "x")).is(0d);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ToDoubleBiFunctionWithException.ignored((x, y) -> 1, 2d).applyAsDouble("2", "3")).is(1d);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(ToDoubleBiFunctionWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, 1d).applyAsDouble("x", "x")).is(1d);
+	}
+
 }

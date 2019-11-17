@@ -186,4 +186,41 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 		return verifyFunction(function).ignore();
 	}
 
+	/**
+	 * Converts a {@code ToDoubleFunctionWithException} to a lifted
+	 * {@code ToDoubleFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value in case of exception
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ToDoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, E extends Exception> ToDoubleFunction<T> ignored(ToDoubleFunctionWithException<T, E> function,
+			double defaultValue) {
+		verifyFunction(function);
+		return new ToDoubleFunctionWithException<T, E>() {
+
+			@Override
+			public double applyAsDouble(T value) throws E {
+				return function.applyAsDouble(value);
+			}
+
+			@Override
+			public double defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

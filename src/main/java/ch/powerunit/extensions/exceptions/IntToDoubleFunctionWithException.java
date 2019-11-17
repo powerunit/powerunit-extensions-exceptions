@@ -175,4 +175,39 @@ public interface IntToDoubleFunctionWithException<E extends Exception>
 		return verifyFunction(function).ignore();
 	}
 
+	/**
+	 * Converts a {@code IntToDoubleFunctionWithException} to a lifted
+	 * {@code IntToDoubleFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(IntToDoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> IntToDoubleFunction ignored(IntToDoubleFunctionWithException<E> function,
+			double defaultValue) {
+		verifyFunction(function);
+		return new IntToDoubleFunctionWithException<E>() {
+
+			@Override
+			public double applyAsDouble(int value) throws E {
+				return function.applyAsDouble(value);
+			}
+
+			@Override
+			public double defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

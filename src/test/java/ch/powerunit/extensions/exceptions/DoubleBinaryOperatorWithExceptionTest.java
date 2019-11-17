@@ -74,4 +74,16 @@ public class DoubleBinaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsDouble(1, 2)).is(0d);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(DoubleBinaryOperatorWithException.ignored((x, y) -> x + y, 1d).applyAsDouble(2, 1)).is(3d);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(DoubleBinaryOperatorWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, 1d).applyAsDouble(1, 2)).is(1d);
+	}
+
 }
