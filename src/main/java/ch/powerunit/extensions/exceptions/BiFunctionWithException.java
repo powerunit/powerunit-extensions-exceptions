@@ -103,7 +103,8 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code BiFunctionWithException} to a lifted {@code BiFunction}
-	 * returning {@code null} in case of exception.
+	 * returning {@code null} (or the value redefined by the method
+	 * {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(BiFunctionWithException)
@@ -111,7 +112,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	@Override
 	default BiFunction<T, U, R> ignore() {
-		return lift().andThen(o -> o.orElse(null));
+		return lift().andThen(o -> o.orElse(defaultValue()));
 	}
 
 	/**
@@ -307,6 +308,47 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * returning a default in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value to be returned in case of error
+	 * @param <T>
+	 *            the type of the first argument to the function
+	 * @param <U>
+	 *            the type of the second argument to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(BiFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function,
+			R defaultValue) {
+		verifyFunction(function);
+		return new BiFunctionWithException<T, U, R, E>() {
+
+			@Override
+			public R apply(T t, U u) throws E {
+				return function.apply(t, u);
+			}
+
+			@Override
+			public R defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+
 	}
 
 	/**

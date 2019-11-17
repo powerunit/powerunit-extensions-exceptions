@@ -95,7 +95,8 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code FunctionWithException} to a lifted {@code Function}
-	 * returning {@code null} in case of exception.
+	 * returning {@code null} (or the value redefined by the method
+	 * {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
@@ -103,7 +104,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	@Override
 	default Function<T, R> ignore() {
-		return lift().andThen(o -> o.orElse(null));
+		return lift().andThen(o -> o.orElse(defaultValue()));
 	}
 
 	/**

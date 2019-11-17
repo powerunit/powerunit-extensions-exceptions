@@ -91,14 +91,15 @@ public interface IntFunctionWithException<R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code IntFunctionWithException} to a lifted
-	 * {@code IntFunction} returning {@code null} in case of exception.
+	 * {@code IntFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(IntFunctionWithException)
 	 */
 	@Override
 	default IntFunction<R> ignore() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> defaultValue());
 	}
 
 	/**

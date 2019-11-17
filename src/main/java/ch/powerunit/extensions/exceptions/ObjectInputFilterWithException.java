@@ -105,10 +105,16 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 				notThrowingHandler());
 	}
 
+	@Override
+	default Status defaultValue() {
+		return Status.UNDECIDED;
+	}
+
 	/**
 	 * Converts this {@code ObjectInputFilterWithException} to a lifted
 	 * {@code ObjectInputFilter} returning {@link Status#UNDECIDED Status.UNDECIDED}
-	 * in case of exception.
+	 * (or the value redefined by the method {@link #defaultValue()}) in case of
+	 * exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(ObjectInputFilterWithException)
@@ -116,7 +122,7 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 */
 	@Override
 	default ObjectInputFilter ignore() {
-		return t -> lift().apply(t).orElse(Status.UNDECIDED);
+		return t -> lift().apply(t).orElse(defaultValue());
 	}
 
 	/**

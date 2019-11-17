@@ -90,14 +90,15 @@ public interface SupplierWithException<T, E extends Exception> extends
 
 	/**
 	 * Converts this {@code SupplierWithException} to a lifted {@code Supplier}
-	 * returning {@code null} in case of exception.
+	 * returning {@code null} (or the value redefined by the method
+	 * {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the supplier that ignore error
 	 * @see #ignored(SupplierWithException)
 	 */
 	@Override
 	default Supplier<T> ignore() {
-		return () -> lift().get().orElse(null);
+		return () -> lift().get().orElse(defaultValue());
 	}
 
 	/**

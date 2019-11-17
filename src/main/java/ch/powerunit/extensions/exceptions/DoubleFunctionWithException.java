@@ -91,14 +91,15 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code DoubleFunctionWithException} to a lifted
-	 * {@code DoubleFunction} returning {@code null} in case of exception.
+	 * {@code DoubleFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(DoubleFunctionWithException)
 	 */
 	@Override
 	default DoubleFunction<R> ignore() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> defaultValue());
 	}
 
 	/**

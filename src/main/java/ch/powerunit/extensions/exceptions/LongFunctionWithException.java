@@ -91,14 +91,15 @@ public interface LongFunctionWithException<R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code LongFunctionWithException} to a lifted
-	 * {@code LongFunction} returning {@code null} in case of exception.
+	 * {@code LongFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(LongFunctionWithException)
 	 */
 	@Override
 	default LongFunction<R> ignore() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> defaultValue());
 	}
 
 	/**
