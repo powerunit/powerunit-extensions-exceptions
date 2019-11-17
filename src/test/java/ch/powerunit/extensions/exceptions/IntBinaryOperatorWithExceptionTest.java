@@ -73,4 +73,16 @@ public class IntBinaryOperatorWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).applyAsInt(1, 2)).is(0);
 	}
+
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntBinaryOperatorWithException.ignored((x, y) -> x + y, 1).applyAsInt(2, 1)).is(3);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntBinaryOperatorWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, 1).applyAsInt(1, 2)).is(1);
+	}
 }

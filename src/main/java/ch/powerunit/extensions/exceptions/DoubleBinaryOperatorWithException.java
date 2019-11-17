@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleBinaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleBinaryOperator>, DoubleDefaultValue {
 
 	/**
 	 * Applies this operator to the given operands.
@@ -69,7 +69,7 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 				return applyAsDouble(left, right);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -178,6 +178,42 @@ public interface DoubleBinaryOperatorWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleBinaryOperator ignored(DoubleBinaryOperatorWithException<E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code DoubleBinaryOperatorWithException} to a lifted
+	 * {@code DoubleBinaryOperator} with a default value as return value in case of
+	 * exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(DoubleBinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> DoubleBinaryOperator ignored(DoubleBinaryOperatorWithException<E> function,
+			double defaultValue) {
+		verifyFunction(function);
+		return new DoubleBinaryOperatorWithException<E>() {
+
+			@Override
+			public double applyAsDouble(double left, double right) throws E {
+				return function.applyAsDouble(left, right);
+			}
+
+			@Override
+			public double defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

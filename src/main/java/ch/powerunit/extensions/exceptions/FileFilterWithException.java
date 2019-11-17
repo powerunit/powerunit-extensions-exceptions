@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FileFilterWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<FileFilter> {
+		extends PrimitiveReturnExceptionHandlerSupport<FileFilter>, BooleanDefaultValue {
 
 	/**
 	 * Tests whether or not the specified abstract pathname should be included in a
@@ -69,7 +69,7 @@ public interface FileFilterWithException<E extends Exception>
 				return accept(pathname);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}
@@ -251,6 +251,40 @@ public interface FileFilterWithException<E extends Exception>
 	 */
 	static <E extends Exception> FileFilter ignored(FileFilterWithException<E> predicate) {
 		return verifyPredicate(predicate).ignore();
+	}
+
+	/**
+	 * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted FileFilter
+	 * @see #ignore()
+	 * @see #ignored(FileFilterWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> FileFilter ignored(FileFilterWithException<E> predicate, boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new FileFilterWithException<E>() {
+
+			@Override
+			public boolean accept(File pathname) throws E {
+				return predicate.accept(pathname);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

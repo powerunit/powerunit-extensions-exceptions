@@ -93,4 +93,16 @@ public class IntUnaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsInt(1)).is(0);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntUnaryOperatorWithException.ignored(x -> x + 1, 1).applyAsInt(2)).is(3);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntUnaryOperatorWithException.ignored(x -> {
+			throw new Exception();
+		}, 1).applyAsInt(1)).is(1);
+	}
+
 }

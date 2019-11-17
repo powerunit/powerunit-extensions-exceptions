@@ -47,7 +47,7 @@ import java.util.function.ToLongFunction;
  */
 @FunctionalInterface
 public interface ToLongFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToLongFunction<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<ToLongFunction<T>>, LongDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.
@@ -68,7 +68,7 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 				return applyAsLong(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -184,6 +184,43 @@ public interface ToLongFunctionWithException<T, E extends Exception>
 	 */
 	static <T, E extends Exception> ToLongFunction<T> ignored(ToLongFunctionWithException<T, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code ToLongFunctionWithException} to a lifted
+	 * {@code ToLongFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value to be returned in case of exception
+	 * @param <T>
+	 *            the type of the input object to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ToLongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, E extends Exception> ToLongFunction<T> ignored(ToLongFunctionWithException<T, E> function,
+			long defaultValue) {
+		verifyFunction(function);
+		return new ToLongFunctionWithException<T, E>() {
+
+			@Override
+			public long applyAsLong(T value) throws E {
+				return function.applyAsLong(value);
+			}
+
+			@Override
+			public long defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

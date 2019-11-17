@@ -51,7 +51,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiPredicateWithException<T, U, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<BiPredicate<T, U>> {
+		extends PrimitiveReturnExceptionHandlerSupport<BiPredicate<T, U>>, BooleanDefaultValue {
 
 	/**
 	 * Evaluates this predicate on the given arguments.
@@ -75,7 +75,7 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 				return test(t, u);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}
@@ -279,6 +279,45 @@ public interface BiPredicateWithException<T, U, E extends Exception>
 	 */
 	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate) {
 		return verifyPredicate(predicate).ignore();
+	}
+
+	/**
+	 * Converts a {@code BiPredicateWithException} to a lifted {@code BiPredicate}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <T>
+	 *            the type of the first argument to the predicate
+	 * @param <U>
+	 *            the type of the second argument the predicate
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted predicate
+	 * @see #ignore()
+	 * @see #ignored(BiPredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <T, U, E extends Exception> BiPredicate<T, U> ignored(BiPredicateWithException<T, U, E> predicate,
+			boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new BiPredicateWithException<T, U, E>() {
+
+			@Override
+			public boolean test(T t, U u) throws E {
+				return predicate.test(t, u);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

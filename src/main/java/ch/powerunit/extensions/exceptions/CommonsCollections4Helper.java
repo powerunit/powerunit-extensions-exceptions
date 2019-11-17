@@ -19,12 +19,12 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
 import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
 import static ch.powerunit.extensions.exceptions.ExceptionMapper.forException;
 import static ch.powerunit.extensions.exceptions.ExceptionMapper.forExceptions;
-import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
-import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
-import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
 
 import java.util.function.Function;
 
@@ -42,7 +42,7 @@ import org.apache.commons.collections4.Transformer;
  * <p>
  * The mapping between the interface from <i>commons-collections4</i> and this
  * library is the following :
- * 
+ *
  * <table border="1">
  * <caption>Mapping between interfaces</caption>
  * <tr>
@@ -66,7 +66,7 @@ import org.apache.commons.collections4.Transformer;
  * <td>ConsumerWithException</td>
  * </tr>
  * </table>
- * 
+ *
  * @since 2.2.0
  *
  */
@@ -82,7 +82,7 @@ public final class CommonsCollections4Helper {
 	/**
 	 * Transforms a {@link PredicateWithException} to the one from
 	 * commons-collections.
-	 * 
+	 *
 	 * @param predicate
 	 *            the {@link PredicateWithException} to be transformed to the one
 	 *            from commons-collections.
@@ -105,7 +105,7 @@ public final class CommonsCollections4Helper {
 	/**
 	 * Transforms a {@link SupplierWithException} to the one from
 	 * commons-collections.
-	 * 
+	 *
 	 * @param supplier
 	 *            the {@link SupplierWithException} to be transformed to the one
 	 *            from commons-collections.
@@ -126,7 +126,7 @@ public final class CommonsCollections4Helper {
 	/**
 	 * Transforms a {@link FunctionWithException} to the one from
 	 * commons-collections.
-	 * 
+	 *
 	 * @param function
 	 *            the {@link FunctionWithException} to be transformed to the one
 	 *            from commons-collections.
@@ -150,7 +150,7 @@ public final class CommonsCollections4Helper {
 	/**
 	 * Transforms a {@link ConsumerWithException} to the one from
 	 * commons-collections.
-	 * 
+	 *
 	 * @param consumer
 	 *            the {@link ConsumerWithException} to be transformed to the one
 	 *            from commons-collections.

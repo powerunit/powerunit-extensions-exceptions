@@ -91,14 +91,15 @@ public interface LongFunctionWithException<R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code LongFunctionWithException} to a lifted
-	 * {@code LongFunction} returning {@code null} in case of exception.
+	 * {@code LongFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(LongFunctionWithException)
 	 */
 	@Override
 	default LongFunction<R> ignore() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> defaultValue());
 	}
 
 	/**
@@ -224,6 +225,42 @@ public interface LongFunctionWithException<R, E extends Exception> extends
 	 */
 	static <R, E extends Exception> LongFunction<R> ignored(LongFunctionWithException<R, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code LongFunctionWithException} to a lifted {@code LongFunction}
+	 * returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value to be returned in case of exception
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(LongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <R, E extends Exception> LongFunction<R> ignored(LongFunctionWithException<R, E> function, R defaultValue) {
+		verifyFunction(function);
+		return new LongFunctionWithException<R, E>() {
+
+			@Override
+			public R apply(long value) throws E {
+				return function.apply(value);
+			}
+
+			@Override
+			public R defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 	/**

@@ -45,7 +45,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongBinaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator>, LongDefaultValue {
 
 	/**
 	 * Applies this operator to the given operands.
@@ -68,7 +68,7 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 				return applyAsLong(left, right);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -177,6 +177,42 @@ public interface LongBinaryOperatorWithException<E extends Exception>
 	 */
 	static <E extends Exception> LongBinaryOperator ignored(LongBinaryOperatorWithException<E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code LongBinaryOperatorWithException} to a lifted
+	 * {@code LongBinaryOperator} with a default value as return value in case of
+	 * exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(LongBinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> LongBinaryOperator ignored(LongBinaryOperatorWithException<E> function,
+			long defaultValue) {
+		verifyFunction(function);
+		return new LongBinaryOperatorWithException<E>() {
+
+			@Override
+			public long applyAsLong(long left, long right) throws E {
+				return function.applyAsLong(left, right);
+			}
+
+			@Override
+			public long defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

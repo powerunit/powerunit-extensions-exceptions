@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntUnaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator>, IntDefaultValue {
 
 	/**
 	 * Applies this operator to the given operand.
@@ -67,7 +67,7 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 				return applyAsInt(t);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -225,6 +225,40 @@ public interface IntUnaryOperatorWithException<E extends Exception>
 	 */
 	static <E extends Exception> IntUnaryOperator ignored(IntUnaryOperatorWithException<E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code IntUnaryOperatorWithException} to a lifted
+	 * {@code IntUnaryOperator} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(IntUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> IntUnaryOperator ignored(IntUnaryOperatorWithException<E> function, int defaultValue) {
+		verifyFunction(function);
+		return new IntUnaryOperatorWithException<E>() {
+
+			@Override
+			public int applyAsInt(int operand) throws E {
+				return function.applyAsInt(operand);
+			}
+
+			@Override
+			public int defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

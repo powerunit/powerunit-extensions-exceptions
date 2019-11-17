@@ -74,4 +74,16 @@ public class DoubleSupplierWithExceptionTest implements TestSuite {
 		}).getAsDouble()).is(0d);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(DoubleSupplierWithException.ignored(() -> 2, 1d).getAsDouble()).is(2d);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(DoubleSupplierWithException.ignored(() -> {
+			throw new Exception();
+		}, 1d).getAsDouble()).is(1d);
+	}
+
 }

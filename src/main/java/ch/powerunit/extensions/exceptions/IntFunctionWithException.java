@@ -91,14 +91,15 @@ public interface IntFunctionWithException<R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code IntFunctionWithException} to a lifted
-	 * {@code IntFunction} returning {@code null} in case of exception.
+	 * {@code IntFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(IntFunctionWithException)
 	 */
 	@Override
 	default IntFunction<R> ignore() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> defaultValue());
 	}
 
 	/**
@@ -224,6 +225,42 @@ public interface IntFunctionWithException<R, E extends Exception> extends
 	 */
 	static <R, E extends Exception> IntFunction<R> ignored(IntFunctionWithException<R, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code IntFunctionWithException} to a lifted {@code IntFunction}
+	 * returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value to be returned in case of exception
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(IntFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <R, E extends Exception> IntFunction<R> ignored(IntFunctionWithException<R, E> function, R defaultValue) {
+		verifyFunction(function);
+		return new IntFunctionWithException<R, E>() {
+
+			@Override
+			public R apply(int value) throws E {
+				return function.apply(value);
+			}
+
+			@Override
+			public R defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 	/**

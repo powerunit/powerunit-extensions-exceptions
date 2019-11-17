@@ -47,7 +47,7 @@ import java.util.function.ToDoubleFunction;
  */
 @FunctionalInterface
 public interface ToDoubleFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleFunction<T>> {
+		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleFunction<T>>, DoubleDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.
@@ -68,7 +68,7 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 				return applyAsDouble(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -184,6 +184,43 @@ public interface ToDoubleFunctionWithException<T, E extends Exception>
 	 */
 	static <T, E extends Exception> ToDoubleFunction<T> ignored(ToDoubleFunctionWithException<T, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code ToDoubleFunctionWithException} to a lifted
+	 * {@code ToDoubleFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value in case of exception
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ToDoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, E extends Exception> ToDoubleFunction<T> ignored(ToDoubleFunctionWithException<T, E> function,
+			double defaultValue) {
+		verifyFunction(function);
+		return new ToDoubleFunctionWithException<T, E>() {
+
+			@Override
+			public double applyAsDouble(T value) throws E {
+				return function.applyAsDouble(value);
+			}
+
+			@Override
+			public double defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

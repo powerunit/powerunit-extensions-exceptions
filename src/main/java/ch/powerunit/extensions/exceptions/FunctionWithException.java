@@ -95,7 +95,8 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code FunctionWithException} to a lifted {@code Function}
-	 * returning {@code null} in case of exception.
+	 * returning {@code null} (or the value redefined by the method
+	 * {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(FunctionWithException)
@@ -103,7 +104,7 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	@Override
 	default Function<T, R> ignore() {
-		return lift().andThen(o -> o.orElse(null));
+		return lift().andThen(o -> o.orElse(defaultValue()));
 	}
 
 	/**
@@ -302,6 +303,44 @@ public interface FunctionWithException<T, R, E extends Exception> extends
 	 */
 	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a lifted {@code Function}
+	 * returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value to be returned in case of exception.
+	 * @param <T>
+	 *            the type of the input to the function
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(FunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <T, R, E extends Exception> Function<T, R> ignored(FunctionWithException<T, R, E> function, R defaultValue) {
+		verifyFunction(function);
+		return new FunctionWithException<T, R, E>() {
+
+			@Override
+			public R apply(T t) throws E {
+				return function.apply(t);
+			}
+
+			@Override
+			public R defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 	/**

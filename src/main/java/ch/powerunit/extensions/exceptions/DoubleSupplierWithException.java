@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier>, DoubleDefaultValue {
 
 	/**
 	 * Gets a result.
@@ -67,7 +67,7 @@ public interface DoubleSupplierWithException<E extends Exception>
 				return getAsDouble();
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -173,6 +173,40 @@ public interface DoubleSupplierWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoubleSupplier ignored(DoubleSupplierWithException<E> supplier) {
 		return verifySupplier(supplier).ignore();
+	}
+
+	/**
+	 * Converts a {@code DoubleSupplierWithException} to a lifted
+	 * {@code DoubleSupplier} returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(DoubleSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> DoubleSupplier ignored(DoubleSupplierWithException<E> supplier, double defaultValue) {
+		verifySupplier(supplier);
+		return new DoubleSupplierWithException<E>() {
+
+			@Override
+			public double getAsDouble() throws E {
+				return supplier.getAsDouble();
+			}
+
+			@Override
+			public double defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

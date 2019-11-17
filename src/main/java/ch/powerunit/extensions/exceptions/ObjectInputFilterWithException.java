@@ -26,6 +26,7 @@ import java.io.ObjectInputFilter;
 import java.io.ObjectInputFilter.FilterInfo;
 import java.io.ObjectInputFilter.Status;
 import java.io.ObjectInputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -105,10 +106,16 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 				notThrowingHandler());
 	}
 
+	@Override
+	default Status defaultValue() {
+		return Status.UNDECIDED;
+	}
+
 	/**
 	 * Converts this {@code ObjectInputFilterWithException} to a lifted
 	 * {@code ObjectInputFilter} returning {@link Status#UNDECIDED Status.UNDECIDED}
-	 * in case of exception.
+	 * (or the value redefined by the method {@link #defaultValue()}) in case of
+	 * exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(ObjectInputFilterWithException)
@@ -116,7 +123,7 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 */
 	@Override
 	default ObjectInputFilter ignore() {
-		return t -> lift().apply(t).orElse(Status.UNDECIDED);
+		return t -> lift().apply(t).orElse(defaultValue());
 	}
 
 	/**
@@ -236,6 +243,42 @@ public interface ObjectInputFilterWithException<E extends Exception> extends
 	 */
 	static <E extends Exception> ObjectInputFilter ignored(ObjectInputFilterWithException<E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code ObjectInputFilterWithException} to a lifted
+	 * {@code ObjectInputFilter} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of exception. <b>Can't be null</b>.
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ObjectInputFilterWithException)
+	 * @throws NullPointerException
+	 *             if function or defaultValue is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> ObjectInputFilter ignored(ObjectInputFilterWithException<E> function,
+			Status defaultValue) {
+		verifyFunction(function);
+		Objects.requireNonNull(defaultValue, "defaultValue can't be null");
+		return new ObjectInputFilterWithException<E>() {
+
+			@Override
+			public Status checkInput(FilterInfo filterInfo) throws E {
+				return function.checkInput(filterInfo);
+			}
+
+			@Override
+			public Status defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 	/**

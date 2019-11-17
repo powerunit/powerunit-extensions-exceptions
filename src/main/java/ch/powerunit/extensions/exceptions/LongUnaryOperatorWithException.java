@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongUnaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongUnaryOperator>, LongDefaultValue {
 
 	/**
 	 * Applies this operator to the given operand.
@@ -69,7 +69,7 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 				return applyAsLong(operand);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -253,6 +253,41 @@ public interface LongUnaryOperatorWithException<E extends Exception>
 	 */
 	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code LongUnaryOperatorWithException} to a lifted
+	 * {@code LongUnaryOperator} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(LongUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> LongUnaryOperator ignored(LongUnaryOperatorWithException<E> function,
+			long defaultValue) {
+		verifyFunction(function);
+		return new LongUnaryOperatorWithException<E>() {
+
+			@Override
+			public long applyAsLong(long operand) throws E {
+				return function.applyAsLong(operand);
+			}
+
+			@Override
+			public long defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

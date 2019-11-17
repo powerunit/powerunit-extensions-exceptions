@@ -91,14 +91,15 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 
 	/**
 	 * Converts this {@code DoubleFunctionWithException} to a lifted
-	 * {@code DoubleFunction} returning {@code null} in case of exception.
+	 * {@code DoubleFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
 	 *
 	 * @return the function that ignore error
 	 * @see #ignored(DoubleFunctionWithException)
 	 */
 	@Override
 	default DoubleFunction<R> ignore() {
-		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
+		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> defaultValue());
 	}
 
 	/**
@@ -224,6 +225,42 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	 */
 	static <R, E extends Exception> DoubleFunction<R> ignored(DoubleFunctionWithException<R, E> function) {
 		return verifyFunction(function).ignore();
+	}
+
+	/**
+	 * Converts a {@code DoubleFunctionWithException} to a lifted
+	 * {@code DoubleFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of error.
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(DoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <R, E extends Exception> DoubleFunction<R> ignored(DoubleFunctionWithException<R, E> function,
+			R defaultValue) {
+		verifyFunction(function);
+		return new DoubleFunctionWithException<R, E>() {
+
+			@Override
+			public R apply(double value) throws E {
+				return function.apply(value);
+			}
+
+			@Override
+			public R defaultValue() {
+				return defaultValue;
+			}
+		}.ignore();
 	}
 
 	/**

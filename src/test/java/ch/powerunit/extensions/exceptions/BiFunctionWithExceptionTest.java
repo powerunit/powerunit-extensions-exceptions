@@ -120,4 +120,16 @@ public class BiFunctionWithExceptionTest implements TestSuite {
 		}, "").apply("2")).throwException(instanceOf(Exception.class));
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(BiFunctionWithException.ignored((x, y) -> "" + x + y, "x").apply("2", "1")).is("21");
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(BiFunctionWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, "x").apply("x", "y")).is("x");
+	}
+
 }

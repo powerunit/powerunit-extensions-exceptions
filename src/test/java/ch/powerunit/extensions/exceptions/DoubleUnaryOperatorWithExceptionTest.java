@@ -93,4 +93,16 @@ public class DoubleUnaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsDouble(1)).is(0d);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(DoubleUnaryOperatorWithException.ignored(x -> x + 1, 1d).applyAsDouble(2)).is(3d);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(DoubleUnaryOperatorWithException.ignored(x -> {
+			throw new Exception();
+		}, 1d).applyAsDouble(1)).is(1d);
+	}
+
 }

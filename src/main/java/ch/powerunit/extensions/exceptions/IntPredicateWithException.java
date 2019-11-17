@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntPredicateWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntPredicate> {
+		extends PrimitiveReturnExceptionHandlerSupport<IntPredicate>, BooleanDefaultValue {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -68,7 +68,7 @@ public interface IntPredicateWithException<E extends Exception>
 				return test(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}
@@ -248,6 +248,40 @@ public interface IntPredicateWithException<E extends Exception>
 	 */
 	static <E extends Exception> IntPredicate ignored(IntPredicateWithException<E> predicate) {
 		return verifyPredicate(predicate).ignore();
+	}
+
+	/**
+	 * Converts a {@code IntPredicateWithException} to a lifted {@code IntPredicate}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted predicate
+	 * @see #ignore()
+	 * @see #ignored(IntPredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> IntPredicate ignored(IntPredicateWithException<E> predicate, boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new IntPredicateWithException<E>() {
+
+			@Override
+			public boolean test(int value) throws E {
+				return predicate.test(value);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

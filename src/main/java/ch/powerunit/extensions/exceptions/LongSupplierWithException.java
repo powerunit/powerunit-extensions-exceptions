@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongSupplier> {
+		extends PrimitiveReturnExceptionHandlerSupport<LongSupplier>, LongDefaultValue {
 
 	/**
 	 * Gets a result.
@@ -68,7 +68,7 @@ public interface LongSupplierWithException<E extends Exception>
 				return getAsLong();
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return 0;
+				return defaultValue();
 			}
 		};
 	}
@@ -199,6 +199,40 @@ public interface LongSupplierWithException<E extends Exception>
 	 */
 	static <E extends Exception> LongSupplier ignored(LongSupplierWithException<E> supplier) {
 		return verifySupplier(supplier).ignore();
+	}
+
+	/**
+	 * Converts a {@code LongSupplierWithException} to a lifted {@code LongSupplier}
+	 * returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(LongSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> LongSupplier ignored(LongSupplierWithException<E> supplier, long defaultValue) {
+		verifySupplier(supplier);
+		return new LongSupplierWithException<E>() {
+
+			@Override
+			public long getAsLong() throws E {
+				return supplier.getAsLong();
+			}
+
+			@Override
+			public long defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

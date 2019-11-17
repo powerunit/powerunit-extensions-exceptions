@@ -74,4 +74,16 @@ public class LongSupplierWithExceptionTest implements TestSuite {
 		}).getAsLong()).is(0L);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(LongSupplierWithException.ignored(() -> 2, 1L).getAsLong()).is(2L);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(LongSupplierWithException.ignored(() -> {
+			throw new Exception();
+		}, 1L).getAsLong()).is(1L);
+	}
+
 }

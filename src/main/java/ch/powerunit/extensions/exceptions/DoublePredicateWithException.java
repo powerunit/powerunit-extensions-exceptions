@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoublePredicateWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoublePredicate> {
+		extends PrimitiveReturnExceptionHandlerSupport<DoublePredicate>, BooleanDefaultValue {
 
 	/**
 	 * Evaluates this predicate on the given argument.
@@ -68,7 +68,7 @@ public interface DoublePredicateWithException<E extends Exception>
 				return test(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}
@@ -248,6 +248,41 @@ public interface DoublePredicateWithException<E extends Exception>
 	 */
 	static <E extends Exception> DoublePredicate ignored(DoublePredicateWithException<E> predicate) {
 		return verifyPredicate(predicate).ignore();
+	}
+
+	/**
+	 * Converts a {@code DoublePredicateWithException} to a lifted
+	 * {@code DoublePredicate} returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted predicate
+	 * @see #ignore()
+	 * @see #ignored(DoublePredicateWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> DoublePredicate ignored(DoublePredicateWithException<E> predicate,
+			boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new DoublePredicateWithException<E>() {
+
+			@Override
+			public boolean test(double value) throws E {
+				return predicate.test(value);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

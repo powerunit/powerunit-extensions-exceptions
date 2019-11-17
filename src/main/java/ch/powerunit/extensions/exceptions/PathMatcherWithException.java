@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface PathMatcherWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<PathMatcher> {
+		extends PrimitiveReturnExceptionHandlerSupport<PathMatcher>, BooleanDefaultValue {
 
 	/**
 	 * Tells if given path matches this matcher's pattern.
@@ -69,7 +69,7 @@ public interface PathMatcherWithException<E extends Exception>
 				return matches(value);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}
@@ -254,6 +254,40 @@ public interface PathMatcherWithException<E extends Exception>
 	 */
 	static <E extends Exception> PathMatcher ignored(PathMatcherWithException<E> predicate) {
 		return verifyPredicate(predicate).ignore();
+	}
+
+	/**
+	 * Converts a {@code PathMatcherWithException} to a lifted {@code PathMatcher}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted PathMatcher
+	 * @see #ignore()
+	 * @see #ignored(PathMatcherWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> PathMatcher ignored(PathMatcherWithException<E> predicate, boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new PathMatcherWithException<E>() {
+
+			@Override
+			public boolean matches(Path t) throws E {
+				return predicate.matches(t);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

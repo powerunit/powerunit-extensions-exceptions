@@ -145,4 +145,16 @@ public class IntPredicateWithExceptionTest implements TestSuite {
 		}).test(3)).is(false);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntPredicateWithException.ignored(x -> false, true).test(2)).is(false);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntPredicateWithException.ignored(y -> {
+			throw new Exception();
+		}, true).test(3)).is(true);
+	}
+
 }

@@ -80,4 +80,16 @@ public class ToIntBiFunctionWithExceptionTest implements TestSuite {
 		}).applyAsInt("x", "x")).is(0);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ToIntBiFunctionWithException.ignored((x, y) -> 1, 2).applyAsInt("2", "3")).is(1);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(ToIntBiFunctionWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, 1).applyAsInt("x", "x")).is(1);
+	}
+
 }

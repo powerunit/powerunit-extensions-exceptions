@@ -88,4 +88,16 @@ public class LongFunctionWithExceptionTest implements TestSuite {
 		}).apply(2).toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(LongFunctionWithException.ignored(x -> "1", "x").apply(2L)).is("1");
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(LongFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, "x").apply(1)).is("x");
+	}
+
 }

@@ -145,4 +145,16 @@ public class BiPredicateWithExceptionTest implements TestSuite {
 		}).test("x", "x")).is(false);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(BiPredicateWithException.ignored((x, y) -> false, true).test("2", "3")).is(false);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(BiPredicateWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, true).test("x", "x")).is(true);
+	}
+
 }

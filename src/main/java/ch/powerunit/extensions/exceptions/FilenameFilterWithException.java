@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FilenameFilterWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<FilenameFilter> {
+		extends PrimitiveReturnExceptionHandlerSupport<FilenameFilter>, BooleanDefaultValue {
 
 	/**
 	 * Tests if a specified file should be included in a file list.
@@ -71,7 +71,7 @@ public interface FilenameFilterWithException<E extends Exception>
 				return accept(dir, name);
 			} catch (Exception e) {
 				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());
-				return false;
+				return defaultValue();
 			}
 		};
 	}
@@ -257,6 +257,41 @@ public interface FilenameFilterWithException<E extends Exception>
 	 */
 	static <E extends Exception> FilenameFilter ignored(FilenameFilterWithException<E> predicate) {
 		return verifyPredicate(predicate).ignore();
+	}
+
+	/**
+	 * Converts a {@code FilenameFilterWithException} to a lifted
+	 * {@code FilenameFilter} returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted FilenameFilter
+	 * @see #ignore()
+	 * @see #ignored(FilenameFilterWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> FilenameFilter ignored(FilenameFilterWithException<E> predicate,
+			boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new FilenameFilterWithException<E>() {
+
+			@Override
+			public boolean accept(File dir, String name) throws E {
+				return predicate.accept(dir, name);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
 	}
 
 }

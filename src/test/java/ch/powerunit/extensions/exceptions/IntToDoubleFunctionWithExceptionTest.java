@@ -74,4 +74,16 @@ public class IntToDoubleFunctionWithExceptionTest implements TestSuite {
 		}).applyAsDouble(1)).is(0d);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(IntToDoubleFunctionWithException.ignored(x -> 1, 2d).applyAsDouble(2)).is(1d);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(IntToDoubleFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, 1d).applyAsDouble(1)).is(1d);
+	}
+
 }
