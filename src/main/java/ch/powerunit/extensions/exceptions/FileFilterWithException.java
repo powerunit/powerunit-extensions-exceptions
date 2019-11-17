@@ -253,4 +253,38 @@ public interface FileFilterWithException<E extends Exception>
 		return verifyPredicate(predicate).ignore();
 	}
 
+	/**
+	 * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted FileFilter
+	 * @see #ignore()
+	 * @see #ignored(FileFilterWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> FileFilter ignored(FileFilterWithException<E> predicate, boolean defaultValue) {
+		verifyPredicate(predicate);
+		return new FileFilterWithException<E>() {
+
+			@Override
+			public boolean accept(File pathname) throws E {
+				return predicate.accept(pathname);
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

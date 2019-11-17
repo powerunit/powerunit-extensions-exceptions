@@ -74,4 +74,16 @@ public class BooleanSupplierWithExceptionTest implements TestSuite {
 		}).getAsBoolean()).is(false);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(BooleanSupplierWithException.ignored(() -> false, true).getAsBoolean()).is(false);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(BooleanSupplierWithException.ignored(() -> {
+			throw new Exception();
+		}, true).getAsBoolean()).is(true);
+	}
+
 }

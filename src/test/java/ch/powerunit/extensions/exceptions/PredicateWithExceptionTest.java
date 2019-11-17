@@ -145,4 +145,16 @@ public class PredicateWithExceptionTest implements TestSuite {
 		}).test("x")).is(false);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(PredicateWithException.ignored(x -> true, false).test("2")).is(true);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(PredicateWithException.ignored(y -> {
+			throw new Exception();
+		}, true).test("x")).is(true);
+	}
+
 }

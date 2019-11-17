@@ -148,4 +148,16 @@ public class PathMatcherWithExceptionTest implements TestSuite {
 		}).matches(Paths.get("."))).is(false);
 	}
 
+	@Test
+	public void matchesIgnoredDefaultNoException() {
+		assertThat(PathMatcherWithException.ignored(x -> false, true).matches(Paths.get("."))).is(false);
+	}
+
+	@Test
+	public void matchesIgnoredDefaultException() {
+		assertThat(PathMatcherWithException.ignored(y -> {
+			throw new Exception();
+		}, true).matches(Paths.get("."))).is(true);
+	}
+
 }

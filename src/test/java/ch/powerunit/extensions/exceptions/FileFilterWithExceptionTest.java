@@ -147,4 +147,16 @@ public class FileFilterWithExceptionTest implements TestSuite {
 		}).accept(new File("."))).is(false);
 	}
 
+	@Test
+	public void acceptIgnoredDefaultNoException() {
+		assertThat(FileFilterWithException.ignored(x -> false, true).accept(new File("."))).is(false);
+	}
+
+	@Test
+	public void acceptIgnoredDefaultException() {
+		assertThat(FileFilterWithException.ignored(y -> {
+			throw new Exception();
+		}, true).accept(new File("."))).is(true);
+	}
+
 }

@@ -172,4 +172,39 @@ public interface BooleanSupplierWithException<E extends Exception>
 		return verifySupplier(supplier).ignore();
 	}
 
+	/**
+	 * Converts a {@code BooleanSupplierWithException} to a lifted
+	 * {@code BooleanSupplier} returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(BooleanSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static <E extends Exception> BooleanSupplier ignored(BooleanSupplierWithException<E> supplier,
+			boolean defaultValue) {
+		verifySupplier(supplier);
+		return new BooleanSupplierWithException<E>() {
+
+			@Override
+			public boolean getAsBoolean() throws E {
+				return supplier.getAsBoolean();
+			}
+
+			@Override
+			public boolean defaultValue() {
+				return defaultValue;
+			}
+
+		}.ignore();
+	}
+
 }

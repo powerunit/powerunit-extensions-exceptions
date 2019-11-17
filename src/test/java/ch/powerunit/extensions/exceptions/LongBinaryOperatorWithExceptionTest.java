@@ -74,4 +74,16 @@ public class LongBinaryOperatorWithExceptionTest implements TestSuite {
 		}).applyAsLong(1, 2)).is(0L);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(LongBinaryOperatorWithException.ignored((x, y) -> x + y, 1L).applyAsLong(2, 1)).is(3L);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(LongBinaryOperatorWithException.ignored((x, y) -> {
+			throw new Exception();
+		}, 1L).applyAsLong(1, 2)).is(1L);
+	}
+
 }

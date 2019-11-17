@@ -145,4 +145,16 @@ public class LongPredicateWithExceptionTest implements TestSuite {
 		}).test(3)).is(false);
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(LongPredicateWithException.ignored(x -> false, true).test(2)).is(false);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(LongPredicateWithException.ignored(y -> {
+			throw new Exception();
+		}, true).test(3)).is(true);
+	}
+
 }
