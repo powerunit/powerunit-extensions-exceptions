@@ -167,4 +167,16 @@ public class FunctionWithExceptionTest implements TestSuite {
 		}, "").run()).throwException(instanceOf(Exception.class));
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(FunctionWithException.ignored(x -> x + "1", "x").apply("2")).is("21");
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(FunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, "x").apply("x")).is("x");
+	}
+
 }
