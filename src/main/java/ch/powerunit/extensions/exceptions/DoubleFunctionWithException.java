@@ -228,6 +228,42 @@ public interface DoubleFunctionWithException<R, E extends Exception> extends
 	}
 
 	/**
+	 * Converts a {@code DoubleFunctionWithException} to a lifted
+	 * {@code DoubleFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of error.
+	 * @param <R>
+	 *            the type of the result of the function
+	 * @param <E>
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(DoubleFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static <R, E extends Exception> DoubleFunction<R> ignored(DoubleFunctionWithException<R, E> function,
+			R defaultValue) {
+		verifyFunction(function);
+		return new DoubleFunctionWithException<R, E>() {
+
+			@Override
+			public R apply(double value) throws E {
+				return function.apply(value);
+			}
+
+			@Override
+			public R defaultValue() {
+				return defaultValue;
+			}
+		}.ignore();
+	}
+
+	/**
 	 * Convert this {@code DoubleFunctionWithException} to a lifted
 	 * {@code DoubleFunction} return {@code CompletionStage} as return value.
 	 *

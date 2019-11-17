@@ -88,4 +88,16 @@ public class DoubleFunctionWithExceptionTest implements TestSuite {
 		}).apply(2).toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
 
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(DoubleFunctionWithException.ignored(x -> "1", "x").apply(2d)).is("1");
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(DoubleFunctionWithException.ignored(y -> {
+			throw new Exception();
+		}, "x").apply(1)).is("x");
+	}
+
 }

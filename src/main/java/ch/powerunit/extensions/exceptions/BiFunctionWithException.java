@@ -331,6 +331,7 @@ public interface BiFunctionWithException<T, U, R, E extends Exception> extends
 	 * @see #ignored(BiFunctionWithException)
 	 * @throws NullPointerException
 	 *             if function is null
+	 * @since 3.0.0
 	 */
 	static <T, U, R, E extends Exception> BiFunction<T, U, R> ignored(BiFunctionWithException<T, U, R, E> function,
 			R defaultValue) {
