@@ -97,4 +97,17 @@ public class ObjectInputFilterWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).apply(null).toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
 	}
+
+	@Test
+	public void testIgnoredDefaultNoException() {
+		assertThat(ObjectInputFilterWithException.ignored(x -> Status.ALLOWED, Status.REJECTED).checkInput(null))
+				.is(Status.ALLOWED);
+	}
+
+	@Test
+	public void testIgnoredDefaultException() {
+		assertThat(ObjectInputFilterWithException.ignored(y -> {
+			throw new Exception();
+		}, Status.REJECTED).checkInput(null)).is(Status.REJECTED);
+	}
 }
