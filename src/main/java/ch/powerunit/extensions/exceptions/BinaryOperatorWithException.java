@@ -81,6 +81,11 @@ public interface BinaryOperatorWithException<T, E extends Exception> extends BiF
 		return (t, u) -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t, u), e -> null);
 	}
 
+	@Override
+	default BinaryOperatorWithException<T, E> documented(Supplier<String> toString) {
+		return (BinaryOperatorWithException<T, E>) BiFunctionWithException.super.documented(toString);
+	}
+
 	/**
 	 * Returns a binary operator that always throw exception.
 	 *

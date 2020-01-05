@@ -73,5 +73,12 @@ public class BinaryOperatorWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).apply("x", "x")).is(optionalIsNotPresent());
 	}
+	
+	@Test
+	public void testDocumented() {
+		BinaryOperatorWithException<String, Exception> fct1 = (x, y) -> x + y;
+		fct1 = fct1.documented(() -> "test");
+		assertThat(fct1.toString()).is("test");
+	}
 
 }
