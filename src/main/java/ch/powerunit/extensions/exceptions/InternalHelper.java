@@ -35,7 +35,7 @@ final class InternalHelper {
 	public static <T extends ExceptionHandlerSupport<?, ?, ?>> T documented(T target, Supplier<String> toString) {
 		return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(),
 				allInterfaces(target.getClass()).stream().distinct().toArray(Class[]::new), (proxy, method, args) -> {
-					if (method.getName().equals("toString") && method.getParameterCount() == 0) {
+					if (method.toString().endsWith(".toString()")) {
 						return toString.get();
 					}
 					try {
