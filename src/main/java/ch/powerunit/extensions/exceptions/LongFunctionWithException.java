@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongFunctionWithException<R, E extends Exception> extends
-		ObjectReturnExceptionHandlerSupport<LongFunction<R>, LongFunction<Optional<R>>, LongFunction<CompletionStage<R>>, R> {
+		ObjectReturnExceptionHandlerSupport<LongFunction<R>, LongFunction<Optional<R>>, LongFunction<CompletionStage<R>>, R, LongFunctionWithException<R, E>> {
 
 	/**
 	 * Applies this function to the given argument.

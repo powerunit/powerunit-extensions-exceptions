@@ -48,8 +48,9 @@ import java.util.function.ToDoubleBiFunction;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface ToDoubleBiFunctionWithException<T, U, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleBiFunction<T, U>>, DoubleDefaultValue {
+public interface ToDoubleBiFunctionWithException<T, U, E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<ToDoubleBiFunction<T, U>, ToDoubleBiFunctionWithException<T, U, E>>,
+		DoubleDefaultValue {
 
 	/**
 	 * Applies this function to the given arguments.

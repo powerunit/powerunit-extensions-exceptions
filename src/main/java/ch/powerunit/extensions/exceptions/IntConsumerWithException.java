@@ -49,8 +49,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface IntConsumerWithException<E extends Exception>
-		extends NoReturnExceptionHandlerSupport<IntConsumer, IntFunction<CompletionStage<Void>>> {
+public interface IntConsumerWithException<E extends Exception> extends
+		NoReturnExceptionHandlerSupport<IntConsumer, IntFunction<CompletionStage<Void>>, IntConsumerWithException<E>> {
 
 	/**
 	 * Performs this operation on the given argument.

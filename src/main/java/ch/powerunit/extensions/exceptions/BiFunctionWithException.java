@@ -56,7 +56,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface BiFunctionWithException<T, U, R, E extends Exception> extends
-		ObjectReturnExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>, BiFunction<T, U, CompletionStage<R>>, R> {
+		ObjectReturnExceptionHandlerSupport<BiFunction<T, U, R>, BiFunction<T, U, Optional<R>>, BiFunction<T, U, CompletionStage<R>>, R, BiFunctionWithException<T, U, R, E>> {
 
 	/**
 	 * Applies this function to the given arguments.

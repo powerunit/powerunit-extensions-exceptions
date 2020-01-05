@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface RunnableWithException<E extends Exception>
-		extends NoReturnExceptionHandlerSupport<Runnable, Supplier<CompletionStage<Void>>> {
+		extends NoReturnExceptionHandlerSupport<Runnable, Supplier<CompletionStage<Void>>, RunnableWithException<E>> {
 
 	/**
 	 * Performs this operation.

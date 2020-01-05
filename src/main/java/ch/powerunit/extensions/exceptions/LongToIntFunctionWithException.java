@@ -45,8 +45,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface LongToIntFunctionWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongToIntFunction>, IntDefaultValue {
+public interface LongToIntFunctionWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<LongToIntFunction, LongToIntFunctionWithException<E>>, IntDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.

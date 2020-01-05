@@ -45,8 +45,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface IntPredicateWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntPredicate>, BooleanDefaultValue {
+public interface IntPredicateWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<IntPredicate, IntPredicateWithException<E>>, BooleanDefaultValue {
 
 	/**
 	 * Evaluates this predicate on the given argument.

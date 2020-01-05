@@ -19,7 +19,9 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Root interface to support global operations related to exception handling.
@@ -30,8 +32,10 @@ import java.util.function.Function;
  * @param <L>
  *            the type of the lifted functional interface. For example,
  *            {@code Function<T,Optional<R>>}.
+ * @param <Z>
+ *            the type of the interface it self.
  */
-public interface ExceptionHandlerSupport<F, L> {
+public interface ExceptionHandlerSupport<F, L, Z extends ExceptionHandlerSupport<F, L, Z>> {
 
 	/**
 	 * Mapping operation to convert the exception that may be thrown during
@@ -171,5 +175,21 @@ public interface ExceptionHandlerSupport<F, L> {
 	 * @see #lift()
 	 */
 	F ignore();
+
+	/**
+	 * Add a {@code toString} method to the existing interface based on the received
+	 * {@code Supplier}.
+	 * 
+	 * @param toString
+	 *            the supplier to be used
+	 * @return a new interface, with {@code toString} using the received supplier.
+	 * @throws NullPointerException
+	 *             if toString is null
+	 * @since 3.0.0
+	 */
+	@SuppressWarnings("unchecked")
+	default Z documented(Supplier<String> toString) {
+		return (Z) InternalHelper.documented(this, Objects.requireNonNull(toString, "toString can't be null"));
+	}
 
 }

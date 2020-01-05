@@ -45,8 +45,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface IntUnaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator>, IntDefaultValue {
+public interface IntUnaryOperatorWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<IntUnaryOperator, IntUnaryOperatorWithException<E>>, IntDefaultValue {
 
 	/**
 	 * Applies this operator to the given operand.

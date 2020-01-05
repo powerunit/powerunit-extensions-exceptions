@@ -46,8 +46,8 @@ import java.util.function.ToIntFunction;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface ToIntFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToIntFunction<T>>, IntDefaultValue {
+public interface ToIntFunctionWithException<T, E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<ToIntFunction<T>, ToIntFunctionWithException<T, E>>, IntDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.

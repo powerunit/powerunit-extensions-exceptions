@@ -45,7 +45,8 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongBinaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator>, LongDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<LongBinaryOperator, LongBinaryOperatorWithException<E>>,
+		LongDefaultValue {
 
 	/**
 	 * Applies this operator to the given operands.

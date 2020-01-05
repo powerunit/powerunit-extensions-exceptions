@@ -47,8 +47,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface DoubleSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleSupplier>, DoubleDefaultValue {
+public interface DoubleSupplierWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<DoubleSupplier, DoubleSupplierWithException<E>>, DoubleDefaultValue {
 
 	/**
 	 * Gets a result.

@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface PathMatcherWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<PathMatcher>, BooleanDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<PathMatcher, PathMatcherWithException<E>>, BooleanDefaultValue {
 
 	/**
 	 * Tells if given path matches this matcher's pattern.

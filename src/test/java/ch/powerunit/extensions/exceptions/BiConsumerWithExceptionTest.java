@@ -19,6 +19,7 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletionException;
 
 import ch.powerunit.Test;
@@ -113,6 +114,14 @@ public class BiConsumerWithExceptionTest implements TestSuite {
 		assertWhen((x) -> BiConsumerWithException.staged((y, z) -> {
 			throw new Exception();
 		}).apply("x", "y").toCompletableFuture().join()).throwException(instanceOf(CompletionException.class));
+	}
+
+	@Test
+	public void testDocumented() {
+		BiConsumerWithException<String, String, Exception> fct1 = (x, y) -> {
+		};
+		fct1 = fct1.documented(() -> "test");
+		assertThat(fct1.toString()).is("test");
 	}
 
 }

@@ -44,8 +44,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface IntBinaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntBinaryOperator>, IntDefaultValue {
+public interface IntBinaryOperatorWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<IntBinaryOperator, IntBinaryOperatorWithException<E>>, IntDefaultValue {
 
 	/**
 	 * Applies this operator to the given operands.

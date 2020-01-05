@@ -49,7 +49,8 @@ import java.util.function.ToIntBiFunction;
  */
 @FunctionalInterface
 public interface ToIntBiFunctionWithException<T, U, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToIntBiFunction<T, U>>, IntDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<ToIntBiFunction<T, U>, ToIntBiFunctionWithException<T, U, E>>,
+		IntDefaultValue {
 
 	/**
 	 * Applies this function to the given arguments.
