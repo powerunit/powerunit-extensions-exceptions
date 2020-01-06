@@ -49,7 +49,8 @@ import java.util.function.ToLongBiFunction;
  */
 @FunctionalInterface
 public interface ToLongBiFunctionWithException<T, U, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToLongBiFunction<T, U>>, LongDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<ToLongBiFunction<T, U>, ToLongBiFunctionWithException<T, U, E>>,
+		LongDefaultValue {
 
 	/**
 	 * Applies this function to the given arguments.

@@ -56,7 +56,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface ObjectInputFilterWithException<E extends Exception> extends
-		ObjectReturnExceptionHandlerSupport<ObjectInputFilter, Function<FilterInfo, Optional<Status>>, Function<FilterInfo, CompletionStage<Status>>, Status> {
+		ObjectReturnExceptionHandlerSupport<ObjectInputFilter, Function<FilterInfo, Optional<Status>>, Function<FilterInfo, CompletionStage<Status>>, Status, ObjectInputFilterWithException<E>> {
 
 	/**
 	 * Check the class, array length, number of object references, depth, stream

@@ -51,7 +51,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FunctionWithException<T, R, E extends Exception> extends
-		ObjectReturnExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>, Function<T, CompletionStage<R>>, R> {
+		ObjectReturnExceptionHandlerSupport<Function<T, R>, Function<T, Optional<R>>, Function<T, CompletionStage<R>>, R, FunctionWithException<T, R, E>> {
 
 	/**
 	 * Applies this function to the given argument.

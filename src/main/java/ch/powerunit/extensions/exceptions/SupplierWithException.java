@@ -50,7 +50,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface SupplierWithException<T, E extends Exception> extends
-		ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, Supplier<CompletionStage<T>>, T> {
+		ObjectReturnExceptionHandlerSupport<Supplier<T>, Supplier<Optional<T>>, Supplier<CompletionStage<T>>, T, SupplierWithException<T, E>> {
 
 	/**
 	 * Gets a result.

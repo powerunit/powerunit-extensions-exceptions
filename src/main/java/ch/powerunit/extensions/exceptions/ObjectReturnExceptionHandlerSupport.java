@@ -43,7 +43,8 @@ import java.util.function.Function;
  * @param <T>
  *            the type of the return type of the Functional interface.
  */
-public interface ObjectReturnExceptionHandlerSupport<F, L, S, T> extends ExceptionHandlerSupport<F, L> {
+public interface ObjectReturnExceptionHandlerSupport<F, L, S, T, Z extends ObjectReturnExceptionHandlerSupport<F, L, S, T, Z>>
+		extends ExceptionHandlerSupport<F, L, Z> {
 
 	/**
 	 * Converts this functional interface to the corresponding one in java and wrap

@@ -37,7 +37,8 @@ import java.util.function.Consumer;
  *            the type of a java standard function interface to return a
  *            {@code CompletionStage}.
  */
-public interface NoReturnExceptionHandlerSupport<F, S> extends ExceptionHandlerSupport<F, F> {
+public interface NoReturnExceptionHandlerSupport<F, S, Z extends NoReturnExceptionHandlerSupport<F, S, Z>>
+		extends ExceptionHandlerSupport<F, F, Z> {
 
 	/**
 	 * Converts this functional interface to the corresponding one in java and wrap

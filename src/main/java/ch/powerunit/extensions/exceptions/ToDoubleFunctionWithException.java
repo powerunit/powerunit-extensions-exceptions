@@ -47,7 +47,8 @@ import java.util.function.ToDoubleFunction;
  */
 @FunctionalInterface
 public interface ToDoubleFunctionWithException<T, E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleFunction<T>>, DoubleDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<ToDoubleFunction<T>, ToDoubleFunctionWithException<T, E>>,
+		DoubleDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.

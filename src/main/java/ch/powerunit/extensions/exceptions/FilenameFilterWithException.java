@@ -46,8 +46,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the function
  */
 @FunctionalInterface
-public interface FilenameFilterWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<FilenameFilter>, BooleanDefaultValue {
+public interface FilenameFilterWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<FilenameFilter, FilenameFilterWithException<E>>, BooleanDefaultValue {
 
 	/**
 	 * Tests if a specified file should be included in a file list.

@@ -92,4 +92,11 @@ public class UnaryOperatorWithExceptionTest implements TestSuite {
 			throw new Exception();
 		}).apply("x")).is(optionalIsNotPresent());
 	}
+
+	@Test
+	public void testDocumented() {
+		UnaryOperatorWithException<String, Exception> fct1 = x -> x;
+		fct1 = fct1.documented(() -> "test");
+		assertThat(fct1.toString()).is("test");
+	}
 }

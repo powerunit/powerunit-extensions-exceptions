@@ -47,7 +47,8 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface DoubleUnaryOperatorWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<DoubleUnaryOperator>, DoubleDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<DoubleUnaryOperator, DoubleUnaryOperatorWithException<E>>,
+		DoubleDefaultValue {
 
 	/**
 	 * Applies this operator to the given operand.

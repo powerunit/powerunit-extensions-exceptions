@@ -30,7 +30,8 @@ import java.util.function.Function;
  *            {@code Predicate<T>}. The same functional interface is also used
  *            for the lifted and ignored version.
  */
-public interface PrimitiveReturnExceptionHandlerSupport<F> extends ExceptionHandlerSupport<F, F> {
+public interface PrimitiveReturnExceptionHandlerSupport<F, Z extends PrimitiveReturnExceptionHandlerSupport<F, Z>>
+		extends ExceptionHandlerSupport<F, F, Z> {
 
 	/**
 	 * Converts this functional interface to the corresponding one in java and wrap

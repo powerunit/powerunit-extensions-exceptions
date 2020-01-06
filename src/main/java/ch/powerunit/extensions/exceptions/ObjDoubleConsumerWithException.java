@@ -51,8 +51,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface ObjDoubleConsumerWithException<T, E extends Exception>
-		extends NoReturnExceptionHandlerSupport<ObjDoubleConsumer<T>, BiFunction<T, Double, CompletionStage<Void>>> {
+public interface ObjDoubleConsumerWithException<T, E extends Exception> extends
+		NoReturnExceptionHandlerSupport<ObjDoubleConsumer<T>, BiFunction<T, Double, CompletionStage<Void>>, ObjDoubleConsumerWithException<T, E>> {
 
 	/**
 	 * Performs this operation on the given arguments.

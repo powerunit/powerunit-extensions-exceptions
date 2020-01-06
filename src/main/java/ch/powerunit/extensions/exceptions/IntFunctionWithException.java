@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntFunctionWithException<R, E extends Exception> extends
-		ObjectReturnExceptionHandlerSupport<IntFunction<R>, IntFunction<Optional<R>>, IntFunction<CompletionStage<R>>, R> {
+		ObjectReturnExceptionHandlerSupport<IntFunction<R>, IntFunction<Optional<R>>, IntFunction<CompletionStage<R>>, R, IntFunctionWithException<R, E>> {
 
 	/**
 	 * Applies this function to the given argument.

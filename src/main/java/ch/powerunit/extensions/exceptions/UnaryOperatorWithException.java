@@ -77,6 +77,11 @@ public interface UnaryOperatorWithException<T, E extends Exception> extends Func
 		return t -> ObjectReturnExceptionHandlerSupport.unchecked(() -> apply(t), e -> null);
 	}
 
+	@Override
+	default UnaryOperatorWithException<T, E> documented(Supplier<String> toString) {
+		return (UnaryOperatorWithException<T, E>) FunctionWithException.super.documented(toString);
+	}
+
 	/**
 	 * Returns a unary operator that always returns its input argument.
 	 *

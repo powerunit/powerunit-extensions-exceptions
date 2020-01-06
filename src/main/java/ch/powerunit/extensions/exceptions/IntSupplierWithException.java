@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface IntSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<IntSupplier>, IntDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<IntSupplier, IntSupplierWithException<E>>, IntDefaultValue {
 
 	/**
 	 * Gets a result.

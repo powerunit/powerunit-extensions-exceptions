@@ -46,7 +46,8 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface LongToDoubleFunctionWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<LongToDoubleFunction>, DoubleDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<LongToDoubleFunction, LongToDoubleFunctionWithException<E>>,
+		DoubleDefaultValue {
 
 	/**
 	 * Applies this function to the given argument.

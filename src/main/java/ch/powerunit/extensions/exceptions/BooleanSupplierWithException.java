@@ -44,8 +44,8 @@ import java.util.function.Supplier;
  *            the type of the potential exception of the operation
  */
 @FunctionalInterface
-public interface BooleanSupplierWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<BooleanSupplier>, BooleanDefaultValue {
+public interface BooleanSupplierWithException<E extends Exception> extends
+		PrimitiveReturnExceptionHandlerSupport<BooleanSupplier, BooleanSupplierWithException<E>>, BooleanDefaultValue {
 
 	/**
 	 * Gets a result.

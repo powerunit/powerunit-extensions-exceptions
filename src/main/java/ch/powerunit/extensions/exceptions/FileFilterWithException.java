@@ -46,7 +46,7 @@ import java.util.function.Supplier;
  */
 @FunctionalInterface
 public interface FileFilterWithException<E extends Exception>
-		extends PrimitiveReturnExceptionHandlerSupport<FileFilter>, BooleanDefaultValue {
+		extends PrimitiveReturnExceptionHandlerSupport<FileFilter, FileFilterWithException<E>>, BooleanDefaultValue {
 
 	/**
 	 * Tests whether or not the specified abstract pathname should be included in a

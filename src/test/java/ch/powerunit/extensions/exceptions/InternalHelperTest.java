@@ -25,31 +25,25 @@ import ch.powerunit.Test;
 import ch.powerunit.TestSuite;
 
 @SuppressWarnings("squid:S2187") // Sonar doesn't under that it is really a test
-public class ExceptionHandlerSupportTest implements TestSuite {
+public class InternalHelperTest implements TestSuite {
+	private SupplierWithException<String, Exception> swe = () -> "y";
 
-	private class MyExceptionHandlerSupport
-			implements ExceptionHandlerSupport<Object, Object, MyExceptionHandlerSupport> {
+	private SupplierWithException<String, Exception> swef = SupplierWithException.failing(IOException::new);
 
-		@Override
-		public Object uncheck() {
-			return null;
-		}
-
-		@Override
-		public Object lift() {
-			return null;
-		}
-
-		@Override
-		public Object ignore() {
-			return null;
-		}
+	@Test
+	public void testDocumentedToString() {
+		assertThat(InternalHelper.documented(swe, () -> "x").toString()).is("x");
 	}
 
 	@Test
-	public void testExceptionMapper() {
-		assertThatFunction(new MyExceptionHandlerSupport().exceptionMapper(), new IOException("test"))
-				.is(both(exceptionMessage("test")).and(instanceOf(WrappedException.class)));
+	public void testDocumentedPassthru() {
+		assertThat(InternalHelper.documented(swe, () -> "x").uncheck().get()).is("y");
+	}
+
+	@Test
+	public void testDocumentedPassthruException() {
+		assertWhen(() -> InternalHelper.documented(swef, () -> "x").get())
+				.throwException(instanceOf(IOException.class));
 	}
 
 }
