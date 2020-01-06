@@ -42,6 +42,7 @@ final class InternalHelper {
 		});
 	}
 
+	@SuppressWarnings("squid:S00112") // This method must throw Throwable
 	private static Object passthruInvoker(Object target, Method method, Object[] args) throws Throwable {
 		try {
 			return method.invoke(target, args);
