@@ -19,7 +19,9 @@
  */
 package ch.powerunit.extensions.exceptions;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,19 +33,27 @@ final class InternalHelper {
 	private InternalHelper() {
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T extends ExceptionHandlerSupport<?, ?, ?>> T documented(T target, Supplier<String> toString) {
+		return proxy(target, (proxy, method, args) -> {
+			if (method.toString().endsWith(".toString()")) {
+				return toString.get();
+			}
+			return passthruInvoker(target, method, args);
+		});
+	}
+
+	private static Object passthruInvoker(Object target, Method method, Object[] args) throws Throwable {
+		try {
+			return method.invoke(target, args);
+		} catch (InvocationTargetException e) {
+			throw e.getCause();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T extends ExceptionHandlerSupport<?, ?, ?>> T proxy(T target, InvocationHandler handler) {
 		return (T) Proxy.newProxyInstance(target.getClass().getClassLoader(),
-				allInterfaces(target.getClass()).stream().distinct().toArray(Class[]::new), (proxy, method, args) -> {
-					if (method.toString().endsWith(".toString()")) {
-						return toString.get();
-					}
-					try {
-						return method.invoke(target, args);
-					} catch (InvocationTargetException e) {
-						throw e.getCause();
-					}
-				});
+				allInterfaces(target.getClass()).stream().distinct().toArray(Class[]::new), handler);
 	}
 
 	private static List<Class<?>> allInterfaces(Class<?> target) {
