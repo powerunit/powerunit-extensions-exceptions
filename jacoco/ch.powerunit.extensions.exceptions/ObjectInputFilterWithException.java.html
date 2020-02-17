@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ObjectInputFilterWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">ObjectInputFilterWithException.java</span></div><h1>ObjectInputFilterWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+
+import java.io.ObjectInputFilter;
+import java.io.ObjectInputFilter.FilterInfo;
+import java.io.ObjectInputFilter.Status;
+import java.io.ObjectInputStream;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Filter classes, array lengths, and graph metrics during deserialization that
+ * may throw exception. If set on an {@link ObjectInputStream}, the
+ * {@link #checkInput checkInput(FilterInfo)} method is called to validate
+ * classes, the length of each array, the number of objects being read from the
+ * stream, the depth of the graph, and the total number of bytes read from the
+ * stream.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #checkInput(FilterInfo) Status checkInput(FilterInfo
+ * filterInfo) throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code ObjectInputFilter}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a
+ * {@code Function&lt;FilterInfo, Optional&lt;Status&gt;&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code ObjectInputFilter}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see ObjectInputFilter
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ * @since 2.0.0
+ */
+@FunctionalInterface
+public interface ObjectInputFilterWithException&lt;E extends Exception&gt; extends
+		ObjectReturnExceptionHandlerSupport&lt;ObjectInputFilter, Function&lt;FilterInfo, Optional&lt;Status&gt;&gt;, Function&lt;FilterInfo, CompletionStage&lt;Status&gt;&gt;, Status, ObjectInputFilterWithException&lt;E&gt;&gt; {
+
+	/**
+	 * Check the class, array length, number of object references, depth, stream
+	 * size, and other available filtering information. Implementations of this
+	 * method check the contents of the object graph being created during
+	 * deserialization. The filter returns {@link Status#ALLOWED Status.ALLOWED},
+	 * {@link Status#REJECTED Status.REJECTED}, or {@link Status#UNDECIDED
+	 * Status.UNDECIDED}.
+	 *
+	 * @param filterInfo
+	 *            provides information about the current object being deserialized,
+	 *            if any, and the status of the {@link ObjectInputStream}
+	 * @return {@link Status#ALLOWED Status.ALLOWED} if accepted,
+	 *         {@link Status#REJECTED Status.REJECTED} if rejected,
+	 *         {@link Status#UNDECIDED Status.UNDECIDED} if undecided.
+	 * @throws E
+	 *             any exception
+	 * @see ObjectInputFilter#checkInput(java.io.ObjectInputFilter.FilterInfo)
+	 */
+	Status checkInput(FilterInfo filterInfo) throws E;
+
+	/**
+	 * Converts this {@code ObjectInputFilterWithException} to a
+	 * {@code ObjectInputFilter} that convert exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked ObjectInputFilter
+	 * @see #unchecked(ObjectInputFilterWithException)
+	 * @see #unchecked(ObjectInputFilterWithException, Function)
+	 * @see ObjectInputFilter
+	 */
+	@Override
+	default ObjectInputFilter uncheck() {
+<span class="fc" id="L92">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; checkInput(t), throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code ObjectInputFilterWithException} to a lifted
+	 * {@code Function} using {@code Optional} as return value.
+	 *
+	 * @return the lifted function
+	 * @see #lifted(ObjectInputFilterWithException)
+	 * @see Function
+	 */
+	@Override
+	default Function&lt;FilterInfo, Optional&lt;Status&gt;&gt; lift() {
+<span class="fc" id="L105">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; Optional.ofNullable(checkInput(t)),</span>
+<span class="fc" id="L106">				notThrowingHandler());</span>
+	}
+
+	@Override
+	default Status defaultValue() {
+<span class="fc" id="L111">		return Status.UNDECIDED;</span>
+	}
+
+	/**
+	 * Converts this {@code ObjectInputFilterWithException} to a lifted
+	 * {@code ObjectInputFilter} returning {@link Status#UNDECIDED Status.UNDECIDED}
+	 * (or the value redefined by the method {@link #defaultValue()}) in case of
+	 * exception.
+	 *
+	 * @return the function that ignore error
+	 * @see #ignored(ObjectInputFilterWithException)
+	 * @see Function
+	 */
+	@Override
+	default ObjectInputFilter ignore() {
+<span class="fc" id="L126">		return t -&gt; lift().apply(t).orElse(defaultValue());</span>
+	}
+
+	/**
+	 * Convert this {@code ObjectInputFilterWithException} to a lifted
+	 * {@code ObjectInputFilter} return {@code CompletionStage} as return value.
+	 *
+	 * @return the lifted function
+	 * @see #staged(ObjectInputFilterWithException)
+	 * @see CompletionStage
+	 */
+	@Override
+	default Function&lt;FilterInfo, CompletionStage&lt;Status&gt;&gt; stage() {
+<span class="fc" id="L139">		return t -&gt; ObjectReturnExceptionHandlerSupport.staged(() -&gt; checkInput(t));</span>
+	}
+
+	/**
+	 * Returns a ObjectInputFilter that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the ObjectInputFilter the type of the
+	 *            result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a ObjectInputFilter that always throw exception
+	 */
+	static &lt;E extends Exception&gt; ObjectInputFilterWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L153">		return t -&gt; {</span>
+<span class="fc" id="L154">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code ObjectInputFilterWithException} to a
+	 * {@code ObjectInputFilter} that convert exception to {@code RuntimeException}.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(ObjectInputFilterWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; ObjectInputFilter unchecked(ObjectInputFilterWithException&lt;E&gt; function) {
+<span class="fc" id="L173">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjectInputFilterWithException} to a
+	 * {@code ObjectInputFilter} that wraps exception to {@code RuntimeException} by
+	 * using the provided mapping function.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(ObjectInputFilterWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; ObjectInputFilter unchecked(ObjectInputFilterWithException&lt;E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L195">		verifyFunction(function);</span>
+<span class="fc" id="L196">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L197">		return new ObjectInputFilterWithException&lt;E&gt;() {</span>
+
+			@Override
+			public Status checkInput(FilterInfo filterInfo) throws E {
+<span class="fc" id="L201">				return function.checkInput(filterInfo);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L206">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L209">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjectInputFilterWithException} to a lifted
+	 * {@code ObjectInputFilter} using {@code Optional} as return value.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; Function&lt;FilterInfo, Optional&lt;Status&gt;&gt; lifted(
+			ObjectInputFilterWithException&lt;E&gt; function) {
+<span class="fc" id="L227">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjectInputFilterWithException} to a lifted
+	 * {@code ObjectInputFilter} returning {@link Status#UNDECIDED Status.UNDECIDED}
+	 * in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; ObjectInputFilter ignored(ObjectInputFilterWithException&lt;E&gt; function) {
+<span class="fc" id="L245">		return verifyFunction(function).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjectInputFilterWithException} to a lifted
+	 * {@code ObjectInputFilter} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of exception. &lt;b&gt;Can't be null&lt;/b&gt;.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(ObjectInputFilterWithException)
+	 * @throws NullPointerException
+	 *             if function or defaultValue is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; ObjectInputFilter ignored(ObjectInputFilterWithException&lt;E&gt; function,
+			Status defaultValue) {
+<span class="fc" id="L267">		verifyFunction(function);</span>
+<span class="fc" id="L268">		Objects.requireNonNull(defaultValue, &quot;defaultValue can't be null&quot;);</span>
+<span class="fc" id="L269">		return new ObjectInputFilterWithException&lt;E&gt;() {</span>
+
+			@Override
+			public Status checkInput(FilterInfo filterInfo) throws E {
+<span class="fc" id="L273">				return function.checkInput(filterInfo);</span>
+			}
+
+			@Override
+			public Status defaultValue() {
+<span class="fc" id="L278">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L281">		}.ignore();</span>
+	}
+
+	/**
+	 * Convert this {@code ObjectInputFilterWithException} to a lifted
+	 * {@code Function} return {@code CompletionStage} as return value.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; Function&lt;FilterInfo, CompletionStage&lt;Status&gt;&gt; staged(
+			ObjectInputFilterWithException&lt;E&gt; function) {
+<span class="fc" id="L299">		return verifyFunction(function).stage();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/**</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Powerunit - A JDK1.8 test framework</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * Copyright (C) 2014 Mathieu Boretti.</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * This file is part of Powerunit</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Powerunit is free software: you can redistribute it and/or modify</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * it under the terms of the GNU General Public License as published by</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * the Free Software Foundation, either version 3 of the License, or</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * (at your option) any later version.</a>
+<span class="sourceLineNo">011</span><a id="line.11"> *</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * Powerunit is distributed in the hope that it will be useful,</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * GNU General Public License for more details.</a>
+<span class="sourceLineNo">016</span><a id="line.16"> *</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * You should have received a copy of the GNU General Public License</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<span class="sourceLineNo">019</span><a id="line.19"> */</a>
+<span class="sourceLineNo">020</span><a id="line.20">package ch.powerunit.extensions.exceptions;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">/**</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * RuntimeException to wrap the Exception.</a>
+<span class="sourceLineNo">024</span><a id="line.24"> *</a>
+<span class="sourceLineNo">025</span><a id="line.25"> */</a>
+<span class="sourceLineNo">026</span><a id="line.26">public final class WrappedException extends RuntimeException {</a>
+<span class="sourceLineNo">027</span><a id="line.27"></a>
+<span class="sourceLineNo">028</span><a id="line.28">        private static final long serialVersionUID = -5914178098082781979L;</a>
+<span class="sourceLineNo">029</span><a id="line.29"></a>
+<span class="sourceLineNo">030</span><a id="line.30">        /**</a>
+<span class="sourceLineNo">031</span><a id="line.31">         * Constructs a new wrapped exception with the specified detail message and</a>
+<span class="sourceLineNo">032</span><a id="line.32">         * cause.</a>
+<span class="sourceLineNo">033</span><a id="line.33">         * &lt;p&gt;</a>
+<span class="sourceLineNo">034</span><a id="line.34">         * Note that the detail message associated with {@code cause} is &lt;i&gt;not&lt;/i&gt;</a>
+<span class="sourceLineNo">035</span><a id="line.35">         * automatically incorporated in this wrapped exception's detail message.</a>
+<span class="sourceLineNo">036</span><a id="line.36">         *</a>
+<span class="sourceLineNo">037</span><a id="line.37">         * @param message</a>
+<span class="sourceLineNo">038</span><a id="line.38">         *            the detail message (which is saved for later retrieval by the</a>
+<span class="sourceLineNo">039</span><a id="line.39">         *            {@link #getMessage()} method).</a>
+<span class="sourceLineNo">040</span><a id="line.40">         * @param cause</a>
+<span class="sourceLineNo">041</span><a id="line.41">         *            the cause (which is saved for later retrieval by the</a>
+<span class="sourceLineNo">042</span><a id="line.42">         *            {@link #getCause()} method). (A {@code null} value is permitted,</a>
+<span class="sourceLineNo">043</span><a id="line.43">         *            and indicates that the cause is nonexistent or unknown.)</a>
+<span class="sourceLineNo">044</span><a id="line.44">         */</a>
+<span class="sourceLineNo">045</span><a id="line.45">        public WrappedException(String message, Throwable cause) {</a>
+<span class="sourceLineNo">046</span><a id="line.46">                super(message, cause);</a>
+<span class="sourceLineNo">047</span><a id="line.47">        }</a>
+<span class="sourceLineNo">048</span><a id="line.48"></a>
+<span class="sourceLineNo">049</span><a id="line.49">        /**</a>
+<span class="sourceLineNo">050</span><a id="line.50">         * Constructs a new wrapped exception with the specified detail message. The</a>
+<span class="sourceLineNo">051</span><a id="line.51">         * cause is not initialized, and may subsequently be initialized by a call to</a>
+<span class="sourceLineNo">052</span><a id="line.52">         * {@link #initCause}.</a>
+<span class="sourceLineNo">053</span><a id="line.53">         *</a>
+<span class="sourceLineNo">054</span><a id="line.54">         * @param message</a>
+<span class="sourceLineNo">055</span><a id="line.55">         *            the detail message. The detail message is saved for later</a>
+<span class="sourceLineNo">056</span><a id="line.56">         *            retrieval by the {@link #getMessage()} method.</a>
+<span class="sourceLineNo">057</span><a id="line.57">         */</a>
+<span class="sourceLineNo">058</span><a id="line.58">        public WrappedException(String message) {</a>
+<span class="sourceLineNo">059</span><a id="line.59">                super(message);</a>
+<span class="sourceLineNo">060</span><a id="line.60">        }</a>
+<span class="sourceLineNo">061</span><a id="line.61"></a>
+<span class="sourceLineNo">062</span><a id="line.62">        /**</a>
+<span class="sourceLineNo">063</span><a id="line.63">         * Constructs a new wrapped exception with the specified cause and a detail</a>
+<span class="sourceLineNo">064</span><a id="line.64">         * message of {@code (cause.getMessage())}</a>
+<span class="sourceLineNo">065</span><a id="line.65">         *</a>
+<span class="sourceLineNo">066</span><a id="line.66">         * @param cause</a>
+<span class="sourceLineNo">067</span><a id="line.67">         *            the cause (which is saved for later retrieval by the</a>
+<span class="sourceLineNo">068</span><a id="line.68">         *            {@link #getCause()} method).</a>
+<span class="sourceLineNo">069</span><a id="line.69">         */</a>
+<span class="sourceLineNo">070</span><a id="line.70">        public WrappedException(Throwable cause) {</a>
+<span class="sourceLineNo">071</span><a id="line.71">                super(cause.getMessage(), cause);</a>
+<span class="sourceLineNo">072</span><a id="line.72">        }</a>
+<span class="sourceLineNo">073</span><a id="line.73"></a>
+<span class="sourceLineNo">074</span><a id="line.74">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

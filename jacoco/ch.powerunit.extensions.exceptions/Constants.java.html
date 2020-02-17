@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Constants.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">Constants.java</span></div><h1>Constants.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.ExceptionMapper.forException;
+import static ch.powerunit.extensions.exceptions.SupplierWithException.ignored;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+
+import java.sql.SQLException;
+import java.util.ServiceLoader;
+import java.util.ServiceLoader.Provider;
+import java.util.function.Function;
+
+import javax.xml.transform.TransformerException;
+
+/**
+ * @author borettim
+ *
+ */
+final class Constants {
+
+<span class="fc" id="L40">	public static final ExceptionMapper SQL_EXCEPTION_MAPPER = ignored(Constants::buildSQLExceptionMapper).get();</span>
+
+<span class="fc" id="L42">	public static final ExceptionMapper JAXBEXCEPTION_EXCEPTION_MAPPER = ignored(Constants::buildJAXBExceptionMapper)</span>
+<span class="fc" id="L43">			.get();</span>
+
+<span class="fc" id="L45">	public static final ExceptionMapper SAXEXCEPTION_EXCEPTION_MAPPER = ignored(Constants::buildSAXExceptionMapper)</span>
+<span class="fc" id="L46">			.get();</span>
+
+<span class="fc" id="L48">	public static final ExceptionMapper TRANSFORMEREXCEPTION_EXCEPTION_MAPPER = ignored(</span>
+<span class="fc" id="L49">			Constants::buildTransformerExceptionMapper).get();</span>
+
+<span class="fc" id="L51">	public static final Function&lt;Exception, RuntimeException&gt; MAPPERS = computeDefaultMapper();</span>
+
+	public static &lt;T&gt; T verifyOperation(T obj) {
+<span class="fc" id="L54">		return requireNonNull(obj, &quot;operation can't be null&quot;);</span>
+	}
+
+	public static &lt;T&gt; T verifyFunction(T obj) {
+<span class="fc" id="L58">		return requireNonNull(obj, &quot;function can't be null&quot;);</span>
+	}
+
+	public static &lt;T&gt; T verifySupplier(T obj) {
+<span class="fc" id="L62">		return requireNonNull(obj, &quot;supplier can't be null&quot;);</span>
+	}
+
+	public static &lt;T&gt; T verifyPredicate(T obj) {
+<span class="fc" id="L66">		return requireNonNull(obj, &quot;predicate can't be null&quot;);</span>
+	}
+
+	public static &lt;T&gt; T verifyConsumer(T obj) {
+<span class="fc" id="L70">		return requireNonNull(obj, &quot;consumer can't be null&quot;);</span>
+	}
+
+	public static &lt;T&gt; T verifyExceptionMapper(T obj) {
+<span class="fc" id="L74">		return requireNonNull(obj, &quot;exceptionMapper can't be null&quot;);</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static ExceptionMapper buildSQLExceptionMapper() throws ClassNotFoundException {
+<span class="fc" id="L79">		return forException((Class&lt;Exception&gt;) Class.forName(&quot;java.sql.SQLException&quot;),</span>
+<span class="fc" id="L80">				e -&gt; new WrappedException(String.format(&quot;%s - ErrorCode=%s ; SQLState=%s&quot;, e.getMessage(),</span>
+<span class="fc" id="L81">						((SQLException) e).getErrorCode(), ((SQLException) e).getSQLState()), e));</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static ExceptionMapper buildJAXBExceptionMapper() throws ClassNotFoundException {
+<span class="fc" id="L86">		return forException((Class&lt;Exception&gt;) Class.forName(&quot;javax.xml.bind.JAXBException&quot;),</span>
+<span class="fc" id="L87">				e -&gt; new WrappedException(String.format(&quot;%s&quot;, e.toString()), e));</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static ExceptionMapper buildSAXExceptionMapper() throws ClassNotFoundException {
+<span class="fc" id="L92">		return forException((Class&lt;Exception&gt;) Class.forName(&quot;org.xml.sax.SAXException&quot;),</span>
+<span class="fc" id="L93">				e -&gt; new WrappedException(String.format(&quot;%s&quot;, e.toString()), e));</span>
+	}
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private static ExceptionMapper buildTransformerExceptionMapper() throws ClassNotFoundException {
+<span class="fc" id="L98">		return forException((Class&lt;Exception&gt;) Class.forName(&quot;javax.xml.transform.TransformerException&quot;),</span>
+<span class="fc" id="L99">				e -&gt; new WrappedException(String.format(&quot;%s&quot;, ((TransformerException) e).getMessageAndLocation()), e));</span>
+	}
+
+	private static Function&lt;Exception, RuntimeException&gt; computeDefaultMapper() {
+<span class="fc" id="L103">		return ExceptionMapper.forOrderedExceptions(</span>
+<span class="fc" id="L104">				ServiceLoader.load(ExceptionMapper.class).stream().map(Provider::get).collect(toList()));</span>
+	}
+
+	private Constants() {
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

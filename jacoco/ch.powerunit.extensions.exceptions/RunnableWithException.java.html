@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RunnableWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">RunnableWithException.java</span></div><h1>RunnableWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyOperation;
+import static java.util.Objects.requireNonNull;
+
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents an operation that accepts no input argument and returns no result
+ * and may throw exception. Unlike most other functional interfaces,
+ * {@code RunnableWithException} is expected to operate via side-effects.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #run() void run() throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional
+ * method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Runnable}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Runnable}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Runnable}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see Runnable
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the operation
+ */
+@FunctionalInterface
+public interface RunnableWithException&lt;E extends Exception&gt;
+		extends NoReturnExceptionHandlerSupport&lt;Runnable, Supplier&lt;CompletionStage&lt;Void&gt;&gt;, RunnableWithException&lt;E&gt;&gt; {
+
+	/**
+	 * Performs this operation.
+	 *
+	 * @throws E
+	 *             any exception
+	 * @see Runnable#run()
+	 */
+	void run() throws E;
+
+	/**
+	 * Converts this {@code RunnableWithException} to a {@code Runnable} that wraps
+	 * exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked operation
+	 * @see #unchecked(RunnableWithException)
+	 * @see #unchecked(RunnableWithException, Function)
+	 */
+	@Override
+	default Runnable uncheck() {
+<span class="fc" id="L70">		return () -&gt; NoReturnExceptionHandlerSupport.unchecked(this::run, throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code RunnableWithException} to a &lt;i&gt;lifted&lt;/i&gt;
+	 * {@code Runnable} ignoring exception.
+	 *
+	 * @return the operation that ignore error
+	 * @see #ignored(RunnableWithException)
+	 */
+	@Override
+	default Runnable ignore() {
+<span class="fc" id="L82">		return () -&gt; NoReturnExceptionHandlerSupport.unchecked(this::run, notThrowingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code RunnableWithException} to a &lt;i&gt;staged&lt;/i&gt;
+	 * {@code Supplier} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default Supplier&lt;CompletionStage&lt;Void&gt;&gt; stage() {
+<span class="fc" id="L94">		return () -&gt; NoReturnExceptionHandlerSupport.staged(this);</span>
+	}
+
+	/**
+	 * Returns a composed {@code RunnableWithException} that performs, in sequence,
+	 * this operation followed by the {@code after} operation. If performing either
+	 * operation throws an exception, it is relayed to the caller of the composed
+	 * operation. If performing this operation throws an exception, the
+	 * {@code after} operation will not be performed.
+	 *
+	 * @param after
+	 *            the operation to perform after this operation
+	 * @return a composed {@code RunnableWithException} that performs in sequence
+	 *         this operation followed by the {@code after} operation
+	 * @throws NullPointerException
+	 *             if {@code after} is null
+	 * @since 1.2.0
+	 */
+	default RunnableWithException&lt;E&gt; andThen(RunnableWithException&lt;? extends E&gt; after) {
+<span class="fc" id="L113">		requireNonNull(after);</span>
+<span class="fc" id="L114">		return () -&gt; {</span>
+<span class="fc" id="L115">			run();</span>
+<span class="fc" id="L116">			after.run();</span>
+<span class="fc" id="L117">		};</span>
+	}
+
+	/**
+	 * Returns an operation that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return an operation that always throw exception
+	 */
+	static &lt;E extends Exception&gt; RunnableWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L130">		return () -&gt; {</span>
+<span class="fc" id="L131">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a {@code Runnable} that wraps
+	 * exception to {@code RuntimeException}.
+	 *
+	 * @param operation
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(RunnableWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;E extends Exception&gt; Runnable unchecked(RunnableWithException&lt;E&gt; operation) {
+<span class="fc" id="L150">		return verifyOperation(operation).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a {@code Runnable} that wraps
+	 * exception to {@code RuntimeException} by using the provided mapping function.
+	 *
+	 * @param operation
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(RunnableWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; Runnable unchecked(RunnableWithException&lt;E&gt; operation,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L171">		verifyOperation(operation);</span>
+<span class="fc" id="L172">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L173">		return new RunnableWithException&lt;E&gt;() {</span>
+
+			@Override
+			public void run() throws E {
+<span class="fc" id="L177">				operation.run();</span>
+<span class="fc" id="L178">			}</span>
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L182">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L185">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a lifted {@code Runnable}
+	 * ignoring exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;E extends Exception&gt; Runnable lifted(RunnableWithException&lt;E&gt; operation) {
+<span class="fc" id="L202">		return verifyOperation(operation).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a lifted {@code Runnable}
+	 * ignoring exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.1.0
+	 */
+	static &lt;E extends Exception&gt; Runnable ignored(RunnableWithException&lt;E&gt; operation) {
+<span class="fc" id="L220">		return verifyOperation(operation).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a staged {@code Supplier}.
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;E extends Exception&gt; Supplier&lt;CompletionStage&lt;Void&gt;&gt; staged(RunnableWithException&lt;E&gt; operation) {
+<span class="fc" id="L235">		return verifyOperation(operation).stage();</span>
+	}
+
+	/**
+	 * Converts a {@code RunnableWithException} to a {@code FunctionWithException}
+	 * returning {@code null} and ignoring input.
+	 *
+	 * @param operation
+	 *            to be converted
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;R&gt;
+	 *            the type of the return value
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the function
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.2.0
+	 */
+	static &lt;T, R, E extends Exception&gt; FunctionWithException&lt;T, R, E&gt; asFunction(RunnableWithException&lt;E&gt; operation) {
+<span class="fc" id="L256">		verifyOperation(operation);</span>
+<span class="fc" id="L257">		return t -&gt; {</span>
+<span class="fc" id="L258">			operation.run();</span>
+<span class="fc" id="L259">			return null;</span>
+		};
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

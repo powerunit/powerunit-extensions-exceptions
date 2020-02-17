@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DoubleSupplierWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">DoubleSupplierWithException.java</span></div><h1>DoubleSupplierWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
+
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents a supplier of {@code double}-valued results and may throw
+ * exception. This is the {@code double}-producing primitive specialization of
+ * {@link SupplierWithException}.
+ * &lt;p&gt;
+ * There is no requirement that a distinct result be returned each time the
+ * supplier is invoked.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #getAsDouble() double getAsDouble() throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleSupplier}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleSupplier}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleSupplier}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see DoubleSupplier
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the operation
+ */
+@FunctionalInterface
+public interface DoubleSupplierWithException&lt;E extends Exception&gt; extends
+		PrimitiveReturnExceptionHandlerSupport&lt;DoubleSupplier, DoubleSupplierWithException&lt;E&gt;&gt;, DoubleDefaultValue {
+
+	/**
+	 * Gets a result.
+	 *
+	 * @throws E
+	 *             any exception
+	 * @return a result
+	 * @see DoubleSupplier#getAsDouble()
+	 */
+	double getAsDouble() throws E;
+
+	@Override
+	default DoubleSupplier uncheckOrIgnore(boolean uncheck) {
+<span class="fc" id="L65">		return () -&gt; {</span>
+			try {
+<span class="fc" id="L67">				return getAsDouble();</span>
+<span class="fc" id="L68">			} catch (Exception e) {</span>
+<span class="fc" id="L69">				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</span>
+<span class="fc" id="L70">				return defaultValue();</span>
+			}
+		};
+	}
+
+	/**
+	 * Returns a supplier that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return an operation that always throw exception
+	 */
+	static &lt;E extends Exception&gt; DoubleSupplierWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L85">		return () -&gt; {</span>
+<span class="fc" id="L86">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code DoubleSupplierWithException} to a {@code DoubleSupplier}
+	 * that wraps exception to {@code RuntimeException}.
+	 *
+	 * @param supplier
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked supplier
+	 * @see #uncheck()
+	 * @see #unchecked(DoubleSupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 */
+	static &lt;E extends Exception&gt; DoubleSupplier unchecked(DoubleSupplierWithException&lt;E&gt; supplier) {
+<span class="fc" id="L105">		return verifySupplier(supplier).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleSupplierWithException} to a {@code DoubleSupplier}
+	 * that wraps exception to {@code RuntimeException} by using the provided
+	 * mapping function.
+	 *
+	 * @param supplier
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked supplier
+	 * @see #uncheck()
+	 * @see #unchecked(DoubleSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; DoubleSupplier unchecked(DoubleSupplierWithException&lt;E&gt; supplier,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L127">		verifySupplier(supplier);</span>
+<span class="fc" id="L128">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L129">		return new DoubleSupplierWithException&lt;E&gt;() {</span>
+
+			@Override
+			public double getAsDouble() throws E {
+<span class="fc" id="L133">				return supplier.getAsDouble();</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L138">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L141">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleSupplierWithException} to a lifted
+	 * {@code DoubleSupplier} returning {@code 0} in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 */
+	static &lt;E extends Exception&gt; DoubleSupplier lifted(DoubleSupplierWithException&lt;E&gt; supplier) {
+<span class="fc" id="L158">		return verifySupplier(supplier).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleSupplierWithException} to a lifted
+	 * {@code DoubleSupplier} returning {@code 0} in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 */
+	static &lt;E extends Exception&gt; DoubleSupplier ignored(DoubleSupplierWithException&lt;E&gt; supplier) {
+<span class="fc" id="L175">		return verifySupplier(supplier).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleSupplierWithException} to a lifted
+	 * {@code DoubleSupplier} returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of exception
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(DoubleSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; DoubleSupplier ignored(DoubleSupplierWithException&lt;E&gt; supplier, double defaultValue) {
+<span class="fc" id="L196">		verifySupplier(supplier);</span>
+<span class="fc" id="L197">		return new DoubleSupplierWithException&lt;E&gt;() {</span>
+
+			@Override
+			public double getAsDouble() throws E {
+<span class="fc" id="L201">				return supplier.getAsDouble();</span>
+			}
+
+			@Override
+			public double defaultValue() {
+<span class="fc" id="L206">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L209">		}.ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

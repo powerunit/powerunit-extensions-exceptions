@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">ExceptionMapper.java</span></div><h1>ExceptionMapper.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static java.util.Arrays.stream;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
+
+/**
+ * Interface to help create mapper function for exception wrapping.
+ *
+ * @since 2.0.0
+ */
+public interface ExceptionMapper extends Function&lt;Exception, RuntimeException&gt; {
+
+	/**
+	 * Exception wrapper, that may be used to copy error code and sql state to the
+	 * {@code WrappedException} message.
+	 * &lt;p&gt;
+	 * &lt;b&gt;This mapper will only works correctly if the module &lt;i&gt;java.sql&lt;/i&gt; is
+	 * available.&lt;/b&gt;
+	 * &lt;p&gt;
+	 *
+	 * @return the Mapper for {@code SQLException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code SQLException} is not available (java.sql
+	 *             module missing).
+	 */
+	static ExceptionMapper sqlExceptionMapper() {
+<span class="fc" id="L50">		return Optional.ofNullable(Constants.SQL_EXCEPTION_MAPPER)</span>
+<span class="pc" id="L51">				.orElseThrow(() -&gt; new NoClassDefFoundError(&quot;Unable to find the sqlException&quot;));</span>
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy jaxb information to the
+	 * {@code WrappedException} message.
+	 * &lt;p&gt;
+	 * &lt;b&gt;This mapper will only works correctly if the class &lt;i&gt;JAXBException&lt;/i&gt; is
+	 * available.&lt;/b&gt;
+	 * &lt;p&gt;
+	 *
+	 * @return the Mapper for {@code JAXBException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code JAXBException} is not available.
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper jaxbExceptionMapper() {
+<span class="fc" id="L68">		return Optional.ofNullable(Constants.JAXBEXCEPTION_EXCEPTION_MAPPER)</span>
+<span class="pc" id="L69">				.orElseThrow(() -&gt; new NoClassDefFoundError(&quot;Unable to find the JAXBException&quot;));</span>
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy sax information to the
+	 * {@code WrappedException} message.
+	 * &lt;p&gt;
+	 * &lt;b&gt;This mapper will only works correctly if the class &lt;i&gt;SAXException&lt;/i&gt; is
+	 * available.&lt;/b&gt;
+	 * &lt;p&gt;
+	 *
+	 * @return the Mapper for {@code SAXException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code SAXException} is not available (java.xml
+	 *             module missing).
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper saxExceptionMapper() {
+<span class="fc" id="L87">		return Optional.ofNullable(Constants.SAXEXCEPTION_EXCEPTION_MAPPER)</span>
+<span class="pc" id="L88">				.orElseThrow(() -&gt; new NoClassDefFoundError(&quot;Unable to find the SAXException&quot;));</span>
+	}
+
+	/**
+	 * Exception wrapper, that may be used to copy transformer exception information
+	 * to the {@code WrappedException} message.
+	 * &lt;p&gt;
+	 * &lt;b&gt;This mapper will only works correctly if the class &lt;i&gt;SAXException&lt;/i&gt; is
+	 * available.&lt;/b&gt;
+	 * &lt;p&gt;
+	 *
+	 * @return the Mapper for {@code TransformerException}.
+	 * @throws NoClassDefFoundError
+	 *             In case the {@code TransformerException} is not available
+	 *             (java.xml module missing).
+	 * @since 2.1.0
+	 */
+	static ExceptionMapper transformerExceptionMapper() {
+<span class="fc" id="L106">		return Optional.ofNullable(Constants.TRANSFORMEREXCEPTION_EXCEPTION_MAPPER)</span>
+<span class="pc" id="L107">				.orElseThrow(() -&gt; new NoClassDefFoundError(&quot;Unable to find the TransformerException&quot;));</span>
+	}
+
+	Class&lt;? extends Exception&gt; targetException();
+
+	private boolean accept(Exception e) {
+<span class="fc" id="L113">		return targetException().isInstance(e);</span>
+	}
+
+	/**
+	 * This method is used when ExceptionMapper are registered as default Mapper to
+	 * defines the right order to select then.
+	 *
+	 * @return an ordering key, by default 0.
+	 * @since 2.2.0
+	 */
+	default int order() {
+<span class="fc" id="L124">		return 0;</span>
+	}
+
+	/**
+	 * Helper method to create exception wrapper that check the exception class.
+	 *
+	 * @param clazz
+	 *            the class of the exception to be wrapped.
+	 * @param mapper
+	 *            the exception mapper.
+	 * @param &lt;E&gt;
+	 *            the type of the exception.
+	 * @return A new exception mapper, which use the one received as parameter or
+	 *         for the other exception just create a {@code WrappedException}.
+	 */
+	static &lt;E extends Exception&gt; ExceptionMapper forException(Class&lt;E&gt; clazz, Function&lt;E, RuntimeException&gt; mapper) {
+<span class="fc" id="L140">		return forException(clazz, mapper, 0);</span>
+	}
+
+	/**
+	 * Helper method to create exception wrapper that check the exception class.
+	 *
+	 * @param clazz
+	 *            the class of the exception to be wrapped.
+	 * @param mapper
+	 *            the exception mapper.
+	 * @param order
+	 *            the order
+	 * @param &lt;E&gt;
+	 *            the type of the exception.
+	 * @return A new exception mapper, which use the one received as parameter or
+	 *         for the other exception just create a {@code WrappedException}.
+	 * @since 2.2.0
+	 */
+	static &lt;E extends Exception&gt; ExceptionMapper forException(Class&lt;E&gt; clazz, Function&lt;E, RuntimeException&gt; mapper,
+			int order) {
+<span class="fc" id="L160">		return new ExceptionMapper() {</span>
+
+			@Override
+			public RuntimeException apply(Exception t) {
+<span class="fc bfc" id="L164" title="All 2 branches covered.">				return clazz.isInstance(t) ? mapper.apply(clazz.cast(t)) : new WrappedException(t);</span>
+			}
+
+			@Override
+			public Class&lt;E&gt; targetException() {
+<span class="fc" id="L169">				return clazz;</span>
+			}
+
+			@Override
+			public int order() {
+<span class="fc" id="L174">				return order;</span>
+			}
+		};
+	}
+
+	/**
+	 * Helper method to create exception wrapper to use the first mapper if
+	 * applicable or else the second.
+	 *
+	 * @param mapper1
+	 *            the first mapper to be used.
+	 * @param mapper2
+	 *            the second mapper to used.
+	 * @return the mapping function.
+	 */
+	static Function&lt;Exception, RuntimeException&gt; forExceptions(ExceptionMapper mapper1, ExceptionMapper mapper2) {
+<span class="fc bfc" id="L190" title="All 2 branches covered.">		return e -&gt; mapper1.accept(e) ? mapper1.apply(e) : mapper2.apply(e);</span>
+	}
+
+	/**
+	 * Helper method to create exception wrapper to use the first mapper if
+	 * applicable or else the second or else the third
+	 *
+	 * @param mapper1
+	 *            the first mapper to be used.
+	 * @param mapper2
+	 *            the second mapper to used.
+	 * @param mapper3
+	 *            the third mapper to used.
+	 * @return the mapping function.
+	 */
+	static Function&lt;Exception, RuntimeException&gt; forExceptions(ExceptionMapper mapper1, ExceptionMapper mapper2,
+			ExceptionMapper mapper3) {
+<span class="fc bfc" id="L207" title="All 2 branches covered.">		return e -&gt; (mapper1.accept(e) ? mapper1 : forExceptions(mapper2, mapper3)).apply(e);</span>
+	}
+
+	/**
+	 * Helper method to create exception wrapper that use the first one that is
+	 * applicable.
+	 *
+	 * @param mappers
+	 *            the mapper to be tried
+	 * @return the mapping function.
+	 */
+	static Function&lt;Exception, RuntimeException&gt; forExceptions(ExceptionMapper... mappers) {
+<span class="fc bfc" id="L219" title="All 2 branches covered.">		if (mappers.length == 0) {</span>
+<span class="fc" id="L220">			return WrappedException::new;</span>
+		}
+<span class="fc" id="L222">		return e -&gt; stream(mappers).sequential().filter(m -&gt; m.accept(e)).limit(1).map(m -&gt; m.apply(e)).findFirst()</span>
+<span class="fc" id="L223">				.orElseGet(() -&gt; new WrappedException(e));</span>
+	}
+
+	/**
+	 * Helper method to create exception wrapper that use the first one that is
+	 * applicable, but having them sorted using the {@link #order()} method.
+	 *
+	 * @param mappers
+	 *            the mapper to be tried
+	 * @return the mapping function.
+	 * @since 2.2.0
+	 */
+	static Function&lt;Exception, RuntimeException&gt; forOrderedExceptions(Collection&lt;ExceptionMapper&gt; mappers) {
+<span class="fc bfc" id="L236" title="All 2 branches covered.">		if (mappers.isEmpty()) {</span>
+<span class="fc" id="L237">			return WrappedException::new;</span>
+		}
+<span class="fc" id="L239">		return forExceptions(mappers.stream().sorted(Comparator.comparingInt(ExceptionMapper::order))</span>
+<span class="fc" id="L240">				.toArray(ExceptionMapper[]::new));</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

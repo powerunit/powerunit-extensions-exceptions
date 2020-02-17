@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConsumerWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">ConsumerWithException.java</span></div><h1>ConsumerWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyConsumer;
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static java.util.Objects.requireNonNull;
+
+import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents an operation that accepts a single input argument, may thrown
+ * exception and returns no result. Unlike most other functional interfaces,
+ * {@code ConsumerWithException} is expected to operate via side-effects.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #accept(Object) void accept(T t) throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The
+ * functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Consumer&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Consumer&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Consumer&lt;T&gt;}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see Consumer
+ * @param &lt;T&gt;
+ *            the type of the input to the operation
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the operation
+ */
+@FunctionalInterface
+public interface ConsumerWithException&lt;T, E extends Exception&gt; extends
+		NoReturnExceptionHandlerSupport&lt;Consumer&lt;T&gt;, Function&lt;T, CompletionStage&lt;Void&gt;&gt;, ConsumerWithException&lt;T, E&gt;&gt; {
+
+	/**
+	 * Performs this operation on the given argument.
+	 *
+	 * @param t
+	 *            the input argument
+	 * @throws E
+	 *             any exception
+	 * @see Consumer#accept(Object)
+	 */
+	void accept(T t) throws E;
+
+	/**
+	 * Converts this {@code ConsumerWithException} to a {@code Consumer} that wraps
+	 * exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked operation
+	 * @see #unchecked(ConsumerWithException)
+	 * @see #unchecked(ConsumerWithException, Function)
+	 * @see Consumer
+	 */
+	@Override
+	default Consumer&lt;T&gt; uncheck() {
+<span class="fc" id="L76">		return t -&gt; NoReturnExceptionHandlerSupport.unchecked(() -&gt; accept(t), throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code ConsumerWithException} to a &lt;i&gt;lifted&lt;/i&gt;
+	 * {@code Consumer} that ignore exception.
+	 *
+	 * @return the operation that ignore error
+	 * @see #ignored(ConsumerWithException)
+	 * @see Consumer
+	 */
+	@Override
+	default Consumer&lt;T&gt; ignore() {
+<span class="fc" id="L89">		return t -&gt; NoReturnExceptionHandlerSupport.unchecked(() -&gt; accept(t), notThrowingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code ConsumerWithException} to a &lt;i&gt;staged&lt;/i&gt;
+	 * {@code Function} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default Function&lt;T, CompletionStage&lt;Void&gt;&gt; stage() {
+<span class="fc" id="L101">		return t -&gt; NoReturnExceptionHandlerSupport.staged(() -&gt; accept(t));</span>
+	}
+
+	/**
+	 * Returns a composed {@code ConsumerWithException} that performs, in sequence,
+	 * this operation followed by the {@code after} operation. If performing either
+	 * operation throws an exception, it is relayed to the caller of the composed
+	 * operation. If performing this operation throws an exception, the
+	 * {@code after} operation will not be performed.
+	 *
+	 * @param after
+	 *            the operation to perform after this operation
+	 * @return a composed {@code ConsumerWithException} that performs in sequence
+	 *         this operation followed by the {@code after} operation
+	 * @throws NullPointerException
+	 *             if {@code after} is null
+	 * @see Consumer#andThen(Consumer)
+	 */
+	default ConsumerWithException&lt;T, E&gt; andThen(ConsumerWithException&lt;? super T, ? extends E&gt; after) {
+<span class="fc" id="L120">		requireNonNull(after);</span>
+<span class="fc" id="L121">		return (T t) -&gt; {</span>
+<span class="fc" id="L122">			accept(t);</span>
+<span class="fc" id="L123">			after.accept(t);</span>
+<span class="fc" id="L124">		};</span>
+	}
+
+	/**
+	 * Returns a {@code ConsumerWithException} that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return an operation that always throw exception
+	 */
+	static &lt;T, E extends Exception&gt; ConsumerWithException&lt;T, E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L139">		return t -&gt; {</span>
+<span class="fc" id="L140">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a {@code Consumer} that wraps
+	 * exception to {@code RuntimeException}.
+	 * &lt;p&gt;
+	 * For example :
+	 *
+	 * &lt;pre&gt;
+	 * ConsumerWithException&amp;lt;String, IOException&amp;gt; consumerThrowingException = ...;
+	 *
+	 * Consumer&amp;lt;String&amp;gt; consumerThrowingRuntimeException =
+	 *   ConsumerWithException.unchecked(consumerThrowingException);
+	 *
+	 * Stream....forEach(consumerThrowingRuntimeException);
+	 * &lt;/pre&gt;
+	 *
+	 * In case of exception inside {@code consumerThrowingRuntimeException} an
+	 * instance of {@code WrappedException} with the original exception as cause
+	 * will be thrown.
+	 *
+	 * @param consumer
+	 *            to be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(ConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 */
+	static &lt;T, E extends Exception&gt; Consumer&lt;T&gt; unchecked(ConsumerWithException&lt;T, E&gt; consumer) {
+<span class="fc" id="L176">		return verifyConsumer(consumer).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a {@code Consumer} that wraps
+	 * exception to {@code RuntimeException} by using the provided mapping function.
+	 * &lt;p&gt;
+	 * For example :
+	 *
+	 * &lt;pre&gt;
+	 * ConsumerWithException&amp;lt;String, IOException&amp;gt; consumerThrowingException = ...;
+	 *
+	 * Consumer&amp;lt;String&amp;gt; consumerThrowingRuntimeException =
+	 *   ConsumerWithException.unchecked(
+	 *     consumerThrowingException,
+	 *     IllegalArgumentException::new
+	 *   );
+	 *
+	 * Stream....forEach(consumerThrowingRuntimeException);
+	 * &lt;/pre&gt;
+	 *
+	 * In case of exception inside {@code consumerThrowingRuntimeException} an
+	 * instance of {@code IllegalArgumentException} with the original exception as
+	 * cause will be thrown.
+	 *
+	 * @param consumer
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(ConsumerWithException)
+	 * @throws NullPointerException
+	 *             if consumer or exceptionMapper is null
+	 */
+	static &lt;T, E extends Exception&gt; Consumer&lt;T&gt; unchecked(ConsumerWithException&lt;T, E&gt; consumer,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L217">		verifyConsumer(consumer);</span>
+<span class="fc" id="L218">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L219">		return new ConsumerWithException&lt;T, E&gt;() {</span>
+
+			@Override
+			public void accept(T t) throws E {
+<span class="fc" id="L223">				consumer.accept(t);</span>
+<span class="fc" id="L224">			}</span>
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L228">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L231">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a lifted {@code Consumer}
+	 * ignoring exception.
+	 *
+	 * @param consumer
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 */
+	static &lt;T, E extends Exception&gt; Consumer&lt;T&gt; lifted(ConsumerWithException&lt;T, E&gt; consumer) {
+<span class="fc" id="L250">		return verifyConsumer(consumer).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a lifted {@code Consumer}
+	 * ignoring exception.
+	 *
+	 * @param consumer
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 */
+	static &lt;T, E extends Exception&gt; Consumer&lt;T&gt; ignored(ConsumerWithException&lt;T, E&gt; consumer) {
+<span class="fc" id="L269">		return verifyConsumer(consumer).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a staged {@code Function}.
+	 *
+	 * @param consumer
+	 *            to be staged
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 * @since 1.1.0
+	 */
+	static &lt;T, E extends Exception&gt; Function&lt;T, CompletionStage&lt;Void&gt;&gt; staged(ConsumerWithException&lt;T, E&gt; consumer) {
+<span class="fc" id="L287">		return verifyConsumer(consumer).stage();</span>
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a {@code FunctionWithException}
+	 * returning {@code null}.
+	 *
+	 * @param consumer
+	 *            the consumer to be converted
+	 * @param &lt;T&gt;
+	 *            the type of the input to the operation
+	 * @param &lt;R&gt;
+	 *            the type of the return value
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the function
+	 * @throws NullPointerException
+	 *             if consumer is null
+	 */
+	static &lt;T, R, E extends Exception&gt; FunctionWithException&lt;T, R, E&gt; asFunction(ConsumerWithException&lt;T, E&gt; consumer) {
+<span class="fc" id="L307">		return verifyConsumer(consumer).asFunction();</span>
+	}
+
+	/**
+	 * Converts a {@code ConsumerWithException} to a {@code FunctionWithException}
+	 * returning {@code null}.
+	 *
+	 * @param &lt;R&gt;
+	 *            the type of the return value
+	 * @return the function
+	 * @since 1.2.0
+	 */
+	default &lt;R&gt; FunctionWithException&lt;T, R, E&gt; asFunction() {
+<span class="fc" id="L320">		return t -&gt; {</span>
+<span class="fc" id="L321">			accept(t);</span>
+<span class="fc" id="L322">			return null;</span>
+		};
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

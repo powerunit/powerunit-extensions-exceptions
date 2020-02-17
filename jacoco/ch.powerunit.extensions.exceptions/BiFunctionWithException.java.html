@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BiFunctionWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">BiFunctionWithException.java</span></div><h1>BiFunctionWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents a function that accepts two arguments, may thrown exception and
+ * produces a result. This is the two-arity specialization of
+ * {@link FunctionWithException}.
+ *
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #apply(Object, Object) R apply(T t, U u) throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code BiFunction&lt;T,U,R&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a
+ * {@code BiFunction&lt;T,U,&lt;Optional&lt;R&gt;&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code BiFunction&lt;T,U,R&gt;}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see BiFunction
+ * @param &lt;T&gt;
+ *            the type of the first argument to the function
+ * @param &lt;U&gt;
+ *            the type of the second argument to the function
+ * @param &lt;R&gt;
+ *            the type of the result of the function
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ */
+@FunctionalInterface
+public interface BiFunctionWithException&lt;T, U, R, E extends Exception&gt; extends
+		ObjectReturnExceptionHandlerSupport&lt;BiFunction&lt;T, U, R&gt;, BiFunction&lt;T, U, Optional&lt;R&gt;&gt;, BiFunction&lt;T, U, CompletionStage&lt;R&gt;&gt;, R, BiFunctionWithException&lt;T, U, R, E&gt;&gt; {
+
+	/**
+	 * Applies this function to the given arguments.
+	 *
+	 * @param t
+	 *            the first function argument
+	 * @param u
+	 *            the second function argument
+	 * @return the function result
+	 * @throws E
+	 *             any exception
+	 * @see BiFunction#apply(Object,Object)
+	 */
+	R apply(T t, U u) throws E;
+
+	/**
+	 * Converts this {@code BiFunctionWithException} to a {@code BiFunction} that
+	 * wraps exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked function
+	 * @see #unchecked(BiFunctionWithException)
+	 * @see #unchecked(BiFunctionWithException, Function)
+	 * @see BiFunction
+	 */
+	@Override
+	default BiFunction&lt;T, U, R&gt; uncheck() {
+<span class="fc" id="L86">		return (t, u) -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t, u), throwingHandler());</span>
+
+	}
+
+	/**
+	 * Converts this {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * using {@code Optional} as return value.
+	 *
+	 * @return the lifted function
+	 * @see #lifted(BiFunctionWithException)
+	 * @see BiFunction
+	 */
+	@Override
+	default BiFunction&lt;T, U, Optional&lt;R&gt;&gt; lift() {
+<span class="fc" id="L100">		return (t, u) -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; Optional.ofNullable(apply(t, u)),</span>
+<span class="fc" id="L101">				notThrowingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * returning {@code null} (or the value redefined by the method
+	 * {@link #defaultValue()}) in case of exception.
+	 *
+	 * @return the function that ignore error
+	 * @see #ignored(BiFunctionWithException)
+	 * @see BiFunction
+	 */
+	@Override
+	default BiFunction&lt;T, U, R&gt; ignore() {
+<span class="fc" id="L115">		return lift().andThen(o -&gt; o.orElse(defaultValue()));</span>
+	}
+
+	/**
+	 * Convert this {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * that uses {@code CompletionStage} as return value.
+	 *
+	 * @return the lifted function
+	 * @see #staged(BiFunctionWithException)
+	 * @see BiFunction
+	 * @see CompletionStage
+	 */
+	@Override
+	default BiFunction&lt;T, U, CompletionStage&lt;R&gt;&gt; stage() {
+<span class="fc" id="L129">		return (t, u) -&gt; ObjectReturnExceptionHandlerSupport.staged(() -&gt; apply(t, u));</span>
+	}
+
+	/**
+	 * Returns a composed {@code FunctionWithException} that first applies this
+	 * {@code FunctionWithException} to its input, and then applies the
+	 * {@code after} {@code FunctionWithException} to the result. If evaluation of
+	 * either {@code FunctionWithException} throws an exception, it is relayed to
+	 * the caller of the composed function.
+	 *
+	 * @param &lt;V&gt;
+	 *            the type of output of the {@code after}
+	 *            {@code FunctionWithException}, and of the composed
+	 *            {@code FunctionWithException}
+	 * @param after
+	 *            the function to apply after this {@code FunctionWithException} is
+	 *            applied
+	 * @return a composed function that first applies this function and then applies
+	 *         the {@code after} function
+	 * @throws NullPointerException
+	 *             if after is null
+	 *
+	 * @see BiFunction#andThen(Function)
+	 */
+	default &lt;V&gt; BiFunctionWithException&lt;T, U, V, E&gt; andThen(
+			FunctionWithException&lt;? super R, ? extends V, ? extends E&gt; after) {
+<span class="fc" id="L155">		requireNonNull(after);</span>
+<span class="fc" id="L156">		return (T t, U u) -&gt; after.apply(apply(t, u));</span>
+	}
+
+	/**
+	 * Returns a {@code FunctionWithException} that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a function that always throw exception
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunctionWithException&lt;T, U, R, E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L175">		return (t, u) -&gt; {</span>
+<span class="fc" id="L176">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
+	 * convert exception to {@code RuntimeException}.
+	 * &lt;p&gt;
+	 * For example :
+	 *
+	 * &lt;pre&gt;
+	 * BiFunction&amp;lt;String, String, String&amp;gt; biFunctionThrowingRuntimeException = BiFunctionWithException
+	 * 		.unchecked(biFouctionThrowingException);
+	 * &lt;/pre&gt;
+	 *
+	 * Will generate a {@code BiFunction} throwing {@code RuntimeException} in case
+	 * of error.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(BiFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunction&lt;T, U, R&gt; unchecked(BiFunctionWithException&lt;T, U, R, E&gt; function) {
+<span class="fc" id="L211">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a {@code BiFunction} that
+	 * convert exception to {@code RuntimeException} by using the provided mapping
+	 * function.
+	 * &lt;p&gt;
+	 * For example :
+	 *
+	 * &lt;pre&gt;
+	 * BiFunction&amp;lt;String, String, String&amp;gt; functionThrowingRuntimeException = BiFunctionWithException
+	 * 		.unchecked(fonctionThrowingException, IllegalArgumentException::new);
+	 * &lt;/pre&gt;
+	 *
+	 * Will generate a {@code BiFunction} throwing {@code IllegalArgumentException}
+	 * in case of error.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(BiFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunction&lt;T, U, R&gt; unchecked(BiFunctionWithException&lt;T, U, R, E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L249">		verifyFunction(function);</span>
+<span class="fc" id="L250">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L251">		return new BiFunctionWithException&lt;T, U, R, E&gt;() {</span>
+
+			@Override
+			public R apply(T t, U u) throws E {
+<span class="fc" id="L255">				return function.apply(t, u);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L260">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L263">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * using {@code Optional} as return value.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunction&lt;T, U, Optional&lt;R&gt;&gt; lifted(
+			BiFunctionWithException&lt;T, U, R, E&gt; function) {
+<span class="fc" id="L287">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunction&lt;T, U, R&gt; ignored(BiFunctionWithException&lt;T, U, R, E&gt; function) {
+<span class="fc" id="L310">		return verifyFunction(function).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * returning a default in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value to be returned in case of error
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(BiFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunction&lt;T, U, R&gt; ignored(BiFunctionWithException&lt;T, U, R, E&gt; function,
+			R defaultValue) {
+<span class="fc" id="L338">		verifyFunction(function);</span>
+<span class="fc" id="L339">		return new BiFunctionWithException&lt;T, U, R, E&gt;() {</span>
+
+			@Override
+			public R apply(T t, U u) throws E {
+<span class="fc" id="L343">				return function.apply(t, u);</span>
+			}
+
+			@Override
+			public R defaultValue() {
+<span class="fc" id="L348">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L351">		}.ignore();</span>
+
+	}
+
+	/**
+	 * Convert this {@code BiFunctionWithException} to a lifted {@code BiFunction}
+	 * return {@code CompletionStage} as return value.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the function
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the function
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiFunction&lt;T, U, CompletionStage&lt;R&gt;&gt; staged(
+			BiFunctionWithException&lt;T, U, R, E&gt; function) {
+<span class="fc" id="L376">		return verifyFunction(function).stage();</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a
+	 * {@code BiConsumerWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the operation
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the operation
+	 * @param &lt;R&gt;
+	 *            the type of the return value of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception of the operation
+	 * @return the consumer
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static &lt;T, U, R, E extends Exception&gt; BiConsumerWithException&lt;T, U, E&gt; asBiConsumer(
+			BiFunctionWithException&lt;T, U, R, E&gt; function) {
+<span class="fc" id="L400">		return verifyFunction(function).asBiConsumer();</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a
+	 * {@code BiConsumerWithException}.
+	 *
+	 * @return the consumer
+	 * @since 1.2.0
+	 */
+	default BiConsumerWithException&lt;T, U, E&gt; asBiConsumer() {
+<span class="fc" id="L411">		return this::apply;</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a
+	 * {@code FunctionWithException}.
+	 *
+	 * @param function
+	 *            to be converter
+	 *
+	 * @param u
+	 *            the second parameter of the {@code BiFunctionWithException} that
+	 *            will be used inside the new {code FunctionWithException}.
+	 * @param &lt;T&gt;
+	 *            the type of the first argument to the operation
+	 * @param &lt;U&gt;
+	 *            the type of the second argument to the operation
+	 * @param &lt;R&gt;
+	 *            the type of the return value of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception of the operation
+	 * @return the consumer
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 1.2.0
+	 */
+	static &lt;T, U, R, E extends Exception&gt; FunctionWithException&lt;T, R, E&gt; asFunction(
+			BiFunctionWithException&lt;T, U, R, E&gt; function, U u) {
+<span class="fc" id="L439">		return verifyFunction(function).asFunction(u);</span>
+	}
+
+	/**
+	 * Converts a {@code BiFunctionWithException} to a
+	 * {@code FunctionWithException}.
+	 *
+	 * @param u
+	 *            the second parameter of the {@code BiFunctionWithException} that
+	 *            will be used inside the new {code FunctionWithException}.
+	 *
+	 *
+	 * @return the consumer
+	 * @since 1.2.0
+	 */
+	default FunctionWithException&lt;T, R, E&gt; asFunction(U u) {
+<span class="fc" id="L455">		return t -&gt; apply(t, u);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

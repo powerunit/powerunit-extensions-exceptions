@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ObjLongConsumerWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">ObjLongConsumerWithException.java</span></div><h1>ObjLongConsumerWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyOperation;
+
+import java.util.concurrent.CompletionStage;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.ObjLongConsumer;
+import java.util.function.Supplier;
+
+/**
+ * Represents an operation that accepts an object-valued and a
+ * {@code long}-valued argument, and returns no result. This is the
+ * {@code (reference, long)} specialization of {@link BiConsumerWithException}.
+ * Unlike most other functional interfaces, {@code ObjLongConsumerWithException}
+ * is expected to operate via side-effects.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #accept(Object, long) void accept(T t, long value) throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code ObjLongConsumer&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code ObjLongConsumer&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code ObjLongConsumer&lt;T&gt;}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see ObjLongConsumer
+ * @param &lt;T&gt;
+ *            the type of the object argument to the operation
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the operation
+ */
+@FunctionalInterface
+public interface ObjLongConsumerWithException&lt;T, E extends Exception&gt; extends
+		NoReturnExceptionHandlerSupport&lt;ObjLongConsumer&lt;T&gt;, BiFunction&lt;T, Long, CompletionStage&lt;Void&gt;&gt;, ObjLongConsumerWithException&lt;T, E&gt;&gt; {
+
+	/**
+	 * Performs this operation on the given arguments.
+	 *
+	 * @param t
+	 *            the first input argument
+	 * @param value
+	 *            the second input argument
+	 * @throws E
+	 *             any exception
+	 * @see ObjLongConsumer#accept(Object,long)
+	 */
+	void accept(T t, long value) throws E;
+
+	/**
+	 * Converts this {@code ObjLongConsumerWithException} to a
+	 * {@code ObjLongConsumer} that wraps exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked operation
+	 * @see #unchecked(ObjLongConsumerWithException)
+	 * @see #unchecked(ObjLongConsumerWithException, Function)
+	 */
+	@Override
+	default ObjLongConsumer&lt;T&gt; uncheck() {
+<span class="fc" id="L79">		return (t, value) -&gt; NoReturnExceptionHandlerSupport.unchecked(() -&gt; accept(t, value), throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code ObjLongConsumerWithException} to a &lt;i&gt;lifted&lt;/i&gt;
+	 * {@code ObjLongConsumer} ignoring exception.
+	 *
+	 * @return the operation that ignore error
+	 * @see #ignored(ObjLongConsumerWithException)
+	 */
+	@Override
+	default ObjLongConsumer&lt;T&gt; ignore() {
+<span class="fc" id="L91">		return (t, value) -&gt; NoReturnExceptionHandlerSupport.unchecked(() -&gt; accept(t, value), notThrowingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code ObjLongConsumerWithException} to a &lt;i&gt;staged&lt;/i&gt;
+	 * {@code BiFunction} that return a {@code CompletionStage}.
+	 *
+	 * @return the staged operation.
+	 * @since 1.1.0
+	 */
+	@Override
+	default BiFunction&lt;T, Long, CompletionStage&lt;Void&gt;&gt; stage() {
+<span class="fc" id="L103">		return (t, value) -&gt; NoReturnExceptionHandlerSupport.staged(() -&gt; accept(t, value));</span>
+	}
+
+	/**
+	 * Returns an operation that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return an operation that always throw exception
+	 */
+	static &lt;T, E extends Exception&gt; ObjLongConsumerWithException&lt;T, E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L118">		return (t, u) -&gt; {</span>
+<span class="fc" id="L119">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code ObjLongConsumerWithException} to a {@code ObjLongConsumer}
+	 * that wraps exception to {@code RuntimeException}.
+	 *
+	 * @param operation
+	 *            to be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked operation
+	 * @see #uncheck()
+	 * @see #unchecked(ObjLongConsumerWithException, Function)
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;T, E extends Exception&gt; ObjLongConsumer&lt;T&gt; unchecked(ObjLongConsumerWithException&lt;T, E&gt; operation) {
+<span class="fc" id="L140">		return verifyOperation(operation).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjLongConsumerWithException} to a {@code ObjLongConsumer}
+	 * that wraps exception to {@code RuntimeException} by using the provided
+	 * mapping function.
+	 *
+	 * @param operation
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked operation
+	 * @see #uncheck()
+	 * @see #unchecked(ObjLongConsumerWithException)
+	 * @throws NullPointerException
+	 *             if operation or exceptionMapper is null
+	 */
+	static &lt;T, E extends Exception&gt; ObjLongConsumer&lt;T&gt; unchecked(ObjLongConsumerWithException&lt;T, E&gt; operation,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L164">		verifyOperation(operation);</span>
+<span class="fc" id="L165">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L166">		return new ObjLongConsumerWithException&lt;T, E&gt;() {</span>
+
+			@Override
+			public void accept(T t, long value) throws E {
+<span class="fc" id="L170">				operation.accept(t, value);</span>
+<span class="fc" id="L171">			}</span>
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L175">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L178">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjLongConsumerWithException} to a lifted
+	 * {@code ObjLongConsumer} ignoring exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;T, E extends Exception&gt; ObjLongConsumer&lt;T&gt; lifted(ObjLongConsumerWithException&lt;T, E&gt; operation) {
+<span class="fc" id="L197">		return verifyOperation(operation).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjLongConsumerWithException} to a lifted
+	 * {@code ObjLongConsumer} ignoring exception.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted operation
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;T, E extends Exception&gt; ObjLongConsumer&lt;T&gt; ignored(ObjLongConsumerWithException&lt;T, E&gt; operation) {
+<span class="fc" id="L216">		return verifyOperation(operation).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjLongConsumerWithException} to a staged
+	 * {@code BiFunction} .
+	 *
+	 * @param operation
+	 *            to be staged
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the staged operation
+	 * @throws NullPointerException
+	 *             if operation is null
+	 * @since 1.1.0
+	 */
+	static &lt;T, E extends Exception&gt; BiFunction&lt;T, Long, CompletionStage&lt;Void&gt;&gt; staged(
+			ObjLongConsumerWithException&lt;T, E&gt; operation) {
+<span class="fc" id="L236">		return verifyOperation(operation).stage();</span>
+	}
+
+	/**
+	 * Converts a {@code ObjLongConsumerWithException} to a
+	 * {@code BiConsumerWithException} returning {@code null}.
+	 *
+	 * @param operation
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the object argument to the operation
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the bi consumer
+	 * @throws NullPointerException
+	 *             if operation is null
+	 */
+	static &lt;T, E extends Exception&gt; BiConsumerWithException&lt;T, Long, E&gt; asBiConsumer(
+			ObjLongConsumerWithException&lt;T, E&gt; operation) {
+<span class="fc" id="L255">		return verifyOperation(operation)::accept;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

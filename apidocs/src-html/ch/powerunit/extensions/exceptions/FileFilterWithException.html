@@ -1,0 +1,364 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<main role="main">
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span><a id="line.1">/**</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Powerunit - A JDK1.8 test framework</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * Copyright (C) 2014 Mathieu Boretti.</a>
+<span class="sourceLineNo">004</span><a id="line.4"> *</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * This file is part of Powerunit</a>
+<span class="sourceLineNo">006</span><a id="line.6"> *</a>
+<span class="sourceLineNo">007</span><a id="line.7"> * Powerunit is free software: you can redistribute it and/or modify</a>
+<span class="sourceLineNo">008</span><a id="line.8"> * it under the terms of the GNU General Public License as published by</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * the Free Software Foundation, either version 3 of the License, or</a>
+<span class="sourceLineNo">010</span><a id="line.10"> * (at your option) any later version.</a>
+<span class="sourceLineNo">011</span><a id="line.11"> *</a>
+<span class="sourceLineNo">012</span><a id="line.12"> * Powerunit is distributed in the hope that it will be useful,</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</a>
+<span class="sourceLineNo">014</span><a id="line.14"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</a>
+<span class="sourceLineNo">015</span><a id="line.15"> * GNU General Public License for more details.</a>
+<span class="sourceLineNo">016</span><a id="line.16"> *</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * You should have received a copy of the GNU General Public License</a>
+<span class="sourceLineNo">018</span><a id="line.18"> * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.</a>
+<span class="sourceLineNo">019</span><a id="line.19"> */</a>
+<span class="sourceLineNo">020</span><a id="line.20">package ch.powerunit.extensions.exceptions;</a>
+<span class="sourceLineNo">021</span><a id="line.21"></a>
+<span class="sourceLineNo">022</span><a id="line.22">import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;</a>
+<span class="sourceLineNo">023</span><a id="line.23">import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;</a>
+<span class="sourceLineNo">024</span><a id="line.24">import static java.util.Objects.requireNonNull;</a>
+<span class="sourceLineNo">025</span><a id="line.25"></a>
+<span class="sourceLineNo">026</span><a id="line.26">import java.io.File;</a>
+<span class="sourceLineNo">027</span><a id="line.27">import java.io.FileFilter;</a>
+<span class="sourceLineNo">028</span><a id="line.28">import java.util.function.Function;</a>
+<span class="sourceLineNo">029</span><a id="line.29">import java.util.function.Supplier;</a>
+<span class="sourceLineNo">030</span><a id="line.30"></a>
+<span class="sourceLineNo">031</span><a id="line.31">/**</a>
+<span class="sourceLineNo">032</span><a id="line.32"> * A filter for abstract pathnames and may throw an exception.</a>
+<span class="sourceLineNo">033</span><a id="line.33"> * &lt;h3&gt;General contract&lt;/h3&gt;</a>
+<span class="sourceLineNo">034</span><a id="line.34"> * &lt;ul&gt;</a>
+<span class="sourceLineNo">035</span><a id="line.35"> * &lt;li&gt;&lt;b&gt;{@link #accept(File) boolean accept(File path) throws</a>
+<span class="sourceLineNo">036</span><a id="line.36"> * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;</a>
+<span class="sourceLineNo">037</span><a id="line.37"> * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code FileFilter}&lt;/li&gt;</a>
+<span class="sourceLineNo">038</span><a id="line.38"> * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code FileFilter}&lt;/li&gt;</a>
+<span class="sourceLineNo">039</span><a id="line.39"> * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code FileFilter}&lt;/li&gt;</a>
+<span class="sourceLineNo">040</span><a id="line.40"> * &lt;/ul&gt;</a>
+<span class="sourceLineNo">041</span><a id="line.41"> *</a>
+<span class="sourceLineNo">042</span><a id="line.42"> * @see FileFilter</a>
+<span class="sourceLineNo">043</span><a id="line.43"> * @param &lt;E&gt;</a>
+<span class="sourceLineNo">044</span><a id="line.44"> *            the type of the potential exception of the function</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * @since 1.1.0</a>
+<span class="sourceLineNo">046</span><a id="line.46"> */</a>
+<span class="sourceLineNo">047</span><a id="line.47">@FunctionalInterface</a>
+<span class="sourceLineNo">048</span><a id="line.48">public interface FileFilterWithException&lt;E extends Exception&gt;</a>
+<span class="sourceLineNo">049</span><a id="line.49">                extends PrimitiveReturnExceptionHandlerSupport&lt;FileFilter, FileFilterWithException&lt;E&gt;&gt;, BooleanDefaultValue {</a>
+<span class="sourceLineNo">050</span><a id="line.50"></a>
+<span class="sourceLineNo">051</span><a id="line.51">        /**</a>
+<span class="sourceLineNo">052</span><a id="line.52">         * Tests whether or not the specified abstract pathname should be included in a</a>
+<span class="sourceLineNo">053</span><a id="line.53">         * pathname list.</a>
+<span class="sourceLineNo">054</span><a id="line.54">         *</a>
+<span class="sourceLineNo">055</span><a id="line.55">         * @param pathname</a>
+<span class="sourceLineNo">056</span><a id="line.56">         *            The abstract pathname to be tested</a>
+<span class="sourceLineNo">057</span><a id="line.57">         * @return &lt;code&gt;true&lt;/code&gt; if and only if &lt;code&gt;pathname&lt;/code&gt; should be</a>
+<span class="sourceLineNo">058</span><a id="line.58">         *         included</a>
+<span class="sourceLineNo">059</span><a id="line.59">         * @throws E</a>
+<span class="sourceLineNo">060</span><a id="line.60">         *             any exception</a>
+<span class="sourceLineNo">061</span><a id="line.61">         * @see FileFilter#accept(File)</a>
+<span class="sourceLineNo">062</span><a id="line.62">         */</a>
+<span class="sourceLineNo">063</span><a id="line.63">        boolean accept(File pathname) throws E;</a>
+<span class="sourceLineNo">064</span><a id="line.64"></a>
+<span class="sourceLineNo">065</span><a id="line.65">        @Override</a>
+<span class="sourceLineNo">066</span><a id="line.66">        default FileFilter uncheckOrIgnore(boolean uncheck) {</a>
+<span class="sourceLineNo">067</span><a id="line.67">                return pathname -&gt; {</a>
+<span class="sourceLineNo">068</span><a id="line.68">                        try {</a>
+<span class="sourceLineNo">069</span><a id="line.69">                                return accept(pathname);</a>
+<span class="sourceLineNo">070</span><a id="line.70">                        } catch (Exception e) {</a>
+<span class="sourceLineNo">071</span><a id="line.71">                                PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</a>
+<span class="sourceLineNo">072</span><a id="line.72">                                return defaultValue();</a>
+<span class="sourceLineNo">073</span><a id="line.73">                        }</a>
+<span class="sourceLineNo">074</span><a id="line.74">                };</a>
+<span class="sourceLineNo">075</span><a id="line.75">        }</a>
+<span class="sourceLineNo">076</span><a id="line.76"></a>
+<span class="sourceLineNo">077</span><a id="line.77">        /**</a>
+<span class="sourceLineNo">078</span><a id="line.78">         * Returns a composed FileFilter that represents a short-circuiting logical AND</a>
+<span class="sourceLineNo">079</span><a id="line.79">         * of this FileFilter and another. When evaluating the composed predicate, if</a>
+<span class="sourceLineNo">080</span><a id="line.80">         * this predicate is {@code false}, then the {@code other} predicate is not</a>
+<span class="sourceLineNo">081</span><a id="line.81">         * evaluated.</a>
+<span class="sourceLineNo">082</span><a id="line.82">         *</a>
+<span class="sourceLineNo">083</span><a id="line.83">         * &lt;p&gt;</a>
+<span class="sourceLineNo">084</span><a id="line.84">         * Any exceptions thrown during evaluation of either FileFilter are relayed to</a>
+<span class="sourceLineNo">085</span><a id="line.85">         * the caller; if evaluation of this predicate throws an exception, the</a>
+<span class="sourceLineNo">086</span><a id="line.86">         * {@code other} FileFilter will not be evaluated.</a>
+<span class="sourceLineNo">087</span><a id="line.87">         *</a>
+<span class="sourceLineNo">088</span><a id="line.88">         * @param other</a>
+<span class="sourceLineNo">089</span><a id="line.89">         *            a FileFilter that will be logically-ANDed with this predicate</a>
+<span class="sourceLineNo">090</span><a id="line.90">         * @return a composed FileFilter that represents the short-circuiting logical</a>
+<span class="sourceLineNo">091</span><a id="line.91">         *         AND of this FileFilter and the {@code other} FileFilter</a>
+<span class="sourceLineNo">092</span><a id="line.92">         * @throws NullPointerException</a>
+<span class="sourceLineNo">093</span><a id="line.93">         *             if other is null</a>
+<span class="sourceLineNo">094</span><a id="line.94">         * @see #or(FileFilterWithException)</a>
+<span class="sourceLineNo">095</span><a id="line.95">         * @see #negate()</a>
+<span class="sourceLineNo">096</span><a id="line.96">         */</a>
+<span class="sourceLineNo">097</span><a id="line.97">        default FileFilterWithException&lt;E&gt; and(FileFilterWithException&lt;? extends E&gt; other) {</a>
+<span class="sourceLineNo">098</span><a id="line.98">                requireNonNull(other);</a>
+<span class="sourceLineNo">099</span><a id="line.99">                return t -&gt; accept(t) &amp;&amp; other.accept(t);</a>
+<span class="sourceLineNo">100</span><a id="line.100">        }</a>
+<span class="sourceLineNo">101</span><a id="line.101"></a>
+<span class="sourceLineNo">102</span><a id="line.102">        /**</a>
+<span class="sourceLineNo">103</span><a id="line.103">         * Returns a FileFilter that represents the logical negation of this FileFilter.</a>
+<span class="sourceLineNo">104</span><a id="line.104">         *</a>
+<span class="sourceLineNo">105</span><a id="line.105">         * @return a FileFilter that represents the logical negation of this FileFilter</a>
+<span class="sourceLineNo">106</span><a id="line.106">         * @see #and(FileFilterWithException)</a>
+<span class="sourceLineNo">107</span><a id="line.107">         * @see #or(FileFilterWithException)</a>
+<span class="sourceLineNo">108</span><a id="line.108">         */</a>
+<span class="sourceLineNo">109</span><a id="line.109">        default FileFilterWithException&lt;E&gt; negate() {</a>
+<span class="sourceLineNo">110</span><a id="line.110">                return t -&gt; !accept(t);</a>
+<span class="sourceLineNo">111</span><a id="line.111">        }</a>
+<span class="sourceLineNo">112</span><a id="line.112"></a>
+<span class="sourceLineNo">113</span><a id="line.113">        /**</a>
+<span class="sourceLineNo">114</span><a id="line.114">         * Negate a {@code PredicateWithException}.</a>
+<span class="sourceLineNo">115</span><a id="line.115">         *</a>
+<span class="sourceLineNo">116</span><a id="line.116">         * @param predicate</a>
+<span class="sourceLineNo">117</span><a id="line.117">         *            to be negate</a>
+<span class="sourceLineNo">118</span><a id="line.118">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">119</span><a id="line.119">         *            the type of the potential exception</a>
+<span class="sourceLineNo">120</span><a id="line.120">         * @return the negated FileFilter</a>
+<span class="sourceLineNo">121</span><a id="line.121">         * @see #negate()</a>
+<span class="sourceLineNo">122</span><a id="line.122">         * @throws NullPointerException</a>
+<span class="sourceLineNo">123</span><a id="line.123">         *             if predicate is null</a>
+<span class="sourceLineNo">124</span><a id="line.124">         */</a>
+<span class="sourceLineNo">125</span><a id="line.125">        static &lt;E extends Exception&gt; FileFilterWithException&lt;E&gt; negate(FileFilterWithException&lt;E&gt; predicate) {</a>
+<span class="sourceLineNo">126</span><a id="line.126">                return verifyPredicate(predicate).negate();</a>
+<span class="sourceLineNo">127</span><a id="line.127">        }</a>
+<span class="sourceLineNo">128</span><a id="line.128"></a>
+<span class="sourceLineNo">129</span><a id="line.129">        /**</a>
+<span class="sourceLineNo">130</span><a id="line.130">         * Returns a composed FileFilter that represents a short-circuiting logical OR</a>
+<span class="sourceLineNo">131</span><a id="line.131">         * of this FileFilter and another. When evaluating the composed FileFilter, if</a>
+<span class="sourceLineNo">132</span><a id="line.132">         * this FileFilter is {@code true}, then the {@code other} predicate is not</a>
+<span class="sourceLineNo">133</span><a id="line.133">         * evaluated.</a>
+<span class="sourceLineNo">134</span><a id="line.134">         *</a>
+<span class="sourceLineNo">135</span><a id="line.135">         * &lt;p&gt;</a>
+<span class="sourceLineNo">136</span><a id="line.136">         * Any exceptions thrown during evaluation of either FileFilter are relayed to</a>
+<span class="sourceLineNo">137</span><a id="line.137">         * the caller; if evaluation of this FileFilter throws an exception, the</a>
+<span class="sourceLineNo">138</span><a id="line.138">         * {@code other} FileFilter will not be evaluated.</a>
+<span class="sourceLineNo">139</span><a id="line.139">         *</a>
+<span class="sourceLineNo">140</span><a id="line.140">         * @param other</a>
+<span class="sourceLineNo">141</span><a id="line.141">         *            a FileFilter that will be logically-ORed with this predicate</a>
+<span class="sourceLineNo">142</span><a id="line.142">         * @return a composed FileFilter that represents the short-circuiting logical OR</a>
+<span class="sourceLineNo">143</span><a id="line.143">         *         of this predicate and the {@code other} FileFilter</a>
+<span class="sourceLineNo">144</span><a id="line.144">         * @throws NullPointerException</a>
+<span class="sourceLineNo">145</span><a id="line.145">         *             if other is null</a>
+<span class="sourceLineNo">146</span><a id="line.146">         * @see #and(FileFilterWithException)</a>
+<span class="sourceLineNo">147</span><a id="line.147">         * @see #negate()</a>
+<span class="sourceLineNo">148</span><a id="line.148">         */</a>
+<span class="sourceLineNo">149</span><a id="line.149">        default FileFilterWithException&lt;E&gt; or(FileFilterWithException&lt;? extends E&gt; other) {</a>
+<span class="sourceLineNo">150</span><a id="line.150">                requireNonNull(other);</a>
+<span class="sourceLineNo">151</span><a id="line.151">                return t -&gt; accept(t) || other.accept(t);</a>
+<span class="sourceLineNo">152</span><a id="line.152">        }</a>
+<span class="sourceLineNo">153</span><a id="line.153"></a>
+<span class="sourceLineNo">154</span><a id="line.154">        /**</a>
+<span class="sourceLineNo">155</span><a id="line.155">         * Returns a FileFilter that always throw exception.</a>
+<span class="sourceLineNo">156</span><a id="line.156">         *</a>
+<span class="sourceLineNo">157</span><a id="line.157">         * @param exceptionBuilder</a>
+<span class="sourceLineNo">158</span><a id="line.158">         *            the supplier to create the exception</a>
+<span class="sourceLineNo">159</span><a id="line.159">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">160</span><a id="line.160">         *            the type of the exception</a>
+<span class="sourceLineNo">161</span><a id="line.161">         * @return a FileFilter that always throw exception</a>
+<span class="sourceLineNo">162</span><a id="line.162">         */</a>
+<span class="sourceLineNo">163</span><a id="line.163">        static &lt;E extends Exception&gt; FileFilterWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {</a>
+<span class="sourceLineNo">164</span><a id="line.164">                return t -&gt; {</a>
+<span class="sourceLineNo">165</span><a id="line.165">                        throw exceptionBuilder.get();</a>
+<span class="sourceLineNo">166</span><a id="line.166">                };</a>
+<span class="sourceLineNo">167</span><a id="line.167">        }</a>
+<span class="sourceLineNo">168</span><a id="line.168"></a>
+<span class="sourceLineNo">169</span><a id="line.169">        /**</a>
+<span class="sourceLineNo">170</span><a id="line.170">         * Converts a {@code FileFilterWithException} to a {@code FileFilter} that wraps</a>
+<span class="sourceLineNo">171</span><a id="line.171">         * exception to {@code RuntimeException}.</a>
+<span class="sourceLineNo">172</span><a id="line.172">         *</a>
+<span class="sourceLineNo">173</span><a id="line.173">         * @param predicate</a>
+<span class="sourceLineNo">174</span><a id="line.174">         *            to be unchecked</a>
+<span class="sourceLineNo">175</span><a id="line.175">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">176</span><a id="line.176">         *            the type of the potential exception</a>
+<span class="sourceLineNo">177</span><a id="line.177">         * @return the unchecked FileFilter</a>
+<span class="sourceLineNo">178</span><a id="line.178">         * @see #uncheck()</a>
+<span class="sourceLineNo">179</span><a id="line.179">         * @see #unchecked(FileFilterWithException, Function)</a>
+<span class="sourceLineNo">180</span><a id="line.180">         * @throws NullPointerException</a>
+<span class="sourceLineNo">181</span><a id="line.181">         *             if predicate is null</a>
+<span class="sourceLineNo">182</span><a id="line.182">         */</a>
+<span class="sourceLineNo">183</span><a id="line.183">        static &lt;E extends Exception&gt; FileFilter unchecked(FileFilterWithException&lt;E&gt; predicate) {</a>
+<span class="sourceLineNo">184</span><a id="line.184">                return verifyPredicate(predicate).uncheck();</a>
+<span class="sourceLineNo">185</span><a id="line.185">        }</a>
+<span class="sourceLineNo">186</span><a id="line.186"></a>
+<span class="sourceLineNo">187</span><a id="line.187">        /**</a>
+<span class="sourceLineNo">188</span><a id="line.188">         * Converts a {@code FileFilterWithException} to a {@code FileFilter} that wraps</a>
+<span class="sourceLineNo">189</span><a id="line.189">         * exception to {@code RuntimeException} by using the provided mapping function.</a>
+<span class="sourceLineNo">190</span><a id="line.190">         *</a>
+<span class="sourceLineNo">191</span><a id="line.191">         * @param predicate</a>
+<span class="sourceLineNo">192</span><a id="line.192">         *            the be unchecked</a>
+<span class="sourceLineNo">193</span><a id="line.193">         * @param exceptionMapper</a>
+<span class="sourceLineNo">194</span><a id="line.194">         *            a function to convert the exception to the runtime exception.</a>
+<span class="sourceLineNo">195</span><a id="line.195">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">196</span><a id="line.196">         *            the type of the potential exception</a>
+<span class="sourceLineNo">197</span><a id="line.197">         * @return the unchecked FileFilter</a>
+<span class="sourceLineNo">198</span><a id="line.198">         * @see #uncheck()</a>
+<span class="sourceLineNo">199</span><a id="line.199">         * @see #unchecked(FileFilterWithException)</a>
+<span class="sourceLineNo">200</span><a id="line.200">         * @throws NullPointerException</a>
+<span class="sourceLineNo">201</span><a id="line.201">         *             if predicate or exceptionMapper is null</a>
+<span class="sourceLineNo">202</span><a id="line.202">         */</a>
+<span class="sourceLineNo">203</span><a id="line.203">        static &lt;E extends Exception&gt; FileFilter unchecked(FileFilterWithException&lt;E&gt; predicate,</a>
+<span class="sourceLineNo">204</span><a id="line.204">                        Function&lt;Exception, RuntimeException&gt; exceptionMapper) {</a>
+<span class="sourceLineNo">205</span><a id="line.205">                verifyPredicate(predicate);</a>
+<span class="sourceLineNo">206</span><a id="line.206">                verifyExceptionMapper(exceptionMapper);</a>
+<span class="sourceLineNo">207</span><a id="line.207">                return new FileFilterWithException&lt;E&gt;() {</a>
+<span class="sourceLineNo">208</span><a id="line.208"></a>
+<span class="sourceLineNo">209</span><a id="line.209">                        @Override</a>
+<span class="sourceLineNo">210</span><a id="line.210">                        public boolean accept(File pathname) throws E {</a>
+<span class="sourceLineNo">211</span><a id="line.211">                                return predicate.accept(pathname);</a>
+<span class="sourceLineNo">212</span><a id="line.212">                        }</a>
+<span class="sourceLineNo">213</span><a id="line.213"></a>
+<span class="sourceLineNo">214</span><a id="line.214">                        @Override</a>
+<span class="sourceLineNo">215</span><a id="line.215">                        public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {</a>
+<span class="sourceLineNo">216</span><a id="line.216">                                return exceptionMapper;</a>
+<span class="sourceLineNo">217</span><a id="line.217">                        }</a>
+<span class="sourceLineNo">218</span><a id="line.218"></a>
+<span class="sourceLineNo">219</span><a id="line.219">                }.uncheck();</a>
+<span class="sourceLineNo">220</span><a id="line.220">        }</a>
+<span class="sourceLineNo">221</span><a id="line.221"></a>
+<span class="sourceLineNo">222</span><a id="line.222">        /**</a>
+<span class="sourceLineNo">223</span><a id="line.223">         * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}</a>
+<span class="sourceLineNo">224</span><a id="line.224">         * returning {@code false} in case of exception.</a>
+<span class="sourceLineNo">225</span><a id="line.225">         *</a>
+<span class="sourceLineNo">226</span><a id="line.226">         * @param predicate</a>
+<span class="sourceLineNo">227</span><a id="line.227">         *            to be lifted</a>
+<span class="sourceLineNo">228</span><a id="line.228">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">229</span><a id="line.229">         *            the type of the potential exception</a>
+<span class="sourceLineNo">230</span><a id="line.230">         * @return the lifted FileFilter</a>
+<span class="sourceLineNo">231</span><a id="line.231">         * @see #lift()</a>
+<span class="sourceLineNo">232</span><a id="line.232">         * @throws NullPointerException</a>
+<span class="sourceLineNo">233</span><a id="line.233">         *             if predicate is null</a>
+<span class="sourceLineNo">234</span><a id="line.234">         */</a>
+<span class="sourceLineNo">235</span><a id="line.235">        static &lt;E extends Exception&gt; FileFilter lifted(FileFilterWithException&lt;E&gt; predicate) {</a>
+<span class="sourceLineNo">236</span><a id="line.236">                return verifyPredicate(predicate).lift();</a>
+<span class="sourceLineNo">237</span><a id="line.237">        }</a>
+<span class="sourceLineNo">238</span><a id="line.238"></a>
+<span class="sourceLineNo">239</span><a id="line.239">        /**</a>
+<span class="sourceLineNo">240</span><a id="line.240">         * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}</a>
+<span class="sourceLineNo">241</span><a id="line.241">         * returning {@code false} in case of exception.</a>
+<span class="sourceLineNo">242</span><a id="line.242">         *</a>
+<span class="sourceLineNo">243</span><a id="line.243">         * @param predicate</a>
+<span class="sourceLineNo">244</span><a id="line.244">         *            to be lifted</a>
+<span class="sourceLineNo">245</span><a id="line.245">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">246</span><a id="line.246">         *            the type of the potential exception</a>
+<span class="sourceLineNo">247</span><a id="line.247">         * @return the lifted FileFilter</a>
+<span class="sourceLineNo">248</span><a id="line.248">         * @see #ignore()</a>
+<span class="sourceLineNo">249</span><a id="line.249">         * @throws NullPointerException</a>
+<span class="sourceLineNo">250</span><a id="line.250">         *             if predicate is null</a>
+<span class="sourceLineNo">251</span><a id="line.251">         */</a>
+<span class="sourceLineNo">252</span><a id="line.252">        static &lt;E extends Exception&gt; FileFilter ignored(FileFilterWithException&lt;E&gt; predicate) {</a>
+<span class="sourceLineNo">253</span><a id="line.253">                return verifyPredicate(predicate).ignore();</a>
+<span class="sourceLineNo">254</span><a id="line.254">        }</a>
+<span class="sourceLineNo">255</span><a id="line.255"></a>
+<span class="sourceLineNo">256</span><a id="line.256">        /**</a>
+<span class="sourceLineNo">257</span><a id="line.257">         * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}</a>
+<span class="sourceLineNo">258</span><a id="line.258">         * returning a default value in case of exception.</a>
+<span class="sourceLineNo">259</span><a id="line.259">         *</a>
+<span class="sourceLineNo">260</span><a id="line.260">         * @param predicate</a>
+<span class="sourceLineNo">261</span><a id="line.261">         *            to be lifted</a>
+<span class="sourceLineNo">262</span><a id="line.262">         * @param defaultValue</a>
+<span class="sourceLineNo">263</span><a id="line.263">         *            value in case of exception</a>
+<span class="sourceLineNo">264</span><a id="line.264">         * @param &lt;E&gt;</a>
+<span class="sourceLineNo">265</span><a id="line.265">         *            the type of the potential exception</a>
+<span class="sourceLineNo">266</span><a id="line.266">         * @return the lifted FileFilter</a>
+<span class="sourceLineNo">267</span><a id="line.267">         * @see #ignore()</a>
+<span class="sourceLineNo">268</span><a id="line.268">         * @see #ignored(FileFilterWithException)</a>
+<span class="sourceLineNo">269</span><a id="line.269">         * @throws NullPointerException</a>
+<span class="sourceLineNo">270</span><a id="line.270">         *             if predicate is null</a>
+<span class="sourceLineNo">271</span><a id="line.271">         * @since 3.0.0</a>
+<span class="sourceLineNo">272</span><a id="line.272">         */</a>
+<span class="sourceLineNo">273</span><a id="line.273">        static &lt;E extends Exception&gt; FileFilter ignored(FileFilterWithException&lt;E&gt; predicate, boolean defaultValue) {</a>
+<span class="sourceLineNo">274</span><a id="line.274">                verifyPredicate(predicate);</a>
+<span class="sourceLineNo">275</span><a id="line.275">                return new FileFilterWithException&lt;E&gt;() {</a>
+<span class="sourceLineNo">276</span><a id="line.276"></a>
+<span class="sourceLineNo">277</span><a id="line.277">                        @Override</a>
+<span class="sourceLineNo">278</span><a id="line.278">                        public boolean accept(File pathname) throws E {</a>
+<span class="sourceLineNo">279</span><a id="line.279">                                return predicate.accept(pathname);</a>
+<span class="sourceLineNo">280</span><a id="line.280">                        }</a>
+<span class="sourceLineNo">281</span><a id="line.281"></a>
+<span class="sourceLineNo">282</span><a id="line.282">                        @Override</a>
+<span class="sourceLineNo">283</span><a id="line.283">                        public boolean defaultValue() {</a>
+<span class="sourceLineNo">284</span><a id="line.284">                                return defaultValue;</a>
+<span class="sourceLineNo">285</span><a id="line.285">                        }</a>
+<span class="sourceLineNo">286</span><a id="line.286"></a>
+<span class="sourceLineNo">287</span><a id="line.287">                }.ignore();</a>
+<span class="sourceLineNo">288</span><a id="line.288">        }</a>
+<span class="sourceLineNo">289</span><a id="line.289"></a>
+<span class="sourceLineNo">290</span><a id="line.290">}</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</main>
+</body>
+</html>

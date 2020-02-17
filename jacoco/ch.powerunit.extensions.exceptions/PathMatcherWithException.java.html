@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PathMatcherWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">PathMatcherWithException.java</span></div><h1>PathMatcherWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
+import static java.util.Objects.requireNonNull;
+
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * An interface that is implemented by objects that perform match operations on
+ * paths and may throw an exception.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #matches(Path) boolean matches(Path path) throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code PathMatcher}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code PathMatcher}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code PathMatcher}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see PathMatcher
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ * @since 1.1.0
+ */
+@FunctionalInterface
+public interface PathMatcherWithException&lt;E extends Exception&gt;
+		extends PrimitiveReturnExceptionHandlerSupport&lt;PathMatcher, PathMatcherWithException&lt;E&gt;&gt;, BooleanDefaultValue {
+
+	/**
+	 * Tells if given path matches this matcher's pattern.
+	 *
+	 * @param path
+	 *            the path to match
+	 *
+	 * @return {@code true} if, and only if, the path matches this matcher's pattern
+	 * @throws E
+	 *             any exception
+	 * @see PathMatcher#matches(Path)
+	 */
+	boolean matches(Path path) throws E;
+
+	@Override
+	default PathMatcher uncheckOrIgnore(boolean uncheck) {
+<span class="fc" id="L67">		return value -&gt; {</span>
+			try {
+<span class="fc" id="L69">				return matches(value);</span>
+<span class="fc" id="L70">			} catch (Exception e) {</span>
+<span class="fc" id="L71">				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</span>
+<span class="fc" id="L72">				return defaultValue();</span>
+			}
+		};
+	}
+
+	/**
+	 * Returns a composed PathMatcher that represents a short-circuiting logical AND
+	 * of this PathMatcher and another. When evaluating the composed predicate, if
+	 * this predicate is {@code false}, then the {@code other} predicate is not
+	 * evaluated.
+	 *
+	 * &lt;p&gt;
+	 * Any exceptions thrown during evaluation of either PathMatcher are relayed to
+	 * the caller; if evaluation of this predicate throws an exception, the
+	 * {@code other} PathMatcher will not be evaluated.
+	 *
+	 * @param other
+	 *            a PathMatcher that will be logically-ANDed with this predicate
+	 * @return a composed PathMatcher that represents the short-circuiting logical
+	 *         AND of this PathMatcher and the {@code other} PathMatcher
+	 * @throws NullPointerException
+	 *             if other is null
+	 * @see #or(PathMatcherWithException)
+	 * @see #negate()
+	 */
+	default PathMatcherWithException&lt;E&gt; and(PathMatcherWithException&lt;? extends E&gt; other) {
+<span class="fc" id="L98">		requireNonNull(other);</span>
+<span class="fc bfc" id="L99" title="All 4 branches covered.">		return t -&gt; matches(t) &amp;&amp; other.matches(t);</span>
+	}
+
+	/**
+	 * Returns a PathMatcher that represents the logical negation of this
+	 * PathMatcher.
+	 *
+	 * @return a PathMatcher that represents the logical negation of this
+	 *         PathMatcher
+	 * @see #and(PathMatcherWithException)
+	 * @see #or(PathMatcherWithException)
+	 */
+	default PathMatcherWithException&lt;E&gt; negate() {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">		return t -&gt; !matches(t);</span>
+	}
+
+	/**
+	 * Negate a {@code PredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the negated PathMatcher
+	 * @see #negate()
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; PathMatcherWithException&lt;E&gt; negate(PathMatcherWithException&lt;E&gt; predicate) {
+<span class="fc" id="L128">		return verifyPredicate(predicate).negate();</span>
+	}
+
+	/**
+	 * Returns a composed PathMatcher that represents a short-circuiting logical OR
+	 * of this PathMatcher and another. When evaluating the composed PathMatcher, if
+	 * this PathMatcher is {@code true}, then the {@code other} predicate is not
+	 * evaluated.
+	 *
+	 * &lt;p&gt;
+	 * Any exceptions thrown during evaluation of either PathMatcher are relayed to
+	 * the caller; if evaluation of this PathMatcher throws an exception, the
+	 * {@code other} PathMatcher will not be evaluated.
+	 *
+	 * @param other
+	 *            a PathMatcher that will be logically-ORed with this predicate
+	 * @return a composed PathMatcher that represents the short-circuiting logical
+	 *         OR of this predicate and the {@code other} PathMatcher
+	 * @throws NullPointerException
+	 *             if other is null
+	 * @see #and(PathMatcherWithException)
+	 * @see #negate()
+	 */
+	default PathMatcherWithException&lt;E&gt; or(PathMatcherWithException&lt;? extends E&gt; other) {
+<span class="fc" id="L152">		requireNonNull(other);</span>
+<span class="fc bfc" id="L153" title="All 4 branches covered.">		return t -&gt; matches(t) || other.matches(t);</span>
+	}
+
+	/**
+	 * Returns a PathMatcher that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a PathMatcher that always throw exception
+	 */
+	static &lt;E extends Exception&gt; PathMatcherWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L166">		return t -&gt; {</span>
+<span class="fc" id="L167">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code PathMatcherWithException} to a {@code PathMatcher} that
+	 * wraps exception to {@code RuntimeException}.
+	 *
+	 * @param predicate
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked PathMatcher
+	 * @see #uncheck()
+	 * @see #unchecked(PathMatcherWithException, Function)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; PathMatcher unchecked(PathMatcherWithException&lt;E&gt; predicate) {
+<span class="fc" id="L186">		return verifyPredicate(predicate).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code PathMatcherWithException} to a {@code PathMatcher} that
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
+	 * function.
+	 *
+	 * @param predicate
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked PathMatcher
+	 * @see #uncheck()
+	 * @see #unchecked(PathMatcherWithException)
+	 * @throws NullPointerException
+	 *             if predicate or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; PathMatcher unchecked(PathMatcherWithException&lt;E&gt; predicate,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L208">		verifyPredicate(predicate);</span>
+<span class="fc" id="L209">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L210">		return new PathMatcherWithException&lt;E&gt;() {</span>
+
+			@Override
+			public boolean matches(Path t) throws E {
+<span class="fc" id="L214">				return predicate.matches(t);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L219">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L222">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code PathMatcherWithException} to a lifted {@code PathMatcher}
+	 * returning {@code false} in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted PathMatcher
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; PathMatcher lifted(PathMatcherWithException&lt;E&gt; predicate) {
+<span class="fc" id="L239">		return verifyPredicate(predicate).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code PathMatcherWithException} to a lifted {@code PathMatcher}
+	 * returning {@code false} in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted PathMatcher
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; PathMatcher ignored(PathMatcherWithException&lt;E&gt; predicate) {
+<span class="fc" id="L256">		return verifyPredicate(predicate).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code PathMatcherWithException} to a lifted {@code PathMatcher}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted PathMatcher
+	 * @see #ignore()
+	 * @see #ignored(PathMatcherWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; PathMatcher ignored(PathMatcherWithException&lt;E&gt; predicate, boolean defaultValue) {
+<span class="fc" id="L277">		verifyPredicate(predicate);</span>
+<span class="fc" id="L278">		return new PathMatcherWithException&lt;E&gt;() {</span>
+
+			@Override
+			public boolean matches(Path t) throws E {
+<span class="fc" id="L282">				return predicate.matches(t);</span>
+			}
+
+			@Override
+			public boolean defaultValue() {
+<span class="fc" id="L287">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L290">		}.ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

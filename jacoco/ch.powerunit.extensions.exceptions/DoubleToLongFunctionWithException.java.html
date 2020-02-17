@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DoubleToLongFunctionWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">DoubleToLongFunctionWithException.java</span></div><h1>DoubleToLongFunctionWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+
+import java.util.function.DoubleToLongFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents a function that accepts a double-valued argument, may throw
+ * exception and produces a long-valued result. This is the
+ * {@code double}-to-{@code long} primitive specialization for
+ * {@link FunctionWithException}.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #applyAsLong(double) long applyAsLong(double value) throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleToLongFunction}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleToLongFunction}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleToLongFunction}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see DoubleToLongFunction
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ */
+@FunctionalInterface
+public interface DoubleToLongFunctionWithException&lt;E extends Exception&gt;
+		extends PrimitiveReturnExceptionHandlerSupport&lt;DoubleToLongFunction, DoubleToLongFunctionWithException&lt;E&gt;&gt;,
+		LongDefaultValue {
+
+	/**
+	 * Applies this function to the given argument.
+	 *
+	 * @param value
+	 *            the function argument
+	 * @return the function result
+	 * @throws E
+	 *             any exception
+	 * @see DoubleToLongFunction#applyAsLong(double)
+	 */
+	long applyAsLong(double value) throws E;
+
+	@Override
+	default DoubleToLongFunction uncheckOrIgnore(boolean uncheck) {
+<span class="fc" id="L66">		return value -&gt; {</span>
+			try {
+<span class="fc" id="L68">				return applyAsLong(value);</span>
+<span class="fc" id="L69">			} catch (Exception e) {</span>
+<span class="fc" id="L70">				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</span>
+<span class="fc" id="L71">				return defaultValue();</span>
+			}
+		};
+	}
+
+	/**
+	 * Returns a function that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a function that always throw exception
+	 */
+	static &lt;E extends Exception&gt; DoubleToLongFunctionWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L86">		return value -&gt; {</span>
+<span class="fc" id="L87">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code DoubleToLongFunctionWithException} to a
+	 * {@code DoubleToLongFunction} that convert exception to
+	 * {@code RuntimeException}.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked function
+	 * @see #uncheck()
+	 * @see #unchecked(DoubleToLongFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; DoubleToLongFunction unchecked(DoubleToLongFunctionWithException&lt;E&gt; function) {
+<span class="fc" id="L107">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleToLongFunctionWithException} to a
+	 * {@code DoubleToLongFunction} that convert exception to
+	 * {@code RuntimeException} by using the provided mapping function.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked function
+	 * @see #uncheck()
+	 * @see #unchecked(DoubleToLongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; DoubleToLongFunction unchecked(DoubleToLongFunctionWithException&lt;E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L129">		verifyFunction(function);</span>
+<span class="fc" id="L130">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L131">		return new DoubleToLongFunctionWithException&lt;E&gt;() {</span>
+
+			@Override
+			public long applyAsLong(double value) throws E {
+<span class="fc" id="L135">				return function.applyAsLong(value);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L140">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L143">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleToLongFunctionWithException} to a lifted
+	 * {@code DoubleToLongFunction} returning {@code 0} in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; DoubleToLongFunction lifted(DoubleToLongFunctionWithException&lt;E&gt; function) {
+<span class="fc" id="L160">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleToLongFunctionWithException} to a lifted
+	 * {@code DoubleToLongFunction} returning {@code 0} in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; DoubleToLongFunction ignored(DoubleToLongFunctionWithException&lt;E&gt; function) {
+<span class="fc" id="L177">		return verifyFunction(function).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleToLongFunctionWithException} to a lifted
+	 * {@code DoubleToLongFunction} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(DoubleToLongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; DoubleToLongFunction ignored(DoubleToLongFunctionWithException&lt;E&gt; function,
+			long defaultValue) {
+<span class="fc" id="L199">		verifyFunction(function);</span>
+<span class="fc" id="L200">		return new DoubleToLongFunctionWithException&lt;E&gt;() {</span>
+
+			@Override
+			public long applyAsLong(double value) throws E {
+<span class="fc" id="L204">				return function.applyAsLong(value);</span>
+			}
+
+			@Override
+			public long defaultValue() {
+<span class="fc" id="L209">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L212">		}.ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

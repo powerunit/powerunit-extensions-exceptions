@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UnaryOperatorWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">UnaryOperatorWithException.java</span></div><h1>UnaryOperatorWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+
+/**
+ * Represents an operation on a single operand that produces a result of the
+ * same type as its operand. This is a specialization of
+ * {@code FunctionWithException} for the case where the operand and result are
+ * of the same type.
+ * &lt;p&gt;
+ * As this interface must return the same type of the input, a lifted version
+ * which returns {@code Optional} is not possible.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #apply(Object) T apply(T t) throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The
+ * functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code UnaryOperator&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code Function&lt;T,Optional&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code UnaryOperator&lt;T&gt;}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see FunctionWithException
+ * @see UnaryOperator
+ * @param &lt;T&gt;
+ *            the type of the operand and result of the operator
+ */
+@FunctionalInterface
+public interface UnaryOperatorWithException&lt;T, E extends Exception&gt; extends FunctionWithException&lt;T, T, E&gt; {
+
+	/**
+	 * Converts this {@code UnaryOperatorWithException} to a {@code UnaryOperator}
+	 * that wraps exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked function
+	 * @see #unchecked(FunctionWithException)
+	 * @see #unchecked(FunctionWithException, Function)
+	 */
+	@Override
+	default UnaryOperator&lt;T&gt; uncheck() {
+<span class="fc" id="L65">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t), throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code UnaryOperatorWithException} to a lifted
+	 * {@code UnaryOperator} returning {@code null} in case of exception.
+	 *
+	 * @return the function that ignore error
+	 * @see #ignored(FunctionWithException)
+	 */
+	@Override
+	default UnaryOperator&lt;T&gt; ignore() {
+<span class="fc" id="L77">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t), e -&gt; null);</span>
+	}
+
+	@Override
+	default UnaryOperatorWithException&lt;T, E&gt; documented(Supplier&lt;String&gt; toString) {
+<span class="fc" id="L82">		return (UnaryOperatorWithException&lt;T, E&gt;) FunctionWithException.super.documented(toString);</span>
+	}
+
+	/**
+	 * Returns a unary operator that always returns its input argument.
+	 *
+	 * @param &lt;T&gt;
+	 *            the type of the input and output of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return a unary operator that always returns its input argument
+	 * @see Function#identity()
+	 */
+	static &lt;T, E extends Exception&gt; UnaryOperatorWithException&lt;T, E&gt; identity() {
+<span class="fc" id="L96">		return t -&gt; t;</span>
+	}
+
+	/**
+	 * Returns a unary operator that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;T&gt;
+	 *            the type of the input and output of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a function that always throw exception
+	 */
+	static &lt;T, E extends Exception&gt; UnaryOperatorWithException&lt;T, E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L111">		return t -&gt; {</span>
+<span class="fc" id="L112">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code UnaryOperatorWithException} to a {@code UnaryOperator} that
+	 * wraps exception to {@code RuntimeException}.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the input and output of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(UnaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, E extends Exception&gt; UnaryOperator&lt;T&gt; unchecked(UnaryOperatorWithException&lt;T, E&gt; function) {
+<span class="fc" id="L133">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code UnaryOperatorWithException} to a {@code UnaryOperator} that
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
+	 * function.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;T&gt;
+	 *            the type of the input and output of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(UnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;T, E extends Exception&gt; UnaryOperator&lt;T&gt; unchecked(UnaryOperatorWithException&lt;T, E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L157">		verifyFunction(function);</span>
+<span class="fc" id="L158">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L159">		return new UnaryOperatorWithException&lt;T, E&gt;() {</span>
+
+			@Override
+			public T apply(T t) throws E {
+<span class="fc" id="L163">				return function.apply(t);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L168">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L171">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code UnaryOperatorWithException} to a lifted {@code Function}
+	 * returning {@code Optional}.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the input and output of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, E extends Exception&gt; Function&lt;T, Optional&lt;T&gt;&gt; lifted(UnaryOperatorWithException&lt;T, E&gt; function) {
+<span class="fc" id="L190">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code UnaryOperatorWithException} to a lifted
+	 * {@code UnaryOperator} returning {@code null} in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;T&gt;
+	 *            the type of the input and output of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, E extends Exception&gt; UnaryOperator&lt;T&gt; ignored(UnaryOperatorWithException&lt;T, E&gt; function) {
+<span class="fc" id="L209">		return verifyFunction(function).ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NoReturnExceptionHandlerSupport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">NoReturnExceptionHandlerSupport.java</span></div><h1>NoReturnExceptionHandlerSupport.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.failedFuture;
+
+import java.util.concurrent.CompletionStage;
+import java.util.function.Consumer;
+
+/**
+ * Root interface to support global operations related to exception handling for
+ * functional interface without return value.
+ *
+ * @param &lt;F&gt;
+ *            the type of the java standard functional interface. For example,
+ *            {@code Consumer&lt;T&gt;}. The same functional interface is also used
+ *            for the lifted and ignored version.
+ * @param &lt;S&gt;
+ *            the type of a java standard function interface to return a
+ *            {@code CompletionStage}.
+ */
+public interface NoReturnExceptionHandlerSupport&lt;F, S, Z extends NoReturnExceptionHandlerSupport&lt;F, S, Z&gt;&gt;
+		extends ExceptionHandlerSupport&lt;F, F, Z&gt; {
+
+	/**
+	 * Converts this functional interface to the corresponding one in java and wrap
+	 * exception using {@link #exceptionMapper()}.
+	 * &lt;p&gt;
+	 * Conceptually, the exception encapsulation is done in the following way :
+	 *
+	 * &lt;pre&gt;
+	 * (xxx) -&amp;gt; {
+	 * 	try {
+	 * 		// do the underlying functional interface action and return result if
+	 * 		// applicable
+	 * 	} catch (Exception e) {
+	 * 		throw new exceptionMapper().apply(e);
+	 * 	}
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * @return the unchecked operation
+	 * @see #lift()
+	 * @see #ignore()
+	 */
+	@Override
+	F uncheck();
+
+	/**
+	 * Converts this functional interface to a lifted one.
+	 * &lt;p&gt;
+	 * The concept is :
+	 *
+	 * &lt;pre&gt;
+	 * (xxx) -&amp;gt; {
+	 * 	try {
+	 * 		realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		// do nothing
+	 * 	}
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
+	 */
+	@Override
+	default F lift() {
+<span class="fc" id="L88">		return ignore();</span>
+	}
+
+	/**
+	 * Converts this functional interface to a lifted one.
+	 * &lt;p&gt;
+	 * The concept is :
+	 *
+	 * &lt;pre&gt;
+	 * (xxx) -&amp;gt; {
+	 * 	try {
+	 * 		realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		// do nothing
+	 * 	}
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
+	 */
+	@Override
+	F ignore();
+
+	/**
+	 * Converts this functional interface to a lifted one, using a
+	 * {@code CompletionStage} as a return value.
+	 *
+	 * @return the lifted function
+	 * @since 1.1.0
+	 */
+	S stage();
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @param internal
+	 *            the call to be done
+	 * @param exceptionhandler
+	 *            the exception handler. May throw RuntimeException..
+	 * @throws RuntimeException
+	 *             in case of error
+	 */
+	static void unchecked(RunnableWithException&lt;?&gt; internal, Consumer&lt;Exception&gt; exceptionhandler) {
+		try {
+<span class="fc" id="L134">			internal.run();</span>
+<span class="fc" id="L135">		} catch (Exception e) {</span>
+			// exceptionhandler must throw the exception if needed
+<span class="fc" id="L137">			exceptionhandler.accept(e);</span>
+<span class="fc" id="L138">		}</span>
+<span class="fc" id="L139">	}</span>
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @param internal
+	 *            the call to be done
+	 * @return the completion stage
+	 * @throws RuntimeException
+	 *             in case of error
+	 */
+	static CompletionStage&lt;Void&gt; staged(RunnableWithException&lt;?&gt; internal) {
+		try {
+<span class="fc" id="L152">			internal.run();</span>
+<span class="fc" id="L153">			return completedFuture(null);</span>
+<span class="fc" id="L154">		} catch (Exception e) {</span>
+<span class="fc" id="L155">			return failedFuture(e);</span>
+		}
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @return exception handler to support exception control
+	 */
+	default Consumer&lt;Exception&gt; throwingHandler() {
+<span class="fc" id="L165">		return e -&gt; {</span>
+<span class="fc" id="L166">			throw exceptionMapper().apply(e);</span>
+		};
+	}
+
+	/**
+	 * Used internally to support the exception interception.
+	 *
+	 * @return exception handler to ignore exception control
+	 */
+	default Consumer&lt;Exception&gt; notThrowingHandler() {
+<span class="fc" id="L176">		return e -&gt; {</span>
+<span class="fc" id="L177">		};</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

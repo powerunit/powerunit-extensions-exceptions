@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileFilterWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">FileFilterWithException.java</span></div><h1>FileFilterWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyPredicate;
+import static java.util.Objects.requireNonNull;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * A filter for abstract pathnames and may throw an exception.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #accept(File) boolean accept(File path) throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code FileFilter}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code FileFilter}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code FileFilter}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see FileFilter
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ * @since 1.1.0
+ */
+@FunctionalInterface
+public interface FileFilterWithException&lt;E extends Exception&gt;
+		extends PrimitiveReturnExceptionHandlerSupport&lt;FileFilter, FileFilterWithException&lt;E&gt;&gt;, BooleanDefaultValue {
+
+	/**
+	 * Tests whether or not the specified abstract pathname should be included in a
+	 * pathname list.
+	 *
+	 * @param pathname
+	 *            The abstract pathname to be tested
+	 * @return &lt;code&gt;true&lt;/code&gt; if and only if &lt;code&gt;pathname&lt;/code&gt; should be
+	 *         included
+	 * @throws E
+	 *             any exception
+	 * @see FileFilter#accept(File)
+	 */
+	boolean accept(File pathname) throws E;
+
+	@Override
+	default FileFilter uncheckOrIgnore(boolean uncheck) {
+<span class="fc" id="L67">		return pathname -&gt; {</span>
+			try {
+<span class="fc" id="L69">				return accept(pathname);</span>
+<span class="fc" id="L70">			} catch (Exception e) {</span>
+<span class="fc" id="L71">				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</span>
+<span class="fc" id="L72">				return defaultValue();</span>
+			}
+		};
+	}
+
+	/**
+	 * Returns a composed FileFilter that represents a short-circuiting logical AND
+	 * of this FileFilter and another. When evaluating the composed predicate, if
+	 * this predicate is {@code false}, then the {@code other} predicate is not
+	 * evaluated.
+	 *
+	 * &lt;p&gt;
+	 * Any exceptions thrown during evaluation of either FileFilter are relayed to
+	 * the caller; if evaluation of this predicate throws an exception, the
+	 * {@code other} FileFilter will not be evaluated.
+	 *
+	 * @param other
+	 *            a FileFilter that will be logically-ANDed with this predicate
+	 * @return a composed FileFilter that represents the short-circuiting logical
+	 *         AND of this FileFilter and the {@code other} FileFilter
+	 * @throws NullPointerException
+	 *             if other is null
+	 * @see #or(FileFilterWithException)
+	 * @see #negate()
+	 */
+	default FileFilterWithException&lt;E&gt; and(FileFilterWithException&lt;? extends E&gt; other) {
+<span class="fc" id="L98">		requireNonNull(other);</span>
+<span class="fc bfc" id="L99" title="All 4 branches covered.">		return t -&gt; accept(t) &amp;&amp; other.accept(t);</span>
+	}
+
+	/**
+	 * Returns a FileFilter that represents the logical negation of this FileFilter.
+	 *
+	 * @return a FileFilter that represents the logical negation of this FileFilter
+	 * @see #and(FileFilterWithException)
+	 * @see #or(FileFilterWithException)
+	 */
+	default FileFilterWithException&lt;E&gt; negate() {
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		return t -&gt; !accept(t);</span>
+	}
+
+	/**
+	 * Negate a {@code PredicateWithException}.
+	 *
+	 * @param predicate
+	 *            to be negate
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the negated FileFilter
+	 * @see #negate()
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; FileFilterWithException&lt;E&gt; negate(FileFilterWithException&lt;E&gt; predicate) {
+<span class="fc" id="L126">		return verifyPredicate(predicate).negate();</span>
+	}
+
+	/**
+	 * Returns a composed FileFilter that represents a short-circuiting logical OR
+	 * of this FileFilter and another. When evaluating the composed FileFilter, if
+	 * this FileFilter is {@code true}, then the {@code other} predicate is not
+	 * evaluated.
+	 *
+	 * &lt;p&gt;
+	 * Any exceptions thrown during evaluation of either FileFilter are relayed to
+	 * the caller; if evaluation of this FileFilter throws an exception, the
+	 * {@code other} FileFilter will not be evaluated.
+	 *
+	 * @param other
+	 *            a FileFilter that will be logically-ORed with this predicate
+	 * @return a composed FileFilter that represents the short-circuiting logical OR
+	 *         of this predicate and the {@code other} FileFilter
+	 * @throws NullPointerException
+	 *             if other is null
+	 * @see #and(FileFilterWithException)
+	 * @see #negate()
+	 */
+	default FileFilterWithException&lt;E&gt; or(FileFilterWithException&lt;? extends E&gt; other) {
+<span class="fc" id="L150">		requireNonNull(other);</span>
+<span class="fc bfc" id="L151" title="All 4 branches covered.">		return t -&gt; accept(t) || other.accept(t);</span>
+	}
+
+	/**
+	 * Returns a FileFilter that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a FileFilter that always throw exception
+	 */
+	static &lt;E extends Exception&gt; FileFilterWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L164">		return t -&gt; {</span>
+<span class="fc" id="L165">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code FileFilterWithException} to a {@code FileFilter} that wraps
+	 * exception to {@code RuntimeException}.
+	 *
+	 * @param predicate
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked FileFilter
+	 * @see #uncheck()
+	 * @see #unchecked(FileFilterWithException, Function)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; FileFilter unchecked(FileFilterWithException&lt;E&gt; predicate) {
+<span class="fc" id="L184">		return verifyPredicate(predicate).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code FileFilterWithException} to a {@code FileFilter} that wraps
+	 * exception to {@code RuntimeException} by using the provided mapping function.
+	 *
+	 * @param predicate
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked FileFilter
+	 * @see #uncheck()
+	 * @see #unchecked(FileFilterWithException)
+	 * @throws NullPointerException
+	 *             if predicate or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; FileFilter unchecked(FileFilterWithException&lt;E&gt; predicate,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L205">		verifyPredicate(predicate);</span>
+<span class="fc" id="L206">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L207">		return new FileFilterWithException&lt;E&gt;() {</span>
+
+			@Override
+			public boolean accept(File pathname) throws E {
+<span class="fc" id="L211">				return predicate.accept(pathname);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L216">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L219">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}
+	 * returning {@code false} in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted FileFilter
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; FileFilter lifted(FileFilterWithException&lt;E&gt; predicate) {
+<span class="fc" id="L236">		return verifyPredicate(predicate).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}
+	 * returning {@code false} in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted FileFilter
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 */
+	static &lt;E extends Exception&gt; FileFilter ignored(FileFilterWithException&lt;E&gt; predicate) {
+<span class="fc" id="L253">		return verifyPredicate(predicate).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code FileFilterWithException} to a lifted {@code FileFilter}
+	 * returning a default value in case of exception.
+	 *
+	 * @param predicate
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted FileFilter
+	 * @see #ignore()
+	 * @see #ignored(FileFilterWithException)
+	 * @throws NullPointerException
+	 *             if predicate is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; FileFilter ignored(FileFilterWithException&lt;E&gt; predicate, boolean defaultValue) {
+<span class="fc" id="L274">		verifyPredicate(predicate);</span>
+<span class="fc" id="L275">		return new FileFilterWithException&lt;E&gt;() {</span>
+
+			@Override
+			public boolean accept(File pathname) throws E {
+<span class="fc" id="L279">				return predicate.accept(pathname);</span>
+			}
+
+			@Override
+			public boolean defaultValue() {
+<span class="fc" id="L284">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L287">		}.ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

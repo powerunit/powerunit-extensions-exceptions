@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LongFunctionWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">LongFunctionWithException.java</span></div><h1>LongFunctionWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+
+import java.util.Optional;
+import java.util.concurrent.CompletionStage;
+import java.util.function.Function;
+import java.util.function.LongFunction;
+import java.util.function.Supplier;
+
+/**
+ * Represents a function that accepts a long-valued argument, may throw
+ * exception and produces a result. This is the {@code long}-consuming primitive
+ * specialization for {@link FunctionWithException}.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #apply(long) R apply(long value) throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The
+ * functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code LongFunction&lt;R&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code LongFunction&lt;Optional&lt;R&gt;&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code LongFunction&lt;R&gt;}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see LongFunction
+ * @param &lt;R&gt;
+ *            the type of the result of the function
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ */
+@FunctionalInterface
+public interface LongFunctionWithException&lt;R, E extends Exception&gt; extends
+		ObjectReturnExceptionHandlerSupport&lt;LongFunction&lt;R&gt;, LongFunction&lt;Optional&lt;R&gt;&gt;, LongFunction&lt;CompletionStage&lt;R&gt;&gt;, R, LongFunctionWithException&lt;R, E&gt;&gt; {
+
+	/**
+	 * Applies this function to the given argument.
+	 *
+	 * @param value
+	 *            the function argument
+	 * @return the function result
+	 * @throws E
+	 *             any exception
+	 * @see LongFunction#apply(long)
+	 */
+	R apply(long value) throws E;
+
+	/**
+	 * Converts this {@code LongFunctionWithException} to a {@code LongFunction}
+	 * that wraps exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked function
+	 * @see #unchecked(LongFunctionWithException)
+	 * @see #unchecked(LongFunctionWithException, Function)
+	 */
+	@Override
+	default LongFunction&lt;R&gt; uncheck() {
+<span class="fc" id="L76">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t), throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code LongFunctionWithException} to a lifted
+	 * {@code LongFunction} using {@code Optional} as return value.
+	 *
+	 * @return the lifted function
+	 * @see #lifted(LongFunctionWithException)
+	 */
+	@Override
+	default LongFunction&lt;Optional&lt;R&gt;&gt; lift() {
+<span class="fc" id="L88">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; Optional.ofNullable(apply(t)),</span>
+<span class="fc" id="L89">				notThrowingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code LongFunctionWithException} to a lifted
+	 * {@code LongFunction} returning {@code null} (or the value redefined by the
+	 * method {@link #defaultValue()}) in case of exception.
+	 *
+	 * @return the function that ignore error
+	 * @see #ignored(LongFunctionWithException)
+	 */
+	@Override
+	default LongFunction&lt;R&gt; ignore() {
+<span class="fc" id="L102">		return t -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t), e -&gt; defaultValue());</span>
+	}
+
+	/**
+	 * Convert this {@code LongFunctionWithException} to a lifted
+	 * {@code LongFunction} returning {@code CompletionStage} as return value.
+	 *
+	 * @return the lifted function
+	 * @see #staged(LongFunctionWithException)
+	 */
+	@Override
+	default LongFunction&lt;CompletionStage&lt;R&gt;&gt; stage() {
+<span class="fc" id="L114">		return t -&gt; ObjectReturnExceptionHandlerSupport.staged(() -&gt; apply(t));</span>
+	}
+
+	/**
+	 * Returns a function that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a function that always throw exception
+	 */
+	static &lt;R, E extends Exception&gt; LongFunctionWithException&lt;R, E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L129">		return t -&gt; {</span>
+<span class="fc" id="L130">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code FunctionWithException} to a {@code LongFunction} that wraps
+	 * to {@code RuntimeException}.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;R&gt;
+	 *            the type of the output object to the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(LongFunctionWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;R, E extends Exception&gt; LongFunction&lt;R&gt; unchecked(LongFunctionWithException&lt;R, E&gt; function) {
+<span class="fc" id="L151">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code LongFunctionWithException} to a {@code LongFunction} that
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
+	 * function.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked function
+	 * @see #uncheck()
+	 * @see #unchecked(LongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;R, E extends Exception&gt; LongFunction&lt;R&gt; unchecked(LongFunctionWithException&lt;R, E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L175">		verifyFunction(function);</span>
+<span class="fc" id="L176">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L177">		return new LongFunctionWithException&lt;R, E&gt;() {</span>
+
+			@Override
+			public R apply(long value) throws E {
+<span class="fc" id="L181">				return function.apply(value);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L186">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L189">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code LongFunctionWithException} to a lifted {@code Function}
+	 * using {@code Optional} as return value.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;R, E extends Exception&gt; LongFunction&lt;Optional&lt;R&gt;&gt; lifted(LongFunctionWithException&lt;R, E&gt; function) {
+<span class="fc" id="L208">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code LongFunctionWithException} to a lifted {@code LongFunction}
+	 * returning {@code null} in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;R, E extends Exception&gt; LongFunction&lt;R&gt; ignored(LongFunctionWithException&lt;R, E&gt; function) {
+<span class="fc" id="L227">		return verifyFunction(function).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code LongFunctionWithException} to a lifted {@code LongFunction}
+	 * returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the value to be returned in case of exception
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(LongFunctionWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static &lt;R, E extends Exception&gt; LongFunction&lt;R&gt; ignored(LongFunctionWithException&lt;R, E&gt; function, R defaultValue) {
+<span class="fc" id="L250">		verifyFunction(function);</span>
+<span class="fc" id="L251">		return new LongFunctionWithException&lt;R, E&gt;() {</span>
+
+			@Override
+			public R apply(long value) throws E {
+<span class="fc" id="L255">				return function.apply(value);</span>
+			}
+
+			@Override
+			public R defaultValue() {
+<span class="fc" id="L260">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L263">		}.ignore();</span>
+	}
+
+	/**
+	 * Convert this {@code LongFunctionWithException} to a lifted
+	 * {@code LongFunction} return {@code CompletionStage} as return value.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;R&gt;
+	 *            the type of the result of the function
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #stage()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;R, E extends Exception&gt; LongFunction&lt;CompletionStage&lt;R&gt;&gt; staged(LongFunctionWithException&lt;R, E&gt; function) {
+<span class="fc" id="L282">		return verifyFunction(function).stage();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

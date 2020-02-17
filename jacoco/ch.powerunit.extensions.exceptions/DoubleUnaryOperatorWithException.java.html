@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DoubleUnaryOperatorWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">DoubleUnaryOperatorWithException.java</span></div><h1>DoubleUnaryOperatorWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+import static java.util.Objects.requireNonNull;
+
+import java.util.function.DoubleUnaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents an operation on a single {@code double}-valued operand that may
+ * thrown exception and produces a {@code double}-valued result. This is the
+ * primitive type specialization of {@link UnaryOperatorWithException} for
+ * {@code double}.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #applyAsDouble(double) double applyAsDouble(double operand)
+ * throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleUnaryOperator}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleUnaryOperator}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code DoubleUnaryOperator}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see DoubleUnaryOperator
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ */
+@FunctionalInterface
+public interface DoubleUnaryOperatorWithException&lt;E extends Exception&gt;
+		extends PrimitiveReturnExceptionHandlerSupport&lt;DoubleUnaryOperator, DoubleUnaryOperatorWithException&lt;E&gt;&gt;,
+		DoubleDefaultValue {
+
+	/**
+	 * Applies this operator to the given operand.
+	 *
+	 * @param operand
+	 *            the operand
+	 * @return the operator result
+	 * @throws E
+	 *             any exception
+	 * @see DoubleUnaryOperator#applyAsDouble(double)
+	 */
+	double applyAsDouble(double operand) throws E;
+
+	@Override
+	default DoubleUnaryOperator uncheckOrIgnore(boolean uncheck) {
+<span class="fc" id="L67">		return operand -&gt; {</span>
+			try {
+<span class="fc" id="L69">				return applyAsDouble(operand);</span>
+<span class="fc" id="L70">			} catch (Exception e) {</span>
+<span class="fc" id="L71">				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</span>
+<span class="fc" id="L72">				return defaultValue();</span>
+			}
+		};
+	}
+
+	/**
+	 * Returns a composed operator that first applies the {@code before} operator to
+	 * its input, and then applies this operator to the result. If evaluation of
+	 * either operator throws an exception, it is relayed to the caller of the
+	 * composed operator.
+	 *
+	 * @param before
+	 *            the operator to apply before this operator is applied
+	 * @return a composed operator that first applies the {@code before} operator
+	 *         and then applies this operator
+	 * @throws NullPointerException
+	 *             if before is null
+	 *
+	 * @see #andThen(DoubleUnaryOperatorWithException)
+	 */
+	default DoubleUnaryOperatorWithException&lt;E&gt; compose(DoubleUnaryOperatorWithException&lt;? extends E&gt; before) {
+<span class="fc" id="L93">		requireNonNull(before);</span>
+<span class="fc" id="L94">		return v -&gt; applyAsDouble(before.applyAsDouble(v));</span>
+	}
+
+	/**
+	 * Returns a composed operator that first applies this operator to its input,
+	 * and then applies the {@code after} operator to the result. If evaluation of
+	 * either operator throws an exception, it is relayed to the caller of the
+	 * composed operator.
+	 *
+	 * @param after
+	 *            the operator to apply after this operator is applied
+	 * @return a composed operator that first applies this operator and then applies
+	 *         the {@code after} operator
+	 * @throws NullPointerException
+	 *             if after is null
+	 *
+	 * @see #compose(DoubleUnaryOperatorWithException)
+	 */
+	default DoubleUnaryOperatorWithException&lt;E&gt; andThen(DoubleUnaryOperatorWithException&lt;? extends E&gt; after) {
+<span class="fc" id="L113">		requireNonNull(after);</span>
+<span class="fc" id="L114">		return t -&gt; after.applyAsDouble(applyAsDouble(t));</span>
+	}
+
+	/**
+	 * Returns a unary operator that always returns its input argument.
+	 *
+	 * @return a unary operator that always returns its input argument
+	 *
+	 * @param &lt;E&gt;
+	 *            the exception that may be thrown
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperatorWithException&lt;E&gt; identity() {
+<span class="fc" id="L126">		return t -&gt; t;</span>
+	}
+
+	/**
+	 * Returns a function that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a function that always throw exception
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperatorWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L139">		return operand -&gt; {</span>
+<span class="fc" id="L140">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code DoubleUnaryOperatorException} to a
+	 * {@code DoubleUnaryOperator} that wraps exception to {@code RuntimeException}.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked function
+	 * @see #uncheck()
+	 * @see #unchecked(DoubleUnaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException&lt;E&gt; function) {
+<span class="fc" id="L159">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleUnaryOperatorWithException} to a
+	 * {@code DoubleUnaryOperator} that wraps exception to {@code RuntimeException}
+	 * by using the provided mapping function.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked function
+	 * @see #uncheck()
+	 * @see #unchecked(DoubleUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperator unchecked(DoubleUnaryOperatorWithException&lt;E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L181">		verifyFunction(function);</span>
+<span class="fc" id="L182">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L183">		return new DoubleUnaryOperatorWithException&lt;E&gt;() {</span>
+
+			@Override
+			public double applyAsDouble(double operand) throws E {
+<span class="fc" id="L187">				return function.applyAsDouble(operand);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L192">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L195">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
+	 * {@code DoubleUnaryOperator} using {@code 0} as return value in case of error.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperator lifted(DoubleUnaryOperatorWithException&lt;E&gt; function) {
+<span class="fc" id="L212">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
+	 * {@code DoubleUnaryOperator} returning {@code 0} in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException&lt;E&gt; function) {
+<span class="fc" id="L229">		return verifyFunction(function).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code DoubleUnaryOperatorWithException} to a lifted
+	 * {@code DoubleUnaryOperator} returning a default value in case of exception.
+	 *
+	 * @param function
+	 *            to be lifted
+	 * @param defaultValue
+	 *            the default value in case of exception
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @see #ignored(DoubleUnaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; DoubleUnaryOperator ignored(DoubleUnaryOperatorWithException&lt;E&gt; function,
+			double defaultValue) {
+<span class="fc" id="L251">		verifyFunction(function);</span>
+<span class="fc" id="L252">		return new DoubleUnaryOperatorWithException&lt;E&gt;() {</span>
+
+			@Override
+			public double applyAsDouble(double operand) throws E {
+<span class="fc" id="L256">				return function.applyAsDouble(operand);</span>
+			}
+
+			@Override
+			public double defaultValue() {
+<span class="fc" id="L261">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L264">		}.ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

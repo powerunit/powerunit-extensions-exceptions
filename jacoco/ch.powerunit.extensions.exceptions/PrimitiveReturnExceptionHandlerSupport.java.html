@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PrimitiveReturnExceptionHandlerSupport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">PrimitiveReturnExceptionHandlerSupport.java</span></div><h1>PrimitiveReturnExceptionHandlerSupport.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import java.util.function.Function;
+
+/**
+ * Root interface to support global operations related to exception handling for
+ * functional interface with primitive return value.
+ *
+ * @param &lt;F&gt;
+ *            the type of the java standard functional interface. For example,
+ *            {@code Predicate&lt;T&gt;}. The same functional interface is also used
+ *            for the lifted and ignored version.
+ */
+public interface PrimitiveReturnExceptionHandlerSupport&lt;F, Z extends PrimitiveReturnExceptionHandlerSupport&lt;F, Z&gt;&gt;
+		extends ExceptionHandlerSupport&lt;F, F, Z&gt; {
+
+	/**
+	 * Converts this functional interface to the corresponding one in java and wrap
+	 * exception using {@link #exceptionMapper()}.
+	 * &lt;p&gt;
+	 * Conceptually, the exception encapsulation is done in the following way :
+	 *
+	 * &lt;pre&gt;
+	 * (xxx) -&amp;gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		throw new exceptionMapper().apply(e);
+	 * 	}
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * @return the unchecked operation
+	 * @see #lift()
+	 * @see #ignore()
+	 */
+	@Override
+	default F uncheck() {
+<span class="fc" id="L58">		return uncheckOrIgnore(true);</span>
+	}
+
+	/**
+	 * Converts this functional interface to a lifted one. A lifted version return
+	 * the same type as the original one, with a default value.
+	 * &lt;p&gt;
+	 * The concept is
+	 *
+	 * &lt;pre&gt;
+	 * (xxx) -&amp;gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		return defaultValue;
+	 * 	}
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #ignore()
+	 */
+	@Override
+	default F lift() {
+<span class="fc" id="L83">		return ignore();</span>
+	}
+
+	/**
+	 * Converts this functional interface to a lifted one. A lifted version return
+	 * the same type as the original one, with a default value.
+	 * &lt;p&gt;
+	 * The concept is
+	 *
+	 * &lt;pre&gt;
+	 * (xxx) -&amp;gt; {
+	 * 	try {
+	 * 		return realaction(xxx);
+	 * 	} catch (Exception e) {
+	 * 		return defaultValue;
+	 * 	}
+	 * }
+	 * &lt;/pre&gt;
+	 *
+	 * @return the lifted function
+	 * @see #uncheck()
+	 * @see #lift()
+	 */
+	@Override
+	default F ignore() {
+<span class="fc" id="L108">		return uncheckOrIgnore(false);</span>
+	}
+
+	/**
+	 * Used internally to implements the ignore or uncheck operation.
+	 *
+	 * @param uncheck
+	 *            create unchecked version of the function when true, else ignored
+	 *            version.
+	 * @return the function
+	 */
+	F uncheckOrIgnore(boolean uncheck);
+
+	/**
+	 * Internal function to throw an exception in case of error and uncheck mode.
+	 *
+	 * @param uncheck
+	 *            true if exception must be thrown.
+	 * @param e
+	 *            the current exception
+	 * @param exceptionMapper
+	 *            the mapper to create exception
+	 */
+	static void handleException(boolean uncheck, Exception e, Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc bfc" id="L132" title="All 2 branches covered.">		if (uncheck) {</span>
+<span class="fc" id="L133">			throw exceptionMapper.apply(e);</span>
+		}
+<span class="fc" id="L135">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

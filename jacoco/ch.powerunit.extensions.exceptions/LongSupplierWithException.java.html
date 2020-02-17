@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LongSupplierWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">LongSupplierWithException.java</span></div><h1>LongSupplierWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifySupplier;
+
+import java.util.function.Function;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
+
+/**
+ * Represents a supplier of {@code long}-valued results and may throw exception.
+ * This is the {@code long}-producing primitive specialization of
+ * {@link SupplierWithException}.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #getAsLong() long getAsLong() throws E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The
+ * functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code LongSupplier}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code LongSupplier}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code LongSupplier}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * &lt;p&gt;
+ * There is no requirement that a distinct result be returned each time the
+ * supplier is invoked.
+ *
+ * @see SupplierWithException
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the operation
+ */
+@FunctionalInterface
+public interface LongSupplierWithException&lt;E extends Exception&gt;
+		extends PrimitiveReturnExceptionHandlerSupport&lt;LongSupplier, LongSupplierWithException&lt;E&gt;&gt;, LongDefaultValue {
+
+	/**
+	 * Gets a result.
+	 *
+	 * @throws E
+	 *             any exception
+	 * @return a result
+	 * @see LongSupplier#getAsLong()
+	 */
+	long getAsLong() throws E;
+
+	@Override
+	default LongSupplier uncheckOrIgnore(boolean uncheck) {
+<span class="fc" id="L66">		return () -&gt; {</span>
+			try {
+<span class="fc" id="L68">				return getAsLong();</span>
+<span class="fc" id="L69">			} catch (Exception e) {</span>
+<span class="fc" id="L70">				PrimitiveReturnExceptionHandlerSupport.handleException(uncheck, e, exceptionMapper());</span>
+<span class="fc" id="L71">				return defaultValue();</span>
+			}
+		};
+	}
+
+	/**
+	 * Converts this {@code LongSupplierWithException} to a {@code LongSupplier}
+	 * that wraps exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked supplier
+	 * @see #unchecked(LongSupplierWithException)
+	 * @see #unchecked(LongSupplierWithException, Function)
+	 */
+	@Override
+	default LongSupplier uncheck() {
+<span class="fc" id="L86">		return uncheckOrIgnore(true);</span>
+	}
+
+	/**
+	 * Converts this {@code LongSupplierWithException} to a lifted
+	 * {@code LongSupplier} returning {@code 0} in case of exception.
+	 *
+	 * @return the supplier that ignore error
+	 * @see #ignored(LongSupplierWithException)
+	 */
+	@Override
+	default LongSupplier ignore() {
+<span class="fc" id="L98">		return uncheckOrIgnore(false);</span>
+	}
+
+	/**
+	 * Returns a supplier that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return an operation that always throw exception
+	 */
+	static &lt;E extends Exception&gt; LongSupplierWithException&lt;E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L111">		return () -&gt; {</span>
+<span class="fc" id="L112">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code LongSupplierWithException} to a {@code LongSupplier} that
+	 * wraps exception to {@code RuntimeException}.
+	 *
+	 * @param supplier
+	 *            to be unchecked
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked supplier
+	 * @see #uncheck()
+	 * @see #unchecked(LongSupplierWithException, Function)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 */
+	static &lt;E extends Exception&gt; LongSupplier unchecked(LongSupplierWithException&lt;E&gt; supplier) {
+<span class="fc" id="L131">		return verifySupplier(supplier).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code LongSupplierWithException} to a {@code LongSupplier} that
+	 * wraps exception to {@code RuntimeException} by using the provided mapping
+	 * function.
+	 *
+	 * @param supplier
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked supplier
+	 * @see #uncheck()
+	 * @see #unchecked(LongSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier or exceptionMapper is null
+	 */
+	static &lt;E extends Exception&gt; LongSupplier unchecked(LongSupplierWithException&lt;E&gt; supplier,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L153">		verifySupplier(supplier);</span>
+<span class="fc" id="L154">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L155">		return new LongSupplierWithException&lt;E&gt;() {</span>
+
+			@Override
+			public long getAsLong() throws E {
+<span class="fc" id="L159">				return supplier.getAsLong();</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L164">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L167">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code LongSupplierWithException} to a lifted {@code LongSupplier}
+	 * returning {@code 0} in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #lift()
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 */
+	static &lt;E extends Exception&gt; LongSupplier lifted(LongSupplierWithException&lt;E&gt; supplier) {
+<span class="fc" id="L184">		return verifySupplier(supplier).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code LongSupplierWithException} to a lifted {@code LongSupplier}
+	 * returning {@code 0} in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 */
+	static &lt;E extends Exception&gt; LongSupplier ignored(LongSupplierWithException&lt;E&gt; supplier) {
+<span class="fc" id="L201">		return verifySupplier(supplier).ignore();</span>
+	}
+
+	/**
+	 * Converts a {@code LongSupplierWithException} to a lifted {@code LongSupplier}
+	 * returning a default value in case of exception.
+	 *
+	 * @param supplier
+	 *            to be lifted
+	 * @param defaultValue
+	 *            value in case of exception
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted supplier
+	 * @see #ignore()
+	 * @see #ignored(LongSupplierWithException)
+	 * @throws NullPointerException
+	 *             if supplier is null
+	 * @since 3.0.0
+	 */
+	static &lt;E extends Exception&gt; LongSupplier ignored(LongSupplierWithException&lt;E&gt; supplier, long defaultValue) {
+<span class="fc" id="L222">		verifySupplier(supplier);</span>
+<span class="fc" id="L223">		return new LongSupplierWithException&lt;E&gt;() {</span>
+
+			@Override
+			public long getAsLong() throws E {
+<span class="fc" id="L227">				return supplier.getAsLong();</span>
+			}
+
+			@Override
+			public long defaultValue() {
+<span class="fc" id="L232">				return defaultValue;</span>
+			}
+
+<span class="fc" id="L235">		}.ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

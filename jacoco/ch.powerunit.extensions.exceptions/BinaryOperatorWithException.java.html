@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BinaryOperatorWithException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</a> &gt; <a href="index.source.html" class="el_package">ch.powerunit.extensions.exceptions</a> &gt; <span class="el_source">BinaryOperatorWithException.java</span></div><h1>BinaryOperatorWithException.java</h1><pre class="source lang-java linenums">/**
+ * Powerunit - A JDK1.8 test framework
+ * Copyright (C) 2014 Mathieu Boretti.
+ *
+ * This file is part of Powerunit
+ *
+ * Powerunit is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Powerunit is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Powerunit. If not, see &lt;http://www.gnu.org/licenses/&gt;.
+ */
+package ch.powerunit.extensions.exceptions;
+
+import static ch.powerunit.extensions.exceptions.Constants.verifyExceptionMapper;
+import static ch.powerunit.extensions.exceptions.Constants.verifyFunction;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+/**
+ * Represents an operation upon two operands of the same type, that may throw
+ * exception, producing a result of the same type as the operands. This is a
+ * specialization of {@link BiFunctionWithException} for the case where the
+ * operands and the result are all of the same type.
+ * &lt;p&gt;
+ * As this interface must return the same type of the input, a lifted version
+ * which returns {@code Optional} is not possible.
+ * &lt;h3&gt;General contract&lt;/h3&gt;
+ * &lt;ul&gt;
+ * &lt;li&gt;&lt;b&gt;{@link #apply(Object, Object) T apply(T t, T u) throws
+ * E}&lt;/b&gt;&amp;nbsp;-&amp;nbsp;The functional method.&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;uncheck&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code BinaryOperator&lt;T&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;lift&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a
+ * {@code BiFunction&lt;T,T,&lt;Optional&lt;T&gt;&gt;}&lt;/li&gt;
+ * &lt;li&gt;&lt;b&gt;ignore&lt;/b&gt;&amp;nbsp;-&amp;nbsp;Return a {@code BinaryOperator&lt;T&gt;}&lt;/li&gt;
+ * &lt;/ul&gt;
+ *
+ * @see BiFunctionWithException
+ * @see BinaryOperator
+ * @param &lt;T&gt;
+ *            the type of the operands and result of the operator
+ * @param &lt;E&gt;
+ *            the type of the potential exception of the function
+ */
+@FunctionalInterface
+public interface BinaryOperatorWithException&lt;T, E extends Exception&gt; extends BiFunctionWithException&lt;T, T, T, E&gt; {
+
+	/**
+	 * Converts this {@code BinaryOperatorWithException} to a {@code BinaryOperator}
+	 * that convert exception to {@code RuntimeException}.
+	 *
+	 * @return the unchecked function
+	 * @see #unchecked(BinaryOperatorWithException)
+	 * @see #unchecked(BinaryOperatorWithException, Function)
+	 */
+	@Override
+	default BinaryOperator&lt;T&gt; uncheck() {
+<span class="fc" id="L69">		return (t, u) -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t, u), throwingHandler());</span>
+	}
+
+	/**
+	 * Converts this {@code BinaryOperatorWithException} to a lifted
+	 * {@code BinaryOperator} returning {@code null} in case of exception.
+	 *
+	 * @return the function that ignore error
+	 * @see #ignored(BinaryOperatorWithException)
+	 */
+	@Override
+	default BinaryOperator&lt;T&gt; ignore() {
+<span class="fc" id="L81">		return (t, u) -&gt; ObjectReturnExceptionHandlerSupport.unchecked(() -&gt; apply(t, u), e -&gt; null);</span>
+	}
+
+	@Override
+	default BinaryOperatorWithException&lt;T, E&gt; documented(Supplier&lt;String&gt; toString) {
+<span class="fc" id="L86">		return (BinaryOperatorWithException&lt;T, E&gt;) BiFunctionWithException.super.documented(toString);</span>
+	}
+
+	/**
+	 * Returns a binary operator that always throw exception.
+	 *
+	 * @param exceptionBuilder
+	 *            the supplier to create the exception
+	 * @param &lt;T&gt;
+	 *            the type of the operands and result of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the exception
+	 * @return a function that always throw exception
+	 */
+	static &lt;T, E extends Exception&gt; BinaryOperatorWithException&lt;T, E&gt; failing(Supplier&lt;E&gt; exceptionBuilder) {
+<span class="fc" id="L101">		return (t, u) -&gt; {</span>
+<span class="fc" id="L102">			throw exceptionBuilder.get();</span>
+		};
+	}
+
+	/**
+	 * Converts a {@code BinaryOperatorWithException} to a {@code BinaryOperator}
+	 * that convert exception to {@code RuntimeException}.
+	 *
+	 * @param function
+	 *            to be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the operands and result of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(BinaryOperatorWithException, Function)
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, E extends Exception&gt; BinaryOperator&lt;T&gt; unchecked(BinaryOperatorWithException&lt;T, E&gt; function) {
+<span class="fc" id="L123">		return verifyFunction(function).uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code BinaryOperatorWithException} to a {@code BinaryOperator}
+	 * that convert exception to {@code RuntimeException} by using the provided
+	 * mapping function.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param exceptionMapper
+	 *            a function to convert the exception to the runtime exception.
+	 * @param &lt;T&gt;
+	 *            the type of the operands and result of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the unchecked exception
+	 * @see #uncheck()
+	 * @see #unchecked(BinaryOperatorWithException)
+	 * @throws NullPointerException
+	 *             if function or exceptionMapper is null
+	 */
+	static &lt;T, E extends Exception&gt; BinaryOperator&lt;T&gt; unchecked(BinaryOperatorWithException&lt;T, E&gt; function,
+			Function&lt;Exception, RuntimeException&gt; exceptionMapper) {
+<span class="fc" id="L147">		verifyFunction(function);</span>
+<span class="fc" id="L148">		verifyExceptionMapper(exceptionMapper);</span>
+<span class="fc" id="L149">		return new BinaryOperatorWithException&lt;T, E&gt;() {</span>
+
+			@Override
+			public T apply(T t, T u) throws E {
+<span class="fc" id="L153">				return function.apply(t, u);</span>
+			}
+
+			@Override
+			public Function&lt;Exception, RuntimeException&gt; exceptionMapper() {
+<span class="fc" id="L158">				return exceptionMapper;</span>
+			}
+
+<span class="fc" id="L161">		}.uncheck();</span>
+	}
+
+	/**
+	 * Converts a {@code BinaryOperatorWithException} to a lifted {@code Function}
+	 * returning an optional in case of exception.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the operands and result of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, E extends Exception&gt; BiFunction&lt;T, T, Optional&lt;T&gt;&gt; lifted(BinaryOperatorWithException&lt;T, E&gt; function) {
+<span class="fc" id="L180">		return verifyFunction(function).lift();</span>
+	}
+
+	/**
+	 * Converts a {@code BinaryOperatorWithException} to a lifted
+	 * {@code BinaryOperator} returning {@code null} in case of exception.
+	 *
+	 * @param function
+	 *            the be unchecked
+	 * @param &lt;T&gt;
+	 *            the type of the operands and result of the operator
+	 * @param &lt;E&gt;
+	 *            the type of the potential exception
+	 * @return the lifted function
+	 * @see #ignore()
+	 * @throws NullPointerException
+	 *             if function is null
+	 */
+	static &lt;T, E extends Exception&gt; BinaryOperator&lt;T&gt; ignored(BinaryOperatorWithException&lt;T, E&gt; function) {
+<span class="fc" id="L199">		return verifyFunction(function).ignore();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
