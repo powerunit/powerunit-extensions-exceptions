@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.powerunit.extensions</groupId>
 	<artifactId>powerunit-extensions-exceptions</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1-SNAPSHOT</version>
 
 	<name>Powerunit - Java Testing framework for JDK 10 - Extension to provide unchecked exception for lambda.</name>
 	<description>This is a test framework for the JDK 10 - Extension to provide unchecked exception for lambda.</description>
