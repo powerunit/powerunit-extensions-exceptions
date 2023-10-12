@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * exception and produces a long-valued result. This is the
  * {@code double}-to-{@code long} primitive specialization for
  * {@link FunctionWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsLong(double) long applyAsLong(double value) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

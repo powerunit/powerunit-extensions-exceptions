@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * produces a result. This is the two-arity specialization of
  * {@link FunctionWithException}.
  *
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #apply(Object, Object) R apply(T t, U u) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

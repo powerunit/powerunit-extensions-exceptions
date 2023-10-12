@@ -36,7 +36,7 @@ import java.util.function.Supplier;
  * <p>
  * As this interface must return the same type of the input, a lifted version
  * which returns {@code Optional} is not possible.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #apply(Object, Object) T apply(T t, T u) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

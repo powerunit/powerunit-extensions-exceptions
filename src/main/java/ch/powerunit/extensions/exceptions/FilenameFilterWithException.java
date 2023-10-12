@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 /**
  * Instances of classes that implement this interface are used to filter
  * filenames and may throw exception.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #accept(File, String) boolean accept(File dir, String name)
  * throws E}</b>&nbsp;-&nbsp;The functional method.</li>

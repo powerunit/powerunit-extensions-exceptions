@@ -35,7 +35,7 @@ import java.util.function.UnaryOperator;
  * <p>
  * As this interface must return the same type of the input, a lifted version
  * which returns {@code Optional} is not possible.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #apply(Object) T apply(T t) throws E}</b>&nbsp;-&nbsp;The
  * functional method.</li>

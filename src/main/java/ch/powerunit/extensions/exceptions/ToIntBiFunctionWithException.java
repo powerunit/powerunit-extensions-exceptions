@@ -30,7 +30,7 @@ import java.util.function.ToIntBiFunction;
  * Represents a function that accepts two arguments and produces an int-valued
  * result. This is the {@code int}-producing primitive specialization for
  * {@link BiFunctionWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsInt(Object, Object) int applyAsInt(T t, U u) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

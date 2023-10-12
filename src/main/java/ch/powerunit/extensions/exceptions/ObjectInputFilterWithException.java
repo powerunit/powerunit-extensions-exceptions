@@ -39,7 +39,7 @@ import java.util.function.Supplier;
  * classes, the length of each array, the number of objects being read from the
  * stream, the depth of the graph, and the total number of bytes read from the
  * stream.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #checkInput(FilterInfo) Status checkInput(FilterInfo
  * filterInfo) throws E}</b>&nbsp;-&nbsp;The functional method.</li>

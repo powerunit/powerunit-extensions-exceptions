@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * Represents a function that accepts an int-valued argument, may throw
  * exception and produces a result. This is the {@code int}-consuming primitive
  * specialization for {@link FunctionWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #apply(int) R apply(int value) throws E}</b>&nbsp;-&nbsp;The
  * functional method.</li>

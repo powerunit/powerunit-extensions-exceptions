@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * Represents an operation that accepts no input argument and returns no result
  * and may throw exception. Unlike most other functional interfaces,
  * {@code RunnableWithException} is expected to operate via side-effects.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #run() void run() throws E}</b>&nbsp;-&nbsp;The functional
  * method.</li>

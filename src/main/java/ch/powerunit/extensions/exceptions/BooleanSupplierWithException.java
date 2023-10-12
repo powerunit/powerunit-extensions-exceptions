@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * Represents a supplier of {@code boolean}-valued results which may throw
  * exception. This is the {@code boolean}-producing primitive specialization of
  * {@link SupplierWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #getAsBoolean() boolean getAsBoolean() throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

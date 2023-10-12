@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * Represents a supplier of {@code long}-valued results and may throw exception.
  * This is the {@code long}-producing primitive specialization of
  * {@link SupplierWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #getAsLong() long getAsLong() throws E}</b>&nbsp;-&nbsp;The
  * functional method.</li>

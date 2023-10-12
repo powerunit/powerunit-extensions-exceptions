@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  * specialization of {@link ConsumerWithException} for {@code long}. Unlike most
  * other functional interfaces, {@code LongConsumerWithException} is expected to
  * operate via side-effects.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #accept(long) void accept(long value) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

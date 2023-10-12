@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * result and may throw exception. Unlike most other functional interfaces,
  * {@code BiConsumerWithException} is expected to operate via side-effects.
  *
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #accept(Object, Object) void accept(T t,U u) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

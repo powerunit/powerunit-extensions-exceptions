@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * Represents a supplier of {@code int}-valued results and may throw exception.
  * This is the {@code int}-producing primitive specialization of
  * {@link SupplierWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #getAsInt() int getAsInt() throws E}</b>&nbsp;-&nbsp;The
  * functional method.</li>

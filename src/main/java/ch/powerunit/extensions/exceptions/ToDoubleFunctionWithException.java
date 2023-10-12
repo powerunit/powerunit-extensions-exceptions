@@ -30,7 +30,7 @@ import java.util.function.ToDoubleFunction;
  * Represents a function that produces a double-valued result, may throw
  * exception. This is the {@code double}-producing primitive specialization for
  * {@link FunctionWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsDouble(Object) double applyAsDouble(T value) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 
 /**
  * A filter for abstract pathnames and may throw an exception.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #accept(File) boolean accept(File path) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

@@ -35,7 +35,7 @@ import java.util.function.Supplier;
  * {@link BiConsumerWithException}. Unlike most other functional interfaces,
  * {@code ObjDoubleConsumerWithException} is expected to operate via
  * side-effects.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #accept(Object, double) void accept(T t, double value) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

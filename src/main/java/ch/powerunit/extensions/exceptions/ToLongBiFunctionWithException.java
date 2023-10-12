@@ -30,7 +30,7 @@ import java.util.function.ToLongBiFunction;
  * Represents a function that accepts two arguments, may throw exception and
  * produces a long-valued result. This is the {@code long}-producing primitive
  * specialization for {@link BiFunctionWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsLong(Object, Object) long applyAsLong(T t, U u) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

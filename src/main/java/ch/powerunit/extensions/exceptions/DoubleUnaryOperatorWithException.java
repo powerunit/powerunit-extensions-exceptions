@@ -32,7 +32,7 @@ import java.util.function.Supplier;
  * thrown exception and produces a {@code double}-valued result. This is the
  * primitive type specialization of {@link UnaryOperatorWithException} for
  * {@code double}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsDouble(double) double applyAsDouble(double operand)
  * throws E}</b>&nbsp;-&nbsp;The functional method.</li>

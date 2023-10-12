@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 /**
  * An interface that is implemented by objects that perform match operations on
  * paths and may throw an exception.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #matches(Path) boolean matches(Path path) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>

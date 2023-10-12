@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * Represents an operation upon two {@code long}-valued operands and producing a
  * {@code long}-valued result which may throw exception. This is the primitive
  * type specialization of {@link BinaryOperatorWithException} for {@code long}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsLong(long, long) long applyAsLong(long left, long
  * right) throws E}</b>&nbsp;-&nbsp;The functional method.</li>

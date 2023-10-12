@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * exception and producing a {@code double}-valued result. This is the primitive
  * type specialization of {@link BinaryOperatorWithException} for
  * {@code double}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #applyAsDouble(double, double) double applyAsDouble(double
  * left, double right) throws E}</b>&nbsp;-&nbsp;The functional method.</li>

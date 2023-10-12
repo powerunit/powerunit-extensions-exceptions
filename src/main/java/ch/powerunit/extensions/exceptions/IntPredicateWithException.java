@@ -31,7 +31,7 @@ import java.util.function.Supplier;
  * Represents a predicate (boolean-valued function) of one {@code int}-valued
  * argument that may throw exception. This is the {@code int}-consuming
  * primitive type specialization of {@link PredicateWithException}.
- * <h3>General contract</h3>
+ * <h2>General contract</h2>
  * <ul>
  * <li><b>{@link #test(int) boolean test(int value) throws
  * E}</b>&nbsp;-&nbsp;The functional method.</li>
